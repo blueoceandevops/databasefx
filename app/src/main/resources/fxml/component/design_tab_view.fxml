@@ -61,7 +61,18 @@
         <SplitPane dividerPositions="0.8" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
                 <Tab text="%view.design.table.field">
-                    <DesignTableView fx:id="fieldTable"/>
+                    <DesignTableView fx:id="fieldTable">
+                        <columns>
+                            <TableColumn text="%view.design.table.field.name"/>
+                            <TableColumn text="%view.design.table.field.type"/>
+                            <TableColumn text="%view.design.table.field.length"/>
+                            <TableColumn text="%view.design.table.field.decimal"/>
+                            <TableColumn text="%view.design.table.field.null"/>
+                            <!--                            <TableColumn text="虚拟"/>-->
+                            <TableColumn text="%view.design.table.field.key"/>
+                            <TableColumn text="%view.design.table.field.comment"/>
+                        </columns>
+                    </DesignTableView>
                 </Tab>
                 <Tab text="%view.design.table.comment">
                     <TextArea fx:id="commentTextArea"/>

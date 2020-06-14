@@ -65,6 +65,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
 
     @Override
     protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
         if (empty
                 || Objects.isNull(item)
                 || Objects.isNull(getTableView())
