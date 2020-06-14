@@ -21,7 +21,8 @@ public class TableColumnMeta {
         LENGTH,
         DECIMAL_POINT,
         CHARSET,
-        PRIMARY_KEY
+        PRIMARY_KEY,
+        UN_SIGNED
     }
 
     /**
@@ -43,7 +44,7 @@ public class TableColumnMeta {
     /**
      * is Null?
      */
-    private Boolean Null = true;
+    private Boolean Null = Boolean.TRUE;
     /**
      * is Key
      */
@@ -51,7 +52,7 @@ public class TableColumnMeta {
     /**
      * field is auto_increment
      */
-    private Boolean AutoIncrement = false;
+    private Boolean AutoIncrement = Boolean.FALSE;
     /**
      * field default
      */
@@ -84,7 +85,11 @@ public class TableColumnMeta {
     /**
      * field is primary Key
      */
-    private Boolean PrimaryKey = false;
+    private Boolean PrimaryKey = Boolean.FALSE;
+    /**
+     * un signed
+     */
+    private Boolean unsigned = Boolean.FALSE;
 
     public TableColumnMeta() {
     }
@@ -213,8 +218,16 @@ public class TableColumnMeta {
         PrimaryKey = primaryKey;
     }
 
+    public Boolean getUnsigned() {
+        return unsigned;
+    }
+
+    public void setUnsigned(Boolean unsigned) {
+        this.unsigned = unsigned;
+    }
+
     public <T> T getFieldValue(TableColumnEnum tableColumnEnum) {
-        T t = null;
+        final T t;
         if (tableColumnEnum == TableColumnEnum.FIELD) {
             t = (T) this.getField();
         } else if (tableColumnEnum == TableColumnEnum.TYPE) {
@@ -241,6 +254,8 @@ public class TableColumnMeta {
             t = (T) this.getNull();
         } else if (tableColumnEnum == TableColumnEnum.DECIMAL_POINT) {
             t = (T) this.getDecimalPoint();
+        } else {
+            t = (T) this.getUnsigned();
         }
         return t;
     }
