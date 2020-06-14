@@ -23,157 +23,117 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
  * @since 1.0
  */
 public class DesignTableModel {
-    /**
-     * field name
-     */
-    private TextField field = new TextField();
-    /**
-     * field type
-     */
-    private EditChoiceBox<String> fieldType = new EditChoiceBox<>();
-    /**
-     * field length
-     */
-    private TextField fieldLength = new TextField();
-    /**
-     * field small point
-     */
-    private TextField fieldPoint = new TextField();
-    /**
-     * field is null?
-     */
-    private CheckBox nullable = new CheckBox();
-    /**
-     * field is key?
-     */
-    private CheckBox key = new CheckBox();
-    /**
-     * field comment
-     */
-    private TextField comment = new TextField();
-    /**
-     * default value
-     */
-    private final StringProperty defaultValue = new SimpleStringProperty("");
-    /**
-     * field collation
-     */
-    private final StringProperty collation = new SimpleStringProperty("");
-    /**
-     * field charset
-     */
-    private final StringProperty charset = new SimpleStringProperty("");
-    /**
-     * field autoincrement?
-     */
-    private final BooleanProperty autoIncrement = new SimpleBooleanProperty(false);
+    private final StringProperty field;
+    private final StringProperty type;
+    private final StringProperty length;
+    private final StringProperty decimalPoint;
+    private final StringProperty nullable;
+    private final StringProperty primaryKey;
+    private final StringProperty comment;
+    private final StringProperty defaultValue;
+    private final StringProperty charset;
+    private final StringProperty collation;
+    private final StringProperty unSigned;
+    private final StringProperty autoIncrement;
+    private final TableColumnMeta meta;
 
-    private TableColumnMeta tableColumnMeta = null;
-
-    private final DesignTableTab designTableTab;
-
-    public DesignTableModel(DesignTableTab designTableTab) {
-        this.designTableTab = designTableTab;
-        var dataTypeList = DATABASE_SOURCE.getDataType().getDataTypeList();
-        fieldType.getItems().addAll(dataTypeList);
-        field.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.FIELD));
-        fieldType.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.TYPE));
-        fieldLength.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.LENGTH));
-        fieldPoint.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DECIMAL_POINT));
-        nullable.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.NULL));
-        key.selectedProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.PRIMARY_KEY));
-        comment.textProperty().addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COMMENT));
-        autoIncrement.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue.toString(), TableColumnMeta.TableColumnEnum.AUTO_INCREMENT));
-        defaultValue.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.DEFAULT));
-        charset.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.CHARSET));
-        collation.addListener((observable, oldValue, newValue) -> updateCallbackValue(newValue, TableColumnMeta.TableColumnEnum.COLLATION));
+    public DesignTableModel(TableColumnMeta meta) {
+        this.meta = meta;
+        if (meta != null) {
+            field = new SimpleStringProperty(meta.getField());
+            type = new SimpleStringProperty(meta.getType());
+            length = new SimpleStringProperty(meta.getLength());
+            decimalPoint = new SimpleStringProperty(meta.getDecimalPoint());
+            nullable = new SimpleStringProperty(meta.getNull().toString());
+            primaryKey = new SimpleStringProperty(meta.getPrimaryKey().toString());
+            comment = new SimpleStringProperty(meta.getComment());
+            defaultValue = new SimpleStringProperty(meta.getDefault());
+            charset = new SimpleStringProperty(meta.getCharset());
+            collation = new SimpleStringProperty(meta.getCollation());
+            unSigned = new SimpleStringProperty(meta.getUnsigned().toString());
+            autoIncrement = new SimpleStringProperty(meta.getAutoIncrement().toString());
+        } else {
+            field = new SimpleStringProperty("");
+            type = new SimpleStringProperty("varchar");
+            length = new SimpleStringProperty("0");
+            decimalPoint = new SimpleStringProperty("0");
+            nullable = new SimpleStringProperty("false");
+            primaryKey = new SimpleStringProperty("false");
+            comment = new SimpleStringProperty(null);
+            defaultValue = new SimpleStringProperty(null);
+            charset = new SimpleStringProperty(null);
+            collation = new SimpleStringProperty(null);
+            unSigned = new SimpleStringProperty("false");
+            autoIncrement = new SimpleStringProperty("false");
+        }
     }
 
-    private void updateCallbackValue(String newValue, TableColumnMeta.TableColumnEnum fieldName) {
-        designTableTab.tableFieldChange(tableColumnMeta, this, fieldName, newValue);
+    public String getField() {
+        return field.get();
     }
 
-    public TextField getField() {
+    public StringProperty fieldProperty() {
         return field;
     }
 
-    public void setField(TextField field) {
-        this.field = field;
+    public void setField(String field) {
+        this.field.set(field);
     }
 
-    public EditChoiceBox<String> getFieldType() {
-        return fieldType;
+    public String getType() {
+        return type.get();
     }
 
-    public void setFieldType(EditChoiceBox<String> fieldType) {
-        this.fieldType = fieldType;
+    public StringProperty typeProperty() {
+        return type;
     }
 
-    public TextField getFieldLength() {
-        return fieldLength;
+    public void setType(String type) {
+        this.type.set(type);
     }
 
-    public void setFieldLength(TextField fieldLength) {
-        this.fieldLength = fieldLength;
+    public String getLength() {
+        return length.get();
     }
 
-    public TextField getFieldPoint() {
-        return fieldPoint;
+    public StringProperty lengthProperty() {
+        return length;
     }
 
-    public void setFieldPoint(TextField fieldPoint) {
-        this.fieldPoint = fieldPoint;
+    public void setLength(String length) {
+        this.length.set(length);
     }
 
-    public CheckBox getNullable() {
+    public String getDecimalPoint() {
+        return decimalPoint.get();
+    }
+
+    public StringProperty decimalPointProperty() {
+        return decimalPoint;
+    }
+
+    public void setDecimalPoint(String decimalPoint) {
+        this.decimalPoint.set(decimalPoint);
+    }
+
+    public StringProperty nullableProperty() {
         return nullable;
     }
 
-    public void setNullable(CheckBox nullable) {
-        this.nullable = nullable;
+    public StringProperty primaryKeyProperty() {
+        return primaryKey;
     }
 
-    public CheckBox getKey() {
-        return key;
+    public String getComment() {
+        return comment.get();
     }
 
-    public void setKey(CheckBox key) {
-        this.key = key;
-    }
-
-    public TextField getComment() {
+    public StringProperty commentProperty() {
         return comment;
     }
 
-    public void setComment(TextField comment) {
-        this.comment = comment;
-    }
-
-    public static DesignTableModel build(final TableColumnMeta meta, final DesignTableTab tableTab) {
-        var model = new DesignTableModel(tableTab);
-
-        model.getField().setText(meta.getField());
-        model.getFieldType().setText(meta.getType());
-        model.getNullable().setSelected(!meta.getNull());
-        model.getComment().setText(meta.getComment());
-        model.getKey().setSelected(meta.getPrimaryKey());
-        model.getFieldType().setText(meta.getType());
-        model.getFieldLength().setText(meta.getLength());
-        model.getFieldPoint().setText(meta.getDecimalPoint());
-        model.setDefaultValue(meta.getDefault());
-        model.setCollation(meta.getCollation());
-        model.setCharset(meta.getCharset());
-        model.setAutoIncrement(meta.getAutoIncrement());
-
-        model.setTableColumnMeta(meta);
-
-        return model;
-    }
-
-    public static List<DesignTableModel> build(final List<TableColumnMeta> metas, DesignTableTab designTableTab) {
-        return metas.stream()
-                .map(meta -> build(meta, designTableTab))
-                .collect(Collectors.toList());
+    public void setComment(String comment) {
+        this.comment.set(comment);
     }
 
     public String getDefaultValue() {
@@ -188,18 +148,6 @@ public class DesignTableModel {
         this.defaultValue.set(defaultValue);
     }
 
-    public String getCollation() {
-        return collation.get();
-    }
-
-    public StringProperty collationProperty() {
-        return collation;
-    }
-
-    public void setCollation(String collation) {
-        this.collation.set(collation);
-    }
-
     public String getCharset() {
         return charset.get();
     }
@@ -212,40 +160,60 @@ public class DesignTableModel {
         this.charset.set(charset);
     }
 
-    public boolean isAutoIncrement() {
+    public String getCollation() {
+        return collation.get();
+    }
+
+    public StringProperty collationProperty() {
+        return collation;
+    }
+
+    public void setCollation(String collation) {
+        this.collation.set(collation);
+    }
+
+    public String getNullable() {
+        return nullable.get();
+    }
+
+    public void setNullable(String nullable) {
+        this.nullable.set(nullable);
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey.get();
+    }
+
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey.set(primaryKey);
+    }
+
+    public String getUnSigned() {
+        return unSigned.get();
+    }
+
+    public StringProperty unSignedProperty() {
+        return unSigned;
+    }
+
+    public void setUnSigned(String unSigned) {
+        this.unSigned.set(unSigned);
+    }
+
+    public String getAutoIncrement() {
         return autoIncrement.get();
     }
 
-    public BooleanProperty autoIncrementProperty() {
+    public StringProperty autoIncrementProperty() {
         return autoIncrement;
     }
 
-    public void setAutoIncrement(boolean autoIncrement) {
+    public void setAutoIncrement(String autoIncrement) {
         this.autoIncrement.set(autoIncrement);
     }
 
-    public TableColumnMeta getTableColumnMeta() {
-        return tableColumnMeta;
-    }
-
-    public void setTableColumnMeta(TableColumnMeta tableColumnMeta) {
-        this.tableColumnMeta = tableColumnMeta;
-    }
-
-    @Override
-    public String toString() {
-        return "DesignTableModel{" +
-                "field=" + field.getText() +
-                ", fieldType=" + fieldType.getText() +
-                ", fieldLength=" + fieldLength.getText() +
-                ", fieldPoint=" + fieldPoint.getText() +
-                ", nullable=" + nullable.getText() +
-                ", key=" + key.getText() +
-                ", comment=" + comment.getText() +
-                ", defaultValue=" + defaultValue.get() +
-                ", collation=" + collation.get() +
-                ", charset=" + charset.get() +
-                ", autoIncrement=" + autoIncrement.get() +
-                '}';
+    public TableColumnMeta getMeta() {
+        return meta;
     }
 }

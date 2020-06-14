@@ -2,9 +2,13 @@ package com.openjfx.database.app.component;
 
 import com.openjfx.database.DataCharset;
 import com.openjfx.database.app.component.tabs.DesignTableTab;
+import com.openjfx.database.app.controls.DesignTableView;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
+import com.openjfx.database.common.utils.StringUtils;
+import com.openjfx.database.enums.DesignTableOperationType;
+import com.openjfx.database.model.TableColumnMeta;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -27,6 +31,7 @@ public class DesignOptionBox extends VBox {
     private final EditChoiceBox<String> charsetBox = new EditChoiceBox<>();
     private final EditChoiceBox<String> collationBox = new EditChoiceBox<>();
     private final CheckBox incrementCheck = new CheckBox();
+    private final CheckBox unSignedCheck = new CheckBox();
 
     /**
      * database source
@@ -36,16 +41,17 @@ public class DesignOptionBox extends VBox {
     public DesignOptionBox() {
 
         defaultBox.setHideSelector(true);
-
-        var autoIncrement = new Label(I18N.getString("view.design.table.option.auto"));
         var grid = new GridPane();
-        grid.addRow(0, autoIncrement, incrementCheck);
+        var unSigned = new Label(I18N.getString("view.design.table.option.unsigned"));
         var defaultLabel = new Label(I18N.getString("view.design.table.option.default"));
-        grid.addRow(1, defaultLabel, defaultBox);
         var charsetLabel = new Label(I18N.getString("view.design.table.option.charset"));
-        grid.addRow(2, charsetLabel, charsetBox);
         var collationLabel = new Label(I18N.getString("view.design.table.option.collation"));
-        grid.addRow(3, collationLabel, collationBox);
+        var autoIncrement = new Label(I18N.getString("view.design.table.option.auto"));
+        grid.addRow(0, autoIncrement, incrementCheck);
+        grid.addRow(1, unSigned, unSignedCheck);
+        grid.addRow(2, defaultLabel, defaultBox);
+        grid.addRow(3, charsetLabel, charsetBox);
+        grid.addRow(4, collationLabel, collationBox);
 
         grid.setHgap(10);
         grid.setVgap(10);
@@ -79,18 +85,38 @@ public class DesignOptionBox extends VBox {
 
     private DesignTableModel model;
 
-    public void updateValue(DesignTableModel model) {
+    public void updateValue(DesignTableModel model, int rowIndex, DesignTableView tableView) {
         this.model = model;
+
+        var defaultValue = model.getDefaultValue() == null ? "" : model.getDefaultValue();
+
         //update value
         this.charsetBox.setText(model.getCharset());
         this.collationBox.setText(model.getCollation());
-        this.incrementCheck.setSelected(model.isAutoIncrement());
-        this.defaultBox.setText(model.getDefaultValue());
+        this.incrementCheck.setSelected(Boolean.parseBoolean(model.getAutoIncrement()));
+        this.defaultBox.setText(defaultValue);
+        this.unSignedCheck.setSelected(Boolean.parseBoolean(model.getUnSigned()));
 
         //update all listener
-        defaultBox.textProperty().addListener((observable, oldValue, newValue) -> this.model.setDefaultValue(newValue));
-        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> this.model.setCharset(newValue));
-        collationBox.textProperty().addListener((observable, oldValue, newValue) -> this.model.setCollation(newValue));
-        incrementCheck.selectedProperty().addListener((observable, oldValue, newValue) -> this.model.setAutoIncrement(newValue));
+        defaultBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            this.model.setDefaultValue(newValue);
+            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.DEFAULT, newValue);
+        });
+        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            this.model.setCharset(newValue);
+            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.CHARSET, newValue);
+        });
+        collationBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            this.model.setCollation(newValue);
+            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.COLLATION, newValue);
+        });
+        incrementCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            this.model.setAutoIncrement(newValue.toString());
+            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.AUTO_INCREMENT, newValue.toString());
+        });
+        unSignedCheck.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            this.model.setUnSigned(newValue.toString());
+            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.UN_SIGNED, newValue.toString());
+        }));
     }
 }

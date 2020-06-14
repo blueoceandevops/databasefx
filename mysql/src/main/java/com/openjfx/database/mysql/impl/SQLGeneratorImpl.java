@@ -2,23 +2,15 @@ package com.openjfx.database.mysql.impl;
 
 import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.common.utils.StringUtils;
-import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
-import com.openjfx.database.model.ColumnChangeModel;
 import com.openjfx.database.model.RowChangeModel;
 import com.openjfx.database.model.TableColumnMeta;
-import com.openjfx.database.mysql.MysqlHelper;
 import com.openjfx.database.mysql.SQLHelper;
-import io.vertx.mysqlclient.MySQLPool;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.openjfx.database.enums.DesignTableOperationSource.TABLE_COMMENT;
 import static com.openjfx.database.enums.DesignTableOperationSource.TABLE_FIELD;
@@ -46,7 +38,7 @@ public class SQLGeneratorImpl implements SQLGenerator {
     }
 
     @Override
-    public String createFieldModifySqlStatement(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas) {
+    public String updateTable(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas) {
         var tableName = SQLHelper.escapeMysqlField(table);
         var sb = new StringBuilder();
         sb.append("ALTER TABLE ");
@@ -56,8 +48,7 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 .collect(Collectors.toList());
         var str = updateTableField(updateFieldList, metas);
         sb.append(str);
-        var optional = changeModels.stream()
-                .filter(rowChangeModel -> rowChangeModel.getSource() == TABLE_COMMENT).findAny();
+        var optional = changeModels.stream().filter(rowChangeModel -> rowChangeModel.getSource() == TABLE_COMMENT).findAny();
         optional.ifPresent(rowChangeModel -> {
             var column = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
             sb.append(" ");
@@ -121,6 +112,9 @@ public class SQLGeneratorImpl implements SQLGenerator {
                 val += length;
                 sb.append(val);
                 sb.append(" ");
+            }
+            if (changeModel.containField(TableColumnMeta.TableColumnEnum.UN_SIGNED)) {
+                sb.append("UNSIGNED ");
             }
             if (changeModel.containField(TableColumnMeta.TableColumnEnum.CHARSET)) {
                 var charset = changeModel.getColumn(TableColumnMeta.TableColumnEnum.CHARSET);
@@ -267,6 +261,16 @@ public class SQLGeneratorImpl implements SQLGenerator {
                         sb.append(meta.getOriginalType());
                     }
                 }
+                if (rowChangeModel.containField(TableColumnMeta.TableColumnEnum.UN_SIGNED)) {
+                    var unSigned = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.UN_SIGNED);
+                    if (Boolean.parseBoolean(unSigned.getNewValue())) {
+                        sb.append(" UNSIGNED ");
+                    }
+                } else {
+                    if (meta != null && meta.getUnsigned()) {
+                        sb.append(" UNSIGNED ");
+                    }
+                }
                 var d = rowChangeModel.containField(TableColumnMeta.TableColumnEnum.CHARSET);
                 var e = rowChangeModel.containField(TableColumnMeta.TableColumnEnum.COLLATION);
                 if (d || e) {
@@ -318,17 +322,29 @@ public class SQLGeneratorImpl implements SQLGenerator {
                         }
                     }
                 }
-                if (rowChangeModel.containField(TableColumnMeta.TableColumnEnum.DEFAULT)) {
-                    var defaultValue = rowChangeModel.getColumnValueOrGet(TableColumnMeta.TableColumnEnum.DEFAULT, "");
+                var aa = rowChangeModel.containField(TableColumnMeta.TableColumnEnum.DEFAULT);
+                var bb = meta != null && !StringUtils.isEmpty(meta.getDefault());
+                if (aa || bb) {
                     sb.append(" DEFAULT '");
-                    sb.append(defaultValue);
+                    if (aa) {
+                        var defaultValue = rowChangeModel.getColumnValueOrGet(TableColumnMeta.TableColumnEnum.DEFAULT, "");
+                        sb.append(defaultValue);
+                    } else {
+                        sb.append(meta.getDefault());
+                    }
                     sb.append("'");
                 }
-                if (rowChangeModel.containField(TableColumnMeta.TableColumnEnum.COMMENT)) {
-                    var col = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
-                    var comment = col.getNewValue();
+                var cc = rowChangeModel.containField(TableColumnMeta.TableColumnEnum.COMMENT);
+                var dd = meta != null && !StringUtils.isEmpty(meta.getComment());
+                if (cc || dd) {
                     sb.append(" COMMENT '");
-                    sb.append(comment);
+                    if (cc) {
+                        var col = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
+                        var comment = col.getNewValue();
+                        sb.append(comment);
+                    } else {
+                        sb.append(meta.getComment());
+                    }
                     sb.append("' ");
                 }
             } else {

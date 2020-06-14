@@ -32,7 +32,7 @@ public interface SQLGenerator {
      * @param metas        table column meta
      * @return sql statement
      */
-    String createFieldModifySqlStatement(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas);
+    String updateTable(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas);
 
     /**
      * create table

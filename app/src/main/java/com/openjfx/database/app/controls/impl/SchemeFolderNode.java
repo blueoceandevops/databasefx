@@ -36,6 +36,7 @@ public class SchemeFolderNode extends BaseTreeNode<String> {
         addMenuItem(createScheme, flush);
     }
 
+
     @Override
     public void init() {
         if (getChildren().size() > 0 || isLoading()) {

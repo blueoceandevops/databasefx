@@ -18,7 +18,7 @@ public class DesignTabModel extends BaseTabMode {
      * @author yangkui
      * @since 1.0
      */
-    public enum DesignTableType {
+    public static enum DesignTableType {
         /**
          * create design table
          */

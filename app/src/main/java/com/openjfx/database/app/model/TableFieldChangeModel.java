@@ -1,6 +1,7 @@
 package com.openjfx.database.app.model;
 
 
+import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.ColumnChangeModel;
@@ -35,59 +36,55 @@ public class TableFieldChangeModel {
      * @param newValue        change value
      */
     public void fieldChange(TableColumnMeta meta, DesignTableOperationType type, int rowIndex, TableColumnMeta.TableColumnEnum tableColumnEnum, String newValue) {
-        var _rowIndex = getRealRowIndex(rowIndex, DesignTableOperationSource.TABLE_FIELD);
-        var optional = changeModels.stream()
-                .filter(rowChangeModel -> rowChangeModel.getSource() == DesignTableOperationSource.TABLE_FIELD)
-                .filter(rowChangeModel -> rowChangeModel.getRowIndex() == _rowIndex)
-                .findAny();
-        //row already exist
-        if (optional.isPresent()) {
-            var row = optional.get();
-            var a = row.containField(tableColumnEnum);
-            if (a) {
-                var col = row.getColumn(tableColumnEnum);
-                var originValue = col.getOriginValue();
-                if (originValue.equals(newValue)) {
-                    var columns = row.getColumnChangeModels();
-                    columns.remove(col);
-                    if (columns.isEmpty()) {
-                        changeModels.remove(row);
-                    }
-                    return;
-                }
-                col.setNewValue(newValue);
-            } else {
-                var col = new ColumnChangeModel(tableColumnEnum);
-                var oldValue = meta == null ? "" : meta.getFieldValue(tableColumnEnum).toString();
-                col.setFieldName(tableColumnEnum);
-                col.setOriginValue(oldValue);
-                col.setNewValue(newValue);
-                row.getColumnChangeModels().add(col);
-            }
-        } else {
-            var columns = new ArrayList<ColumnChangeModel>();
-            if (tableColumnEnum != null) {
-                var column = new ColumnChangeModel(tableColumnEnum);
-                var oldValue = meta == null ? "" : meta.getFieldValue(tableColumnEnum).toString();
-                if (meta == null) {
-                    oldValue = "";
-                } else {
-                    var temp = meta.getFieldValue(tableColumnEnum);
-                    if (tableColumnEnum == TableColumnMeta.TableColumnEnum.NULL) {
-                        var abc = (Boolean) temp;
-                        oldValue = Boolean.valueOf(!abc).toString();
-                    } else {
-                        oldValue = temp.toString();
-                    }
-                }
-                column.setFieldName(tableColumnEnum);
-                column.setOriginValue(oldValue);
-                column.setNewValue(newValue);
-                columns.add(column);
-            }
-            var row = new RowChangeModel(_rowIndex, type, DesignTableOperationSource.TABLE_FIELD, columns, meta);
-            changeModels.add(row);
-        }
+//        var _rowIndex = getRealRowIndex(rowIndex, DesignTableOperationSource.TABLE_FIELD);
+//        var optional = changeModels.stream()
+//                .filter(rowChangeModel -> rowChangeModel.getSource() == DesignTableOperationSource.TABLE_FIELD)
+//                .filter(rowChangeModel -> rowChangeModel.getRowIndex() == _rowIndex)
+//                .findAny();
+//        //row already exist
+//        if (optional.isPresent()) {
+//            var row = optional.get();
+//            var a = row.containField(tableColumnEnum);
+//            if (a) {
+//                var col = row.getColumn(tableColumnEnum);
+//                var originValue = col.getOriginValue();
+//                if (originValue.equals(newValue)) {
+//                    var columns = row.getColumnChangeModels();
+//                    columns.remove(col);
+//                    if (columns.isEmpty()) {
+//                        changeModels.remove(row);
+//                    }
+//                    return;
+//                }
+//                col.setNewValue(newValue);
+//            } else {
+//                var col = new ColumnChangeModel(tableColumnEnum);
+//                var oldValue = meta == null ? "" : meta.getFieldValue(tableColumnEnum).toString();
+//                col.setFieldName(tableColumnEnum);
+//                col.setOriginValue(oldValue);
+//                col.setNewValue(newValue);
+//                row.getColumnChangeModels().add(col);
+//            }
+//        } else {
+//            var columns = new ArrayList<ColumnChangeModel>();
+//            if (tableColumnEnum != null) {
+//                var column = new ColumnChangeModel(tableColumnEnum);
+//                var oldValue = meta == null ? "" : meta.getFieldValue(tableColumnEnum);
+////                var temp = meta.getFieldValue(tableColumnEnum).toString();
+//                if (tableColumnEnum == TableColumnMeta.TableColumnEnum.NULL) {
+//                    var abc = Boolean.parseBoolean(temp);
+//                    oldValue = Boolean.valueOf(!abc).toString();
+//                } else {
+//                    oldValue = temp;
+//                }
+//                column.setFieldName(tableColumnEnum);
+//                column.setOriginValue(oldValue);
+//                column.setNewValue(newValue);
+//                columns.add(column);
+//            }
+//            var row = new RowChangeModel(_rowIndex, type, DesignTableOperationSource.TABLE_FIELD, columns, meta);
+//            changeModels.add(row);
+//        }
     }
 
     /**
@@ -98,43 +95,43 @@ public class TableFieldChangeModel {
      * @param rowIndex row index
      */
     public void deleteChange(TableColumnMeta meta, DesignTableOperationSource source, int rowIndex) {
-        var _rowIndex = getRealRowIndex(rowIndex, source);
-        var optional = changeModels.stream()
-                .filter(rowChangeModel -> rowChangeModel.getSource() == source)
-                .filter(rowChangeModel -> rowChangeModel.getRowIndex() == _rowIndex)
-                .findAny();
-        if (optional.isEmpty()) {
-            var rowChange = new RowChangeModel(_rowIndex, DesignTableOperationType.DELETE, source, List.of(), meta);
-            changeModels.add(rowChange);
-        } else {
-            var row = optional.get();
-            //if the row is new create execute delete the row
-            if (row.getOperationType() == DesignTableOperationType.CREATE) {
-                changeModels.remove(row);
-            }
-        }
+//        var _rowIndex = getRealRowIndex(rowIndex, source);
+//        var optional = changeModels.stream()
+//                .filter(rowChangeModel -> rowChangeModel.getSource() == source)
+//                .filter(rowChangeModel -> rowChangeModel.getRowIndex() == _rowIndex)
+//                .findAny();
+//        if (optional.isEmpty()) {
+//            var rowChange = new RowChangeModel(_rowIndex, DesignTableOperationType.DELETE, source, List.of(), meta);
+//            changeModels.add(rowChange);
+//        } else {
+//            var row = optional.get();
+//            //if the row is new create execute delete the row
+//            if (row.getOperationType() == DesignTableOperationType.CREATE) {
+//                changeModels.remove(row);
+//            }
+//        }
     }
 
     public void tableCommentChange(final String original, final String comment) {
-        var optional = changeModels.stream()
-                .filter(rowChangeModel -> rowChangeModel.getSource() == DesignTableOperationSource.TABLE_COMMENT)
-                .findAny();
-        if (optional.isEmpty()) {
-            var column = new ColumnChangeModel(TableColumnMeta.TableColumnEnum.COMMENT);
-            column.setOriginValue(original);
-            column.setNewValue(comment);
-            var row = new RowChangeModel(9999,
-                    DesignTableOperationType.UPDATE, DesignTableOperationSource.TABLE_COMMENT, List.of(column), null);
-            changeModels.add(row);
-        } else {
-            var row = optional.get();
-            var column = row.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
-            if (comment.equals(column.getOriginValue())) {
-                changeModels.remove(row);
-            } else {
-                column.setNewValue(comment);
-            }
-        }
+//        var optional = changeModels.stream()
+//                .filter(rowChangeModel -> rowChangeModel.getSource() == DesignTableOperationSource.TABLE_COMMENT)
+//                .findAny();
+//        if (optional.isEmpty()) {
+//            var column = new ColumnChangeModel(TableColumnMeta.TableColumnEnum.COMMENT);
+//            column.setOriginValue(original);
+//            column.setNewValue(comment);
+//            var row = new RowChangeModel(9999,
+//                    DesignTableOperationType.UPDATE, DesignTableOperationSource.TABLE_COMMENT, List.of(column), null);
+//            changeModels.add(row);
+//        } else {
+//            var row = optional.get();
+//            var column = row.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
+//            if (comment.equals(column.getOriginValue())) {
+//                changeModels.remove(row);
+//            } else {
+//                column.setNewValue(comment);
+//            }
+//        }
     }
 
     public String getUpdateSql(String tableName, List<TableColumnMeta> tableColumnMetas) {
@@ -142,7 +139,7 @@ public class TableFieldChangeModel {
             return "";
         }
         var generator = DATABASE_SOURCE.getGenerator();
-        return generator.createFieldModifySqlStatement(tableName, changeModels, tableColumnMetas);
+        return generator.updateTable(tableName, changeModels, tableColumnMetas);
     }
 
     public String getCreateSql(String tableName) {
