@@ -38,12 +38,15 @@ public class MysqlDataType implements DataType {
         if (StringUtils.isEmpty(type)) {
             return "";
         }
-        var index = type.indexOf("(");
-        var tty = type;
-        if (index != -1) {
-            tty = type.substring(0, index);
+        var i = type.indexOf(" ");
+        if (i != -1) {
+            type = type.substring(0, i);
         }
-        return tty;
+        var index = type.indexOf("(");
+        if (index != -1) {
+            type = type.substring(0, index);
+        }
+        return type;
     }
 
     @Override

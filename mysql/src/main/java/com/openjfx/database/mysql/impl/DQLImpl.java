@@ -8,14 +8,12 @@ import com.openjfx.database.mysql.PageHelper;
 import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.json.JsonObject;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 
 import java.util.*;
 
-import static com.openjfx.database.common.config.StringConstants.NULL;
 
 public class DQLImpl implements DQL {
 
@@ -96,28 +94,39 @@ public class DQLImpl implements DQL {
             for (var row : rows) {
 
                 var meta = new TableColumnMeta();
+
+                var key = StringUtils.getObjectStrElseGet(row.getValue("Key"), "");
+                var field = StringUtils.getObjectStrElseGet(row.getValue("Field"), "");
+                var comment = StringUtils.getObjectStrElseGet(row.getValue("Comment"), null);
+                var nullable = StringUtils.getObjectStrElseGet(row.getValue("Null"), "No");
+                var privileges = StringUtils.getObjectStrElseGet("Privileges", "");
                 var type = StringUtils.getObjectStrElseGet(row.getValue("Type"), "");
                 var extra = StringUtils.getObjectStrElseGet(row.getValue("Extra"), "");
-                var key = StringUtils.getObjectStrElseGet(row.getValue("Key"), "");
                 var collation = StringUtils.getObjectStrElseGet(row.getValue("Collation"), "");
-                var defaultValue = StringUtils.getObjectStrElseGet(row.getValue("Default"), "");
-                var comment = row.getValue("Comment").toString();
+                var defaultValue = StringUtils.getObjectStrElseGet(row.getValue("Default"), null);
 
-                meta.setField(row.getString("Field"));
-                meta.setOriginalType(type);
-                meta.setType(dataType.getDataType(type));
-                meta.setLength(dataType.getDataTypeLength(type));
-                meta.setAutoIncrement(extra.contains("auto_increment"));
-                meta.setCollation(collation);
-                meta.setNull("YES".equals(row.getString("Null")));
+                var isKey = key.contains("PRI");
+                var isNull = "YES".equals(nullable);
+                var isUnSigned = type.contains("unsigned");
+                var autoIncrement = extra.contains("auto_increment");
+
                 meta.setKey(key);
-                meta.setPrimaryKey(key.contains("PRI"));
-                meta.setCharset(charset.getCharset(collation));
-                meta.setDefault(defaultValue);
-                meta.setDecimalPoint(dataType.getDataFieldDecimalPoint(type));
+                meta.setField(field);
                 meta.setExtra(extra);
-                meta.setPrivileges(row.getString("Privileges"));
-                meta.setComment(comment == null ? "" : comment);
+                meta.setNull(isNull);
+                meta.setComment(comment);
+                meta.setPrimaryKey(isKey);
+                meta.setOriginalType(type);
+                meta.setUnsigned(isUnSigned);
+                meta.setCollation(collation);
+                meta.setDefault(defaultValue);
+                meta.setPrivileges(privileges);
+                meta.setAutoIncrement(autoIncrement);
+                meta.setType(dataType.getDataType(type));
+                meta.setCharset(charset.getCharset(collation));
+                meta.setLength(dataType.getDataTypeLength(type));
+                meta.setDecimalPoint(dataType.getDataFieldDecimalPoint(type));
+
                 metas.add(meta);
             }
             promise.complete(metas);

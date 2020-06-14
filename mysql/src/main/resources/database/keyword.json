@@ -33,5 +33,6 @@
   "COMMENT",
   "NOT",
   "NULL",
+  "UNSIGNED",
   "VALUES"
 ]

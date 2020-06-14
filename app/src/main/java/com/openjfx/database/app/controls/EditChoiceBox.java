@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Skin;
 
@@ -32,6 +33,11 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
     public EditChoiceBox() {
         getStyleClass().add(DEFAULT_STYLE_CLASS);
         editChoiceBoxSkin = new EditChoiceBoxSkin<>(this);
+    }
+
+    public EditChoiceBox(ObservableList<T> items) {
+        this();
+        getItems().addAll(items);
     }
 
     @Override

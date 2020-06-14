@@ -256,10 +256,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         var future = loadTableMeta().compose(v -> loadData()).compose(v -> countDataNumber());
         future.onComplete(v -> {
             if (v.succeeded()) {
-                Platform.runLater(() -> {
-                    tableView.refresh();
-                    tableView.resetChange();
-                });
+                Platform.runLater(() -> tableView.resetChange());
             }
             setLoading(false);
         });
@@ -342,7 +339,6 @@ public class TableTab extends BaseTab<TableTabModel> {
                 Platform.runLater(() -> {
                     countDataNumber();
                     tableView.resetChange();
-                    tableView.refresh();
                     if (isLoading) {
                         initTable();
                     }

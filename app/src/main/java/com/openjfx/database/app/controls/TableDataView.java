@@ -131,8 +131,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         if (a && isChangeStatus()) {
             setChangeStatus(false);
         }
-        //refresh the view
-        refresh();
     }
 
     /**
