@@ -39,33 +39,19 @@ public class DesignTableModel {
 
     public DesignTableModel(TableColumnMeta meta) {
         this.meta = meta;
-        if (meta != null) {
-            field = new SimpleStringProperty(meta.getField());
-            type = new SimpleStringProperty(meta.getType());
-            length = new SimpleStringProperty(meta.getLength());
-            decimalPoint = new SimpleStringProperty(meta.getDecimalPoint());
-            nullable = new SimpleStringProperty(meta.getNull().toString());
-            primaryKey = new SimpleStringProperty(meta.getPrimaryKey().toString());
-            comment = new SimpleStringProperty(meta.getComment());
-            defaultValue = new SimpleStringProperty(meta.getDefault());
-            charset = new SimpleStringProperty(meta.getCharset());
-            collation = new SimpleStringProperty(meta.getCollation());
-            unSigned = new SimpleStringProperty(meta.getUnsigned().toString());
-            autoIncrement = new SimpleStringProperty(meta.getAutoIncrement().toString());
-        } else {
-            field = new SimpleStringProperty("");
-            type = new SimpleStringProperty("varchar");
-            length = new SimpleStringProperty("0");
-            decimalPoint = new SimpleStringProperty("0");
-            nullable = new SimpleStringProperty("false");
-            primaryKey = new SimpleStringProperty("false");
-            comment = new SimpleStringProperty(null);
-            defaultValue = new SimpleStringProperty(null);
-            charset = new SimpleStringProperty(null);
-            collation = new SimpleStringProperty(null);
-            unSigned = new SimpleStringProperty("false");
-            autoIncrement = new SimpleStringProperty("false");
-        }
+
+        field = new SimpleStringProperty(meta.getField());
+        type = new SimpleStringProperty(meta.getType());
+        length = new SimpleStringProperty(meta.getLength());
+        decimalPoint = new SimpleStringProperty(meta.getDecimalPoint());
+        nullable = new SimpleStringProperty(meta.getNotNull().toString());
+        primaryKey = new SimpleStringProperty(meta.getPrimaryKey().toString());
+        comment = new SimpleStringProperty(meta.getComment());
+        defaultValue = new SimpleStringProperty(meta.getDefault());
+        charset = new SimpleStringProperty(meta.getCharset());
+        collation = new SimpleStringProperty(meta.getCollation());
+        unSigned = new SimpleStringProperty(meta.getUnsigned().toString());
+        autoIncrement = new SimpleStringProperty(meta.getAutoIncrement().toString());
     }
 
     public String getField() {

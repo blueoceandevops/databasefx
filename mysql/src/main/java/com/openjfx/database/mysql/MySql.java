@@ -8,7 +8,6 @@ import com.openjfx.database.model.ConnectionParam;
 import com.openjfx.database.mysql.impl.MysqlCharset;
 import com.openjfx.database.mysql.impl.MysqlDataType;
 import com.openjfx.database.mysql.impl.MysqlPoolImpl;
-import com.openjfx.database.mysql.impl.SQLGeneratorImpl;
 import io.vertx.core.json.JsonObject;
 
 
@@ -24,7 +23,7 @@ public class MySql extends AbstractDatabaseSource {
     public MySql() {
         charset = new MysqlCharset();
         dataType = new MysqlDataType();
-        generator = new SQLGeneratorImpl();
+        generator = new MysqlSQLGenerator();
         heartBeat();
     }
 

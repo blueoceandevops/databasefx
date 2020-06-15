@@ -8,20 +8,62 @@ package com.openjfx.database.model;
  */
 public class TableColumnMeta {
 
-    public static enum TableColumnEnum {
+    public enum TableColumnEnum {
+        /**
+         * field
+         */
         FIELD,
+        /**
+         * type
+         */
         TYPE,
+        /**
+         * collation
+         */
         COLLATION,
+        /**
+         * null
+         */
         NULL,
+        /**
+         * key
+         */
         KEY,
+        /**
+         * autoIncrement
+         */
         AUTO_INCREMENT,
+        /**
+         * default
+         */
         DEFAULT,
+        /**
+         * extra
+         */
         EXTRA,
+        /**
+         * comment
+         */
         COMMENT,
+        /**
+         * length
+         */
         LENGTH,
+        /**
+         * decimal point
+         */
         DECIMAL_POINT,
+        /**
+         * charset
+         */
         CHARSET,
+        /**
+         * primary key
+         */
         PRIMARY_KEY,
+        /**
+         * unSigned
+         */
         UN_SIGNED
     }
 
@@ -40,11 +82,11 @@ public class TableColumnMeta {
     /**
      * charset collation
      */
-    private String Collation;
+    private String Collation = "";
     /**
-     * is Null?
+     * not null?
      */
-    private Boolean Null = Boolean.TRUE;
+    private Boolean NotNull = Boolean.FALSE;
     /**
      * is Key
      */
@@ -81,7 +123,7 @@ public class TableColumnMeta {
     /**
      * field charset
      */
-    private String Charset;
+    private String Charset = "";
     /**
      * field is primary Key
      */
@@ -122,12 +164,12 @@ public class TableColumnMeta {
         Collation = collation;
     }
 
-    public Boolean getNull() {
-        return Null;
+    public Boolean getNotNull() {
+        return NotNull;
     }
 
-    public void setNull(Boolean aNull) {
-        Null = aNull;
+    public void setNotNull(Boolean notNull) {
+        NotNull = notNull;
     }
 
     public String getKey() {
@@ -251,12 +293,24 @@ public class TableColumnMeta {
         } else if (tableColumnEnum == TableColumnEnum.PRIMARY_KEY) {
             t = (T) this.getPrimaryKey();
         } else if (tableColumnEnum == TableColumnEnum.NULL) {
-            t = (T) this.getNull();
+            t = (T) this.getNotNull();
         } else if (tableColumnEnum == TableColumnEnum.DECIMAL_POINT) {
             t = (T) this.getDecimalPoint();
         } else {
             t = (T) this.getUnsigned();
         }
         return t;
+    }
+
+    public static TableColumnMeta defaultMeta() {
+        var meta = new TableColumnMeta();
+        meta.setUnsigned(false);
+        meta.setType("varchar");
+        meta.setField("Unnamed");
+        meta.setPrimaryKey(false);
+        meta.setLength("255");
+        meta.setDecimalPoint("0");
+        meta.setOriginalType("varchar(255)");
+        return meta;
     }
 }

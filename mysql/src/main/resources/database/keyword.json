@@ -34,5 +34,8 @@
   "NOT",
   "NULL",
   "UNSIGNED",
-  "VALUES"
+  "VALUES",
+  "MODIFY",
+  "COLUMN",
+  "AUTO_INCREMENT"
 ]

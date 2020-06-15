@@ -43,13 +43,9 @@ public class RowChangeModel {
         return optional.isPresent();
     }
 
-    public ColumnChangeModel getColumn(TableColumnMeta.TableColumnEnum tableColumnEnum) {
-        var optional = columnChangeModels.stream()
+    public Optional<ColumnChangeModel> getColumn(TableColumnMeta.TableColumnEnum tableColumnEnum) {
+        return columnChangeModels.stream()
                 .filter(column -> column.getFieldName() == tableColumnEnum).findAny();
-        if (optional.isPresent()) {
-            return optional.get();
-        }
-        throw new RuntimeException("Column not find");
     }
 
     public Optional<ColumnChangeModel> getFixColumn(TableColumnMeta.TableColumnEnum tableColumnEnum) {

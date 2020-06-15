@@ -37,8 +37,15 @@ public class DesignOptionBox extends VBox {
      * database source
      */
     private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
+    /**
+     * design table model
+     */
+    private DesignTableModel model;
 
-    public DesignOptionBox() {
+
+    private int rowIndex;
+
+    public DesignOptionBox(DesignTableView tableView) {
 
         defaultBox.setHideSelector(true);
         var grid = new GridPane();
@@ -52,7 +59,6 @@ public class DesignOptionBox extends VBox {
         grid.addRow(2, defaultLabel, defaultBox);
         grid.addRow(3, charsetLabel, charsetBox);
         grid.addRow(4, collationLabel, collationBox);
-
         grid.setHgap(10);
         grid.setVgap(10);
         grid.getRowConstraints().add(new RowConstraints());
@@ -62,6 +68,15 @@ public class DesignOptionBox extends VBox {
         charsetBox.getItems().addAll(dataCharset.getCharset());
 
         charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            boolean canUpdate = false;
+            if (StringUtils.nonEmpty(model.getCollation())) {
+                var charset = dataCharset.getCharset(model.getCollation());
+                canUpdate = charset.equals(newValue);
+                System.out.println(charset);
+            }
+            if (canUpdate) {
+                return;
+            }
             var text = charsetBox.getText();
             var items = charsetBox.getItems();
             for (String charset : items) {
@@ -80,43 +95,47 @@ public class DesignOptionBox extends VBox {
 
         this.getChildren().add(grid);
 
+        //update all listener
+        defaultBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            model.setDefaultValue(newValue);
+            tableView.fieldChange(model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.DEFAULT, newValue);
+        });
+        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            model.setCharset(newValue);
+            tableView.fieldChange(model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.CHARSET, newValue);
+        });
+        collationBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            model.setCollation(newValue);
+            tableView.fieldChange(model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.COLLATION, newValue);
+        });
+        incrementCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            model.setAutoIncrement(newValue.toString());
+            tableView.fieldChange(model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.AUTO_INCREMENT, newValue.toString());
+        });
+        unSignedCheck.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            model.setUnSigned(newValue.toString());
+            tableView.fieldChange(model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.UN_SIGNED, newValue.toString());
+        }));
+
         getStyleClass().add("design-table-option");
     }
 
-    private DesignTableModel model;
 
-    public void updateValue(DesignTableModel model, int rowIndex, DesignTableView tableView) {
+    public void updateValue(DesignTableModel model, int rowIndex) {
         this.model = model;
+        this.rowIndex = rowIndex;
 
-        var defaultValue = model.getDefaultValue() == null ? "" : model.getDefaultValue();
-
+        final String defaultValue;
+        if (model.getDefaultValue() == null) {
+            defaultValue = "";
+        } else {
+            defaultValue = model.getDefaultValue();
+        }
         //update value
         this.charsetBox.setText(model.getCharset());
         this.collationBox.setText(model.getCollation());
         this.incrementCheck.setSelected(Boolean.parseBoolean(model.getAutoIncrement()));
         this.defaultBox.setText(defaultValue);
         this.unSignedCheck.setSelected(Boolean.parseBoolean(model.getUnSigned()));
-
-        //update all listener
-        defaultBox.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.model.setDefaultValue(newValue);
-            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.DEFAULT, newValue);
-        });
-        charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.model.setCharset(newValue);
-            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.CHARSET, newValue);
-        });
-        collationBox.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.model.setCollation(newValue);
-            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.COLLATION, newValue);
-        });
-        incrementCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            this.model.setAutoIncrement(newValue.toString());
-            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.AUTO_INCREMENT, newValue.toString());
-        });
-        unSignedCheck.selectedProperty().addListener(((observable, oldValue, newValue) -> {
-            this.model.setUnSigned(newValue.toString());
-            tableView.fieldChange(this.model.getMeta(), DesignTableOperationType.UPDATE, rowIndex, TableColumnMeta.TableColumnEnum.UN_SIGNED, newValue.toString());
-        }));
     }
 }

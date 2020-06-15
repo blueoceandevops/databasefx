@@ -43,6 +43,9 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
         //listener TextField change
         textField.textProperty().addListener((observable, oldValue, newValue) -> control.setText(newValue));
         control.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
             var text = textField.getText();
             if (!text.equals(newValue)) {
                 textField.setText(newValue);

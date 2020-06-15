@@ -21,7 +21,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -47,13 +46,12 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
     private SplitPane splitPane;
 
     @FXML
-    private DesignOptionBox box;
-
-    @FXML
     private SQLEditor sqlEditor;
 
     @FXML
     private TextArea commentTextArea;
+
+    private DesignOptionBox box;
 
     private AbstractDataBasePool pool;
     /**
@@ -72,9 +70,10 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
     @Override
     public void init() {
         initDataTable();
-        for (Tab tab : tabPane.getTabs()) {
-            tab.setClosable(false);
-        }
+
+        box = new DesignOptionBox(fieldTable);
+        splitPane.getItems().add(box);
+
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
             var tab = tabPane.getTabs().get(index);
@@ -90,13 +89,14 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
                 }
             }
         });
+
         fieldTable.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
             if (index == -1) {
                 return;
             }
             var model = fieldTable.getItems().get(index);
-            box.updateValue(model, index, fieldTable);
+            box.updateValue(model, index);
         }));
 
         //dynamic show/hide bottom DesignOptionBox
@@ -160,12 +160,12 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     @FXML
     public void createNewField() {
-        var model = new DesignTableModel(null);
+        var model = new DesignTableModel(TableColumnMeta.defaultMeta());
         var items = fieldTable.getItems();
         items.add(model);
         var index = items.size() - 1;
         //note this row code must place first row
-        fieldTable.fieldChange(null, DesignTableOperationType.CREATE, index, null, "");
+        fieldTable.fieldChange(model.getMeta(), DesignTableOperationType.CREATE, index, null, "");
         //init property
         fieldTable.getSelectionModel().select(index);
     }
@@ -187,8 +187,9 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
             return;
         }
         var item = fieldTable.getItems().get(index);
+        var ab = !Boolean.parseBoolean(item.getPrimaryKey());
         //select key
-        item.primaryKeyProperty().set("true");
+        item.primaryKeyProperty().set(Boolean.valueOf(ab).toString());
     }
 
     private String getSql(String tableName) {
@@ -219,18 +220,5 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         }
 
         Platform.runLater(() -> setText(title));
-    }
-
-    public void tableFieldChange(TableColumnMeta meta, DesignTableModel model, TableColumnMeta.TableColumnEnum field, String newValue) {
-        var i = fieldTable.getItems().indexOf(model);
-        if (i == -1) {
-            return;
-        }
-        var j = fieldTable.getSelectionModel().getSelectedIndex();
-        //if row index happen change then select current row
-        if (j != i) {
-            fieldTable.getSelectionModel().select(i);
-        }
-        fieldTable.fieldChange(meta, DesignTableOperationType.UPDATE, i, field, newValue);
     }
 }

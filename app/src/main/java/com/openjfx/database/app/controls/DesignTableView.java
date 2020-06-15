@@ -14,6 +14,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -103,10 +105,10 @@ public class DesignTableView extends TableView<DesignTableModel> {
         //row already exist
         if (optional.isPresent()) {
             row = optional.get();
-            var a = row.containField(tableColumnEnum);
-            if (a) {
-                var add = checkFieldValue(row, tableColumnEnum, meta, newValue);
-                var col = row.getColumn(tableColumnEnum);
+            var optional1 = row.getColumn(tableColumnEnum);
+            if (optional1.isPresent()) {
+                var add = checkFieldValue(tableColumnEnum, meta, newValue);
+                var col = optional1.get();
                 if (add) {
                     col.setNewValue(newValue);
                 } else {
@@ -119,11 +121,13 @@ public class DesignTableView extends TableView<DesignTableModel> {
             var columns = new ArrayList<ColumnChangeModel>();
             row = new RowChangeModel(realRowIndex, type, DesignTableOperationSource.TABLE_FIELD, columns, meta);
             if (tableColumnEnum != null) {
-                boolean add = checkFieldValue(row, tableColumnEnum, meta, newValue);
+                boolean add = checkFieldValue(tableColumnEnum, meta, newValue);
                 if (add) {
                     createColumnChange(row, tableColumnEnum, meta, newValue);
                     changeModels.add(row);
                 }
+            } else {
+                changeModels.add(row);
             }
         }
         if (row.getOperationType() == DesignTableOperationType.UPDATE && row.getColumnChangeModels().isEmpty()) {
@@ -150,41 +154,30 @@ public class DesignTableView extends TableView<DesignTableModel> {
     /**
      * check column change
      *
-     * @param row             chang row
      * @param tableColumnEnum change field
      * @param meta            table row meta data
      * @param newValue        new value
      * @return return create column result
      */
-    private boolean checkFieldValue(RowChangeModel row, TableColumnMeta.TableColumnEnum tableColumnEnum, TableColumnMeta meta, String newValue) {
-        // var col = new ColumnChangeModel(tableColumnEnum);
+    private boolean checkFieldValue(TableColumnMeta.TableColumnEnum tableColumnEnum, TableColumnMeta meta, String newValue) {
         var a = tableColumnEnum == TableColumnMeta.TableColumnEnum.DEFAULT || tableColumnEnum == TableColumnMeta.TableColumnEnum.COMMENT;
         var add = true;
         var fieldVal = getMetaValue(meta, tableColumnEnum);
         if (a) {
             if (fieldVal == null) {
-                add = !"".equals(newValue);
+                add = !(newValue == null || "".equals(newValue));
             } else {
                 add = !fieldVal.equals(newValue);
             }
-        } else if (fieldVal.equals(newValue)) {
+        } else if (fieldVal != null && fieldVal.equals(newValue)) {
             add = false;
         }
         return add;
     }
 
     private String getMetaValue(TableColumnMeta meta, TableColumnMeta.TableColumnEnum tableColumnEnum) {
-        final String fieldVal;
-        if (meta == null) {
-            fieldVal = switch (tableColumnEnum) {
-                case DEFAULT, COMMENT -> null;
-                default -> "";
-            };
-        } else {
-            var obj = meta.getFieldValue(tableColumnEnum);
-            fieldVal = obj == null ? null : obj.toString();
-        }
-        return fieldVal;
+        var obj = meta.getFieldValue(tableColumnEnum);
+        return obj == null ? null : obj.toString();
     }
 
     /**
@@ -243,7 +236,11 @@ public class DesignTableView extends TableView<DesignTableModel> {
             changeModels.add(row);
         } else {
             var row = optional.get();
-            var column = row.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
+            var optional1 = row.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
+            if (optional1.isEmpty()) {
+                return;
+            }
+            var column = optional1.get();
             if (comment.equals(column.getOriginValue())) {
                 changeModels.remove(row);
             } else {
@@ -295,20 +292,24 @@ public class DesignTableView extends TableView<DesignTableModel> {
     private class CustomTableCell extends TableCell<DesignTableModel, String> {
 
         private final HBox graphic = new HBox();
+        private final TableColumnMeta.TableColumnEnum columnEnum;
 
         public CustomTableCell(TableColumnMeta.TableColumnEnum columnEnum) {
+            this.columnEnum = columnEnum;
             var list = DATABASE_SOURCE.getDataType().getDataTypeList();
             var items = FXCollections.observableArrayList(list);
             var textField = new TextField();
             var checkBox = new CheckBox();
             var typeBox = new EditChoiceBox<>();
             graphic.setAlignment(Pos.CENTER);
-            HBox.setHgrow(typeBox, Priority.ALWAYS);
             HBox.setHgrow(textField, Priority.ALWAYS);
             typeBox.getItems().addAll(items);
             switch (columnEnum) {
                 case PRIMARY_KEY, NULL -> graphic.getChildren().add(checkBox);
-                case TYPE -> graphic.getChildren().add(typeBox);
+                case TYPE -> {
+                    graphic.getChildren().add(typeBox);
+                    typeBox.prefWidthProperty().bind(graphic.widthProperty());
+                }
                 default -> graphic.getChildren().add(textField);
             }
             //listener mouse enter change table select row
@@ -323,6 +324,12 @@ public class DesignTableView extends TableView<DesignTableModel> {
             textField.textProperty().addListener(valueChange());
             typeBox.textProperty().addListener(valueChange());
             checkBox.selectedProperty().addListener(valueChange());
+            //Solve the problem that the value in the input box disappears when enter is pressed
+            addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    event.consume();
+                }
+            });
         }
 
         private <T> ChangeListener<T> valueChange() {
@@ -347,22 +354,21 @@ public class DesignTableView extends TableView<DesignTableModel> {
                 return;
             }
             setGraphicValue(item);
-            setItem(item);
         }
 
         public void setGraphicValue(String item) {
+            if (getGraphic() == null) {
+                setText(null);
+                setGraphic(graphic);
+            }
             var node = graphic.getChildren().get(0);
             if (node instanceof CheckBox) {
                 var select = Boolean.parseBoolean(item);
-                ((CheckBox) node).setSelected(select);
+                ((CheckBox) node).setSelected((select));
             } else if (node instanceof EditChoiceBox) {
                 ((EditChoiceBox) node).setText(item);
             } else {
                 ((TextField) node).setText(item);
-            }
-            if (getGraphic() == null) {
-                setText(null);
-                setGraphic(graphic);
             }
         }
     }

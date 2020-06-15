@@ -34,7 +34,7 @@ public class TableColumnTooltipSkin implements Skin<TableDataColumn.TableColumnT
         var key = StringUtils.isEmpty(columnMeta.getKey()) ? "FALSE" : "TRUE";
         var defValue = columnMeta.getDefault();
         var comment = columnMeta.getComment();
-        var isNull = columnMeta.getNull();
+        var notNull = columnMeta.getNotNull();
         var collation = columnMeta.getCollation();
         var charset = columnMeta.getCharset();
         var autoIncrement = columnMeta.getAutoIncrement().toString();
@@ -45,7 +45,7 @@ public class TableColumnTooltipSkin implements Skin<TableDataColumn.TableColumnT
         gridPane.addRow(2, new Label("PrimaryKey"), new Label(primaryKey));
         gridPane.addRow(3, new Label("Key"), new Label(key));
         gridPane.addRow(4, new Label("AutoIncrement"), new Label(autoIncrement));
-        gridPane.addRow(5, new Label("Null"), new Label(isNull.toString()));
+        gridPane.addRow(5, new Label("Not Null"), new Label(notNull.toString()));
         gridPane.addRow(6, new Label("Charset"), new Label(charset));
         gridPane.addRow(7, new Label("Collation"), new Label(collation));
         gridPane.addRow(8, new Label("Default"), new Label(defValue));

@@ -106,14 +106,14 @@ public class DQLImpl implements DQL {
                 var defaultValue = StringUtils.getObjectStrElseGet(row.getValue("Default"), null);
 
                 var isKey = key.contains("PRI");
-                var isNull = "YES".equals(nullable);
+                var notNull = "NO".equals(nullable);
                 var isUnSigned = type.contains("unsigned");
                 var autoIncrement = extra.contains("auto_increment");
 
                 meta.setKey(key);
                 meta.setField(field);
                 meta.setExtra(extra);
-                meta.setNull(isNull);
+                meta.setNotNull(notNull);
                 meta.setComment(comment);
                 meta.setPrimaryKey(isKey);
                 meta.setOriginalType(type);
