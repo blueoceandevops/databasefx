@@ -29,5 +29,6 @@ NOTE : databasefx requires Java 14 and above.
 ![Travis CI](./SNAPSHOTS/f.png)
 ### SQL terminal
 ![Travis CI](./SNAPSHOTS/g.png)
-
+### Special Thanks
+Special thanks to [JetBrains](https://www.jetbrains.com/) support to this project.
 

@@ -29,5 +29,7 @@ gradlew run
 ![Travis CI](./SNAPSHOTS/f.png)
 ### SQL终端
 ![Travis CI](./SNAPSHOTS/g.png)
+### 鸣谢
+特别感谢[JetBrains](https://www.jetbrains.com/)对本项目的大力支持.
 
 
