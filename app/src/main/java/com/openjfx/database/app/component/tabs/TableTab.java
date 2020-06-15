@@ -268,24 +268,37 @@ public class TableTab extends BaseTab<TableTabModel> {
     private Future<Void> loadTableMeta() {
         var promise = Promise.<Void>promise();
         var future = pool.getDql().showColumns(model.getTable());
-        future.onSuccess(metas ->
+        future.onSuccess(rs ->
         {
-            if (this.metas.size() > 0) {
-                this.metas.clear();
+            var isFlushColumn = false;
+            if (rs.size() != this.metas.size()) {
+                isFlushColumn = true;
+            } else {
+                for (int i = 0; i < rs.size(); i++) {
+                    var meta = rs.get(i);
+                    var old = metas.get(i);
+                    var is = !meta.getField().equals(old.getField()) || !meta.getType().equals(old.getType());
+                    if (is) {
+                        isFlushColumn = true;
+                        break;
+                    }
+                }
             }
-            this.metas.addAll(metas);
-
-            //create column
-            var columns = TableColumnUtils.createTableDataColumn(metas);
-            Platform.runLater(() -> {
-                tableView.getColumns().clear();
-                tableView.getColumns().addAll(columns);
-            });
-            //get key
-            var optional = MysqlHelper.getPrimaryKey(metas);
-            if (optional.isPresent()) {
-                tableView.setEditable(true);
-                primaryKeyMeta = optional.get();
+            if (isFlushColumn) {
+                //create column
+                var columns = TableColumnUtils.createTableDataColumn(rs);
+                Platform.runLater(() -> {
+                    tableView.getColumns().clear();
+                    tableView.getColumns().addAll(columns);
+                });
+                //get key
+                var optional = MysqlHelper.getPrimaryKey(metas);
+                if (optional.isPresent()) {
+                    tableView.setEditable(true);
+                    primaryKeyMeta = optional.get();
+                }
+                this.metas.clear();
+                this.metas.addAll(rs);
             }
             promise.complete();
         });
