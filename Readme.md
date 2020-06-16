@@ -29,6 +29,8 @@ NOTE : databasefx requires Java 14 and above.
 ![Travis CI](./SNAPSHOTS/f.png)
 ### SQL terminal
 ![Travis CI](./SNAPSHOTS/g.png)
-### Special Thanks
-Special thanks to [JetBrains](https://www.jetbrains.com/) support to this project.
-
+## Thanks To
+| Company              | For..                          |
+|----------------------|--------------------------------|
+| <a href="http://gluonhq.com"><img width="200" src="http://fxexperience.com/wp-content/uploads/2016/08/Gluon_combined_logo_vertical.png"></a>| Provides wireless power for the development and improvement of JavaFX.|
+|<img width="200" src="http://fxexperience.com/wp-content/uploads/2013/04/jetbrains.png">| For the <a href="https://www.jetbrains.com/idea">IntelliJ IDEA</a> licenses.|

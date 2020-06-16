@@ -30,6 +30,10 @@ gradlew run
 ### SQL终端
 ![Travis CI](./SNAPSHOTS/g.png)
 ### 鸣谢
-特别感谢[JetBrains](https://www.jetbrains.com/)对本项目的大力支持.
+## Thanks To
 
+| Company              | For..                          |
+|----------------------|--------------------------------|
+| <a href="http://gluonhq.com"><img width="200" src="http://fxexperience.com/wp-content/uploads/2016/08/Gluon_combined_logo_vertical.png"></a>| 为javafx的发展和改进提供了无线动力.|
+|<img width="200" src="http://fxexperience.com/wp-content/uploads/2013/04/jetbrains.png">| 提供 <a href="https://www.jetbrains.com/idea">IntelliJ IDEA</a> 许可执照.|
 
