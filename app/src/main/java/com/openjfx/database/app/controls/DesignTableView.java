@@ -341,14 +341,15 @@ public class DesignTableView extends TableView<DesignTableModel> {
                 var column = getTableColumn();
                 var item = getTableView().getItems().get(index);
                 var columnMeta = (TableColumnMeta.TableColumnEnum) column.getUserData();
-                var fileValue = newValue == null ? null : newValue.toString();
+                var fileValue = (newValue == null ? null : newValue.toString());
                 DesignTableView.this.fieldChange(item.getMeta(), DesignTableOperationType.UPDATE, index, columnMeta, fileValue);
+                item.setValue(columnEnum, fileValue);
             };
         }
 
         @Override
         protected void updateItem(String item, boolean empty) {
-            if (empty || getTableView() == null || getTableRow() == null || getTableColumn() == null) {
+            if (empty || item == null) {
                 setText(null);
                 setGraphic(null);
                 return;
@@ -368,7 +369,9 @@ public class DesignTableView extends TableView<DesignTableModel> {
             } else if (node instanceof EditChoiceBox) {
                 ((EditChoiceBox) node).setText(item);
             } else {
-                ((TextField) node).setText(item);
+                var field = (TextField) node;
+                field.setText(item);
+                field.positionCaret(item.length());
             }
         }
     }

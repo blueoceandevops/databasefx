@@ -202,4 +202,21 @@ public class DesignTableModel {
     public TableColumnMeta getMeta() {
         return meta;
     }
+
+    public void setValue(TableColumnMeta.TableColumnEnum columnEnum, String value) {
+        switch (columnEnum) {
+            case TYPE -> setType(value);
+            case NULL -> setNullable(value);
+            case FIELD -> setField(value);
+            case KEY -> setPrimaryKey(value);
+            case AUTO_INCREMENT -> setAutoIncrement(value);
+            case DECIMAL_POINT -> setDecimalPoint(value);
+            case UN_SIGNED -> setUnSigned(value);
+            case CHARSET -> setCharset(value);
+            case COLLATION -> setCollation(value);
+            case COMMENT -> setComment(value);
+            case LENGTH -> setLength(value);
+            default -> setDefaultValue(value);
+        }
+    }
 }

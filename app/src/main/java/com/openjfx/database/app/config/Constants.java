@@ -1,7 +1,7 @@
 package com.openjfx.database.app.config;
 
 /**
- * 字符串常亮
+ * 字符串常量
  *
  * @author yangkui
  * @since 1.0
@@ -10,7 +10,7 @@ public class Constants {
     /**
      * 配置文件名
      */
-    public static final String CONFIG_FILE_NAME = ".databaseFx";
+    public static final String CONFIG_FILE_NAME = ".databasefx";
     /**
      * ui配置文件
      */
