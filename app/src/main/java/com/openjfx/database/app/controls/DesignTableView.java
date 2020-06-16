@@ -349,7 +349,7 @@ public class DesignTableView extends TableView<DesignTableModel> {
 
         @Override
         protected void updateItem(String item, boolean empty) {
-            if (empty || item == null) {
+            if (empty) {
                 setText(null);
                 setGraphic(null);
                 return;
@@ -371,7 +371,11 @@ public class DesignTableView extends TableView<DesignTableModel> {
             } else {
                 var field = (TextField) node;
                 field.setText(item);
-                field.positionCaret(item.length());
+                if (item == null) {
+                    field.positionCaret(0);
+                } else {
+                    field.positionCaret(item.length());
+                }
             }
         }
     }

@@ -72,7 +72,6 @@ public class DesignOptionBox extends VBox {
             if (StringUtils.nonEmpty(model.getCollation())) {
                 var charset = dataCharset.getCharset(model.getCollation());
                 canUpdate = charset.equals(newValue);
-                System.out.println(charset);
             }
             if (canUpdate) {
                 return;
