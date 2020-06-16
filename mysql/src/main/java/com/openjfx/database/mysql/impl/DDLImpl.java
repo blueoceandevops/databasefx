@@ -4,12 +4,11 @@ import com.openjfx.database.DDL;
 import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.mysqlclient.MySQLPool;
 
 public class DDLImpl implements DDL {
-    private MySQLPool client;
+    private final MysqlPoolImpl client;
 
-    public DDLImpl(MySQLPool client) {
+    public DDLImpl(MysqlPoolImpl client) {
         this.client = client;
     }
 

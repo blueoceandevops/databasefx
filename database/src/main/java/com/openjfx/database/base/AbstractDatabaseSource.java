@@ -6,6 +6,8 @@ import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.sqlclient.Pool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.0
  */
 public abstract class AbstractDatabaseSource {
+    protected static Logger logger;
     /**
      * Database connection pool cache map
      */
@@ -38,6 +41,10 @@ public abstract class AbstractDatabaseSource {
      * current database local sql generator
      */
     protected SQLGenerator generator;
+
+    public AbstractDatabaseSource() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
 
     /**
      * Get database connection pool according to UUID
@@ -92,12 +99,12 @@ public abstract class AbstractDatabaseSource {
         //Move out of database connection cache
         pools.remove(uuid);
         var param = pool.getConnectionParam();
-        System.out.println(
-                "================Connection pool is closed===============\r\n" +
-                        "uuid:" + param.getUuid() + "\r\n" +
-                        "connection name:" + param.getName() + "\r\n" +
-                        "host:" + param.getHost() + "\r\n" +
-                        "========================================================");
+        var str = "\r\n================Connection pool is closed===============\r\n" +
+                "uuid:" + param.getUuid() + "\r\n" +
+                "connection name:" + param.getName() + "\r\n" +
+                "host:" + param.getHost() + "\r\n" +
+                "========================================================";
+        logger.debug(str);
     }
 
     /**
@@ -129,24 +136,22 @@ public abstract class AbstractDatabaseSource {
         var fut = pool.getDql().heartBeatQuery();
         fut.onSuccess(r -> {
             pools.put(param.getUuid(), pool);
-            System.out.println(
-                    "================Connection pool was created===============\r\n" +
-                            "uuid:" + param.getUuid() + "\r\n" +
-                            "connection name:" + param.getName() + "\r\n" +
-                            "host:" + param.getHost() + "\r\n" +
-                            "========================================================="
-            );
+            var str = "\r\n================Connection pool was created===============\r\n" +
+                    "uuid:" + param.getUuid() + "\r\n" +
+                    "connection name:" + param.getName() + "\r\n" +
+                    "host:" + param.getHost() + "\r\n" +
+                    "=========================================================";
+            logger.debug(str);
         });
         fut.onFailure(t -> {
             pool.close();
-            System.out.println(
-                    "================Connection pool create failed===============\r\n" +
-                            "uuid:" + param.getUuid() + "\r\n" +
-                            "connection name:" + param.getName() + "\r\n" +
-                            "host:" + param.getHost() + "\r\n" +
-                            "failed cause:" + t.getMessage() + "\r\n" +
-                            "========================================================="
-            );
+            var errorMsg = ("\r\n================Connection pool create failed===============\r\n" +
+                    "uuid:" + param.getUuid() + "\r\n" +
+                    "connection name:" + param.getName() + "\r\n" +
+                    "host:" + param.getHost() + "\r\n" +
+                    "failed cause:" + t.getMessage() + "\r\n" +
+                    "===========================================================");
+            logger.error(errorMsg);
         });
     }
 

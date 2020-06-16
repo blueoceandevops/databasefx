@@ -2,6 +2,8 @@ package com.openjfx.database.app;
 
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,6 +32,12 @@ public abstract class BaseController<D> implements Initializable {
      * URL
      */
     protected URL location;
+
+    protected final Logger logger;
+
+    public BaseController() {
+        logger = LoggerFactory.getLogger(this.getClass());
+    }
 
     /**
      * Called when initializing the fxml view
