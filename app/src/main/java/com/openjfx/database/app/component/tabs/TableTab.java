@@ -285,18 +285,16 @@ public class TableTab extends BaseTab<TableTabModel> {
                 }
             }
             if (isFlushColumn) {
-                //create column
+                var optional = MysqlHelper.getPrimaryKey(rs);
                 var columns = TableColumnUtils.createTableDataColumn(rs);
                 Platform.runLater(() -> {
                     tableView.getColumns().clear();
                     tableView.getColumns().addAll(columns);
+                    if (optional.isPresent()) {
+                        tableView.setEditable(true);
+                        primaryKeyMeta = optional.get();
+                    }
                 });
-                //get key
-                var optional = MysqlHelper.getPrimaryKey(metas);
-                if (optional.isPresent()) {
-                    tableView.setEditable(true);
-                    primaryKeyMeta = optional.get();
-                }
                 this.metas.clear();
                 this.metas.addAll(rs);
             }
