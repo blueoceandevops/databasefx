@@ -3,6 +3,7 @@ package com.openjfx.database.app.controls;
 
 import com.openjfx.database.app.model.TableDataChangeMode;
 import com.openjfx.database.app.skin.TableDataViewSkin;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -35,12 +36,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
      * New row data
      */
     private final List<ObservableList<StringProperty>> newRows = new ArrayList<>();
-
-    /**
-     * Whether the current table data changes
-     */
-    private final BooleanProperty changeStatus = new SimpleBooleanProperty();
-
 
     public TableDataView() {
         //Disable sorting
@@ -79,13 +74,11 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
                 deletes.add(item);
             }
             sortChange(index);
-            updateChange();
         }
     }
 
     public void addChangeMode(TableDataChangeMode mode) {
         changeModes.add(mode);
-        updateChange();
     }
 
     public Optional<TableDataChangeMode> getChangeModel(int rowIndex, int columnIndex) {
@@ -102,7 +95,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
 
     public void removeChange(TableDataChangeMode model) {
         this.changeModes.remove(model);
-        updateChange();
     }
 
     public void addNewRow(ObservableList<StringProperty> newRow) {
@@ -111,26 +103,10 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         }
         newRows.add(newRow);
         getItems().add(newRow);
-        updateChange();
     }
 
     public void removeRow(ObservableList<StringProperty> row) {
         this.newRows.remove(row);
-        updateChange();
-    }
-
-    /**
-     * Update change status
-     */
-    private void updateChange() {
-        boolean a = (changeModes.isEmpty() && deletes.isEmpty() && newRows.isEmpty());
-        if (!a && !isChangeStatus()) {
-            setChangeStatus(true);
-        }
-
-        if (a && isChangeStatus()) {
-            setChangeStatus(false);
-        }
     }
 
     /**
@@ -140,7 +116,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         this.deletes.clear();
         this.changeModes.clear();
         this.newRows.clear();
-        this.setChangeStatus(false);
     }
 
     /**
@@ -154,22 +129,15 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
                 .forEach(item -> item.setRowIndex(item.getRowIndex() - 1));
     }
 
+    public boolean isChange() {
+        return changeModes.size() != 0 || deletes.size() != 0 || newRows.size() != 0;
+    }
+
     @Override
     protected Skin<?> createDefaultSkin() {
         return new TableDataViewSkin(this);
     }
 
-    public boolean isChangeStatus() {
-        return changeStatus.get();
-    }
-
-    public BooleanProperty changeStatusProperty() {
-        return changeStatus;
-    }
-
-    public void setChangeStatus(boolean changeStatus) {
-        this.changeStatus.set(changeStatus);
-    }
 
     public List<ObservableList<StringProperty>> getDeletes() {
         return deletes;

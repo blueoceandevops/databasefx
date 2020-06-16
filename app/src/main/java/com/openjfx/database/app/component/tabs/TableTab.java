@@ -48,23 +48,6 @@ import static com.openjfx.database.common.config.StringConstants.NULL;
  * @since 1.0
  */
 public class TableTab extends BaseTab<TableTabModel> {
-    /**
-     * Data table related control icons
-     */
-    private static final Image FLAG_IMAGE = getLocalImage(20, 20, "point.png");
-    /**
-     * Set table icon dynamically for current table type
-     */
-    private static final Image TABLE_VIEW_ICON = getLocalImage(20, 20, "table_view_icon.png");
-    private static final Image TABLE_ICON = getLocalImage(20, 20, "table_icon.png");
-
-    @FXML
-    private BorderPane borderPane;
-
-    @FXML
-    private TableDataView tableView;
-    @FXML
-    private Button addData;
     @FXML
     private Button flush;
     @FXML
@@ -76,30 +59,35 @@ public class TableTab extends BaseTab<TableTabModel> {
     @FXML
     private Button delete;
     @FXML
-    private TextField numberTextField;
+    private Button addData;
     @FXML
     private Label totalLabel;
     @FXML
     private Label indexCounter;
     @FXML
     private Label pageCounter;
+    @FXML
+    private BorderPane borderPane;
+    @FXML
+    private TableDataView tableView;
+    @FXML
+    private TextField numberTextField;
 
+    private int pageIndex = 1;
+    private int pageSize = 100;
     private final AbstractDataBasePool pool;
-
-    private final Label flag = new Label();
-    private final List<TableColumnMeta> metas = new ArrayList<>();
-    private final List<TableSearchResultModel> searchList = new ArrayList<>();
-    private final SearchPopup searchPopup = SearchPopup.complexPopup();
-
     /**
      * Determine whether the primary key exists in the current table.
      * If it does not exist, it is not allowed to update.
      * Because there is no primary key, it is likely to cause data update failure.
      */
     private TableColumnMeta primaryKeyMeta = null;
+    private final List<TableColumnMeta> metas = new ArrayList<>();
+    private final SearchPopup searchPopup = SearchPopup.complexPopup();
+    private final List<TableSearchResultModel> searchList = new ArrayList<>();
 
-    private int pageIndex = 1;
-    private int pageSize = 100;
+    private static final Image TABLE_ICON = getLocalImage(20, 20, "table_icon.png");
+    private static final Image TABLE_VIEW_ICON = getLocalImage(20, 20, "table_view_icon.png");
 
     public TableTab(TableTabModel model) {
         super(model);
@@ -127,20 +115,10 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     @Override
     public void init() {
-        flag.setGraphic(new ImageView(FLAG_IMAGE));
 
         flush.setOnAction(e -> checkChange(true));
 
         submit.setOnAction(e -> checkChange(false));
-
-
-        tableView.changeStatusProperty().addListener((observable, oldValue, newValue) -> {
-            if (Objects.nonNull(newValue) && newValue) {
-                setGraphic(flag);
-            } else {
-                setGraphic(null);
-            }
-        });
 
         numberTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -254,14 +232,14 @@ public class TableTab extends BaseTab<TableTabModel> {
     private void initTable() {
         setLoading(true);
         var future = loadTableMeta().compose(v -> loadData()).compose(v -> countDataNumber());
-        future.onComplete(v -> {
-            if (v.succeeded()) {
-                Platform.runLater(() -> tableView.resetChange());
-            }
+        future.onComplete(ar -> {
             setLoading(false);
+            if (ar.failed()) {
+                DialogUtils.showErrorDialog(ar.cause(), I18N.getString("databasefx.table.init.fail"));
+                return;
+            }
+            tableView.resetChange();
         });
-
-        future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("databasefx.table.init.fail")));
     }
 
 
@@ -290,10 +268,10 @@ public class TableTab extends BaseTab<TableTabModel> {
                 Platform.runLater(() -> {
                     tableView.getColumns().clear();
                     tableView.getColumns().addAll(columns);
-                    if (optional.isPresent()) {
+                    optional.ifPresent(meta -> {
                         tableView.setEditable(true);
-                        primaryKeyMeta = optional.get();
-                    }
+                        primaryKeyMeta = meta;
+                    });
                 });
                 this.metas.clear();
                 this.metas.addAll(rs);
@@ -337,25 +315,32 @@ public class TableTab extends BaseTab<TableTabModel> {
      * @param isLoading Whether to refresh the current data list true false do not refresh
      */
     private void checkChange(boolean isLoading) {
-        if (!tableView.isChangeStatus()) {
-            initTable();
+        if (!tableView.isChange()) {
+            if (isLoading) {
+                initTable();
+            }
             return;
         }
         var result = DialogUtils.showAlertConfirm(I18N.getString("databasefx.table.update.tips"));
         // Synchronous data change to database
         if (result) {
+            setLoading(true);
             var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
             var future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
-            future.onSuccess(rs -> {
-                Platform.runLater(() -> {
+            future.onComplete(ar -> {
+                setLoading(false);
+                if (ar.failed()) {
+                    DialogUtils.showErrorDialog(ar.cause(), I18N.getString("databasefx.table.update.fail"));
+                    return;
+                }
+                if (isLoading) {
+                    initTable();
+                } else {
                     countDataNumber();
-                    tableView.resetChange();
-                    if (isLoading) {
-                        initTable();
-                    }
-                });
+                    tableView.refresh();
+                }
+                tableView.resetChange();
             });
-            future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("databasefx.table.update.fail")));
         } else {
             tableView.resetChange();
             initTable();
