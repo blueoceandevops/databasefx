@@ -10,6 +10,10 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.Window;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.ExceptionDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.logging.LogManager;
 
 import static com.openjfx.database.app.DatabaseFX.I18N;
 
@@ -20,6 +24,7 @@ import static com.openjfx.database.app.DatabaseFX.I18N;
  * @since 1.0
  */
 public class DialogUtils {
+    private static final Logger logger = LoggerFactory.getLogger(DialogUtils.class);
 
     /**
      * show error dialog
@@ -28,7 +33,7 @@ public class DialogUtils {
      * @param throwable error info
      */
     public static void showErrorDialog(Throwable throwable, String title) {
-        throwable.printStackTrace();
+        logger.error("Unknown error", throwable);
         Platform.runLater(() -> {
             var exceptionDialog = new ExceptionDialog(throwable);
             var pane = exceptionDialog.getDialogPane();
@@ -67,20 +72,11 @@ public class DialogUtils {
         }
         Platform.runLater(() -> {
             switch (type) {
-                case ERROR:
-                    notifications.showError();
-                    break;
-                case WARNING:
-                    notifications.showWarning();
-                    break;
-                case INFORMATION:
-                    notifications.showInformation();
-                    break;
-                case CONFIRMATION:
-                    notifications.showConfirm();
-                    break;
-                default:
-                    notifications.show();
+                case ERROR -> notifications.showError();
+                case WARNING -> notifications.showWarning();
+                case INFORMATION -> notifications.showInformation();
+                case CONFIRMATION -> notifications.showConfirm();
+                default -> notifications.show();
             }
         });
     }

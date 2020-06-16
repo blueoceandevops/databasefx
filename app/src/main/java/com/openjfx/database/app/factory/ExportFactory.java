@@ -26,6 +26,8 @@ import org.dom4j.Element;
 import org.dom4j.dom.DOMDocument;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -58,6 +60,8 @@ public class ExportFactory {
     private ExportFactory(ExportWizardModel model) {
         this.model = model;
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(ExportFactory.class);
 
     /**
      * start export task
@@ -119,7 +123,10 @@ public class ExportFactory {
             }
         });
         //execute sql fail
-        future.onFailure(t -> setText("Failed to read data:" + t.getMessage()));
+        future.onFailure(t -> {
+            logger.error("export data failed", t);
+            setText("Failed to read data:" + t.getMessage());
+        });
     }
 
     /**
@@ -303,8 +310,9 @@ public class ExportFactory {
         var templatePath = "assets/html/export_html_template.html";
         VertexUtils.getFileSystem().readFile(templatePath, ar -> {
             if (ar.failed()) {
-                var str = "Export failed:\r\n html template file not found!";
+                var str = "html template file not found";
                 setText(str);
+                logger.error(str, ar.cause());
                 return;
             }
             var title = "{{TABLE_TITLE}}";
@@ -343,7 +351,6 @@ public class ExportFactory {
     private void exportAsXml(Map<String, List<String>> map) {
         var dom = DocumentHelper.createDocument();
         var root = dom.addElement("RECORDS");
-        var values = map.values();
         var list = getValueList(map.values());
         var rowSize = list.size() / map.size();
         var keys = map.keySet().toArray(new String[0]);
@@ -399,7 +406,9 @@ public class ExportFactory {
             if (!txtFile.exists()) {
                 boolean writable = txtFile.setWritable(true);
                 if (!txtFile.createNewFile() && !writable) {
-                    throw new Exception("fail to create txt file");
+                    var str = "Fail to create txt file";
+                    logger.info(str);
+                    throw new Exception(str);
                 }
             }
             csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
@@ -458,15 +467,17 @@ public class ExportFactory {
         var path = model.getPath();
         var future = VertexUtils.writerFile(path, bytes);
         future.onComplete(ar -> writerResult(ar.cause()));
+
     }
 
     private void writerResult(Throwable throwable) {
         final String str;
         if (throwable == null) {
-            str = "File success save in:" + model.getPath();
+            str = "File success save!";
             setProgress(1);
         } else {
-            str = "Failed to generate file:" + throwable.getMessage();
+            str = "Failed to generate file";
+            logger.error(str, throwable);
         }
         setText(str);
     }

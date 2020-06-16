@@ -1,20 +1,8 @@
 package com.openjfx.database.app.model;
 
-import com.openjfx.database.app.component.tabs.DesignTableTab;
-import com.openjfx.database.app.controls.EditChoiceBox;
-import com.openjfx.database.common.MultipleHandler;
 import com.openjfx.database.model.TableColumnMeta;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 
 /**
  * design table model
@@ -205,17 +193,17 @@ public class DesignTableModel {
 
     public void setValue(TableColumnMeta.TableColumnEnum columnEnum, String value) {
         switch (columnEnum) {
-            case TYPE -> setType(value);
-            case NULL -> setNullable(value);
             case FIELD -> setField(value);
-            case KEY -> setPrimaryKey(value);
-            case AUTO_INCREMENT -> setAutoIncrement(value);
+            case TYPE -> setType(value);
+            case LENGTH -> setLength(value);
             case DECIMAL_POINT -> setDecimalPoint(value);
+            case NULL -> setNullable(value);
+            case PRIMARY_KEY -> setPrimaryKey(value);
+            case COMMENT -> setComment(value);
+            case AUTO_INCREMENT -> setAutoIncrement(value);
             case UN_SIGNED -> setUnSigned(value);
             case CHARSET -> setCharset(value);
             case COLLATION -> setCollation(value);
-            case COMMENT -> setComment(value);
-            case LENGTH -> setLength(value);
             default -> setDefaultValue(value);
         }
     }
