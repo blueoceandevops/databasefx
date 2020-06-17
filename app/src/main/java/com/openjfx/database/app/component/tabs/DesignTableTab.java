@@ -16,6 +16,7 @@ import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.TableColumnMeta;
+import com.openjfx.database.utils.SQLFormatUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -79,7 +80,8 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
             var tab = tabPane.getTabs().get(index);
             if (index == 2) {
                 var sql = getSql(getTableName(false));
-                sqlEditor.setText(sql);
+                var formatSql = SQLFormatUtils.format(sql, DATABASE_SOURCE.getDatabaseType());
+                sqlEditor.setText(formatSql);
             }
             if (index == 1) {
                 var ua = tab.getUserData();

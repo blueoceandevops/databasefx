@@ -4,6 +4,7 @@ import com.openjfx.database.DataCharset;
 import com.openjfx.database.DataType;
 import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.common.VertexUtils;
+import com.openjfx.database.enums.DatabaseType;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.sqlclient.Pool;
 import org.slf4j.Logger;
@@ -24,10 +25,6 @@ public abstract class AbstractDatabaseSource {
      * Database connection pool cache map
      */
     protected ConcurrentHashMap<String, AbstractDataBasePool> pools = new ConcurrentHashMap<>();
-    /**
-     * Heartbeat ID
-     */
-    protected Long timerId;
     /**
      * data charset
      */
@@ -93,18 +90,16 @@ public abstract class AbstractDatabaseSource {
     public void close(String uuid) {
         var pool = pools.get(uuid);
         if (pool == null) {
+            var debug = uuid + " corresponding database connection pool non-existent," +
+                    "so cancel the close action!";
+            logger.debug(debug);
             return;
         }
         pool.close();
         //Move out of database connection cache
         pools.remove(uuid);
-        var param = pool.getConnectionParam();
-        var str = "\r\n================Connection pool is closed===============\r\n" +
-                "uuid:" + param.getUuid() + "\r\n" +
-                "connection name:" + param.getName() + "\r\n" +
-                "host:" + param.getHost() + "\r\n" +
-                "========================================================";
-        logger.debug(str);
+        var debug = uuid + " connection closed successfully!";
+        logger.debug(debug);
     }
 
     /**
@@ -112,16 +107,14 @@ public abstract class AbstractDatabaseSource {
      */
     public void closeAll() {
         pools.forEach((uuid, pool) -> close(uuid));
-        //close timer
-        if (timerId != null) {
-            VertexUtils.getVertex().cancelTimer(timerId);
-        }
     }
 
     /**
-     * Prevent the database server from losing response without interaction for a long time
+     * get current database type{@link DatabaseType}
+     *
+     * @return current database type
      */
-    public abstract void heartBeat();
+    public abstract DatabaseType getDatabaseType();
 
     /**
      * create pool after must check current pool can use,else call {@link Pool#close()}
@@ -130,28 +123,18 @@ public abstract class AbstractDatabaseSource {
      * @param pool  wait test database pool
      * @param param connection param
      */
-    protected void _createPool(AbstractDataBasePool pool, ConnectionParam param) {
+    protected void createPool(AbstractDataBasePool pool, ConnectionParam param) {
         pool.setConnectionParam(param);
         //Make sure the link is available before joining the cache
         var fut = pool.getDql().heartBeatQuery();
-        fut.onSuccess(r -> {
-            pools.put(param.getUuid(), pool);
-            var str = "\r\n================Connection pool was created===============\r\n" +
-                    "uuid:" + param.getUuid() + "\r\n" +
-                    "connection name:" + param.getName() + "\r\n" +
-                    "host:" + param.getHost() + "\r\n" +
-                    "=========================================================";
-            logger.debug(str);
-        });
+        var uuid = param.getUuid();
         fut.onFailure(t -> {
             pool.close();
-            var errorMsg = ("\r\n================Connection pool create failed===============\r\n" +
-                    "uuid:" + param.getUuid() + "\r\n" +
-                    "connection name:" + param.getName() + "\r\n" +
-                    "host:" + param.getHost() + "\r\n" +
-                    "failed cause:" + t.getMessage() + "\r\n" +
-                    "===========================================================");
-            logger.error(errorMsg);
+            logger.error("create database pool failed", t);
+        });
+        fut.onSuccess(rs -> {
+            pools.put(uuid, pool);
+            logger.debug("create database pool success uuid:{}!", uuid);
         });
     }
 

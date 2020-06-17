@@ -4,11 +4,11 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>
-                %yellow(%d{yyyy-MM-dd HH:mm:ss.SSS}) %blue([%thread]) %cyan(%-5level) %green(%logger) - %msg%n
+                %yellow(%d{yyyy-MM-dd HH:mm:ss.SSS}) %cyan(%-5level) --- %blue([%thread]) %green(%logger) -> %msg%n
             </pattern>
         </encoder>
     </appender>
-    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.FileAppender">
         <file>${user.home}/.databasefx/logs/sys-err.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
@@ -16,7 +16,25 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-36.36thread] [%-5level] [%-36.36logger{36}:%-4.4line] - %msg%n
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level --- [%thread] %logger -> %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE-DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/.databasefx/logs/sys-debug.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log-home}/sys-debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>3</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level --- [%thread] %logger -> %msg%n
             </pattern>
         </encoder>
     </appender>
@@ -25,6 +43,7 @@
     <root level="${log.root.level}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-ERROR"/>
+        <appender-ref ref="FILE-DEBUG"/>
     </root>
     <logger name="io.vertx" level="info"/>
     <logger name="io.netty" level="info"/>
