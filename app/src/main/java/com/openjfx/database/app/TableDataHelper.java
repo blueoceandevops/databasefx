@@ -18,11 +18,10 @@ public class TableDataHelper {
      * Convert the changed field to map
      *
      * @param modes update value
-     * @param metas table column meta
      * @param data  raw data
      * @return Return converted data
      */
-    public static List<Map<String, Object[]>> getChangeValue(List<TableDataChangeMode> modes, List<TableColumnMeta> metas, int keyIndex, ObservableList<ObservableList<StringProperty>> data) {
+    public static List<Map<String, Object[]>> getChangeValue(List<TableDataChangeMode> modes, int keyIndex, ObservableList<ObservableList<StringProperty>> data) {
         var rows = modes.stream().map(TableDataChangeMode::getRowIndex)
                 .distinct()
                 .sorted()
