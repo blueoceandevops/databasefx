@@ -7,7 +7,6 @@ import com.openjfx.database.mysql.SQLHelper;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
-import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Tuple;
 
 import java.util.*;
@@ -40,9 +39,8 @@ public class DMLImpl implements DML {
             var tuples = new ArrayList<Tuple>();
             for (var item : items) {
                 var t = item.get(ROW);
-                var tt = toConvertData(t);
                 var tuple = Tuple.tuple();
-                for (var o : tt) {
+                for (var o : t) {
                     tuple.addValue(o);
                 }
                 tuple.addValue(item.get(KEY)[0]);
@@ -71,30 +69,6 @@ public class DMLImpl implements DML {
         future.onFailure(promise::fail);
         return promise.future();
     }
-
-    @Override
-    public Future<Object> batchInsert(List<TableColumnMeta> metas, List<Object[]> rows, String tableName) {
-        var sql = insertSql(metas, tableName);
-        var tuples = new ArrayList<Tuple>();
-
-        for (var column : rows) {
-            var obj = toConvertData(column);
-            var tuple = Tuple.wrap(Arrays.asList(obj));
-            tuples.add(tuple);
-        }
-
-        var promise = Promise.promise();
-
-        var future = client.preparedBatch(sql, tuples);
-        future.onSuccess(rowSet -> {
-            rowSet.property(MySQLClient.LAST_INSERTED_ID);
-            promise.complete((long) rows.size());
-        });
-        future.onFailure(promise::fail);
-
-        return promise.future();
-    }
-
 
     private String insertSql(List<TableColumnMeta> metas, String table) {
         var tableName = SQLHelper.escapeMysqlField(table);
@@ -140,16 +114,6 @@ public class DMLImpl implements DML {
         return sb.toString();
     }
 
-    private Object[] toConvertData(Object[] data) {
-        for (int i = 0; i < data.length; i++) {
-            var item = data[i];
-            if (item != null && item.equals(NULL)) {
-                data[i] = null;
-            }
-        }
-        return data;
-    }
-
     @Override
     public Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String table) {
         var sb = new StringBuilder();
@@ -171,22 +135,12 @@ public class DMLImpl implements DML {
         return promise.future();
     }
 
-    @Override
-    public Future<Integer> executeSqlUpdate(String sql) {
-        var promise = Promise.<Integer>promise();
-        var future = client.query(sql);
-        future.onSuccess(rows -> {
-            promise.complete(rows.rowCount());
-        });
-        future.onFailure(promise::fail);
-        return promise.future();
-    }
 
     @Override
     public Future<Integer> renameTable(String table, String target, String scheme) {
         var t = scheme + "." + table;
         var tt = scheme + "." + target;
-        var sql = "rename table " + SQLHelper.escapeMysqlField(t) + " to " + SQLHelper.escapeMysqlField(tt);
+        var sql = "RENAME TABLE " + SQLHelper.escapeMysqlField(t) + " TO " + SQLHelper.escapeMysqlField(tt);
         var promise = Promise.<Integer>promise();
         var future = client.query(sql);
         future.onComplete(ar -> {
@@ -197,21 +151,5 @@ public class DMLImpl implements DML {
             }
         });
         return promise.future();
-    }
-
-    /**
-     * Get auto increment field
-     */
-    @Override
-    public Optional<TableColumnMeta> getAutoIncreaseField(List<TableColumnMeta> metas) {
-        return metas.stream().filter(TableColumnMeta::getAutoIncrement).findAny();
-//        var optional = Optional.<TableColumnMeta>empty();
-//        for (var tableColumnMeta : metas) {
-//            if (tableColumnMeta.getExtra().contains("auto_increment")) {
-//                optional = Optional.of(tableColumnMeta);
-//                break;
-//            }
-//        }
-//        return optional;
     }
 }
