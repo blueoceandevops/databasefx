@@ -61,11 +61,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     @FXML
     private Button addData;
     @FXML
-    private Label totalLabel;
-    @FXML
-    private Label indexCounter;
-    @FXML
-    private Label pageCounter;
+    private Label display;
     @FXML
     private BorderPane borderPane;
     @FXML
@@ -75,6 +71,8 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     private int pageIndex = 1;
     private int pageSize = 100;
+    private long total = 0;
+
     private final AbstractDataBasePool pool;
     /**
      * Determine whether the primary key exists in the current table.
@@ -190,14 +188,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
         });
 
-        tableView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            var index = newValue.intValue();
-            if (index == -1) {
-                indexCounter.setText("");
-            } else {
-                indexCounter.setText("第" + (index + 1) + "条记录");
-            }
-        });
+        tableView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> updateDisplay());
 
         searchPopup.textChange(keyword -> {
             var items = tableView.getItems();
@@ -298,12 +289,9 @@ public class TableTab extends BaseTab<TableTabModel> {
                 }
                 list.add(item);
             }
-
-            Platform.runLater(() -> {
-                tableView.getItems().addAll(list);
-                pageCounter.setText("于第" + pageIndex + "页");
-            });
+            updateDisplay();
             promise.complete();
+            Platform.runLater(() -> tableView.getItems().addAll(list));
         });
         future.onFailure(promise::fail);
         return promise.future();
@@ -433,11 +421,19 @@ public class TableTab extends BaseTab<TableTabModel> {
         var promise = Promise.<Void>promise();
         var future = pool.getDql().count(model.getTable());
         future.onSuccess(number -> {
-            Platform.runLater(() -> totalLabel.setText("(共" + number + "行)"));
+            this.total = number;
+            updateDisplay();
             promise.complete();
         });
         future.onFailure(promise::fail);
         return promise.future();
+    }
+
+    private void updateDisplay() {
+        var rowIndex = tableView.getSelectionModel().getSelectedIndex();
+        var t = I18N.getString("databasefx.table.label.display");
+        var info = String.format(t, rowIndex == -1 ? 0 : rowIndex, total, pageIndex);
+        Platform.runLater(() -> display.setText(info));
     }
 
     /**
