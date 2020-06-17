@@ -78,13 +78,6 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
         setGraphic(tabIcon);
     }
 
-//    /**
-//     * When there are multiple database tabs, you can rewrite the logic to distinguish the older database
-//     *
-//     * @param t Whether there are multiple database tabs
-//     */
-//    public abstract void updateValue(boolean t);
-
     /**
      * Called on subclass initialization
      */

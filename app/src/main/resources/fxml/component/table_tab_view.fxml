@@ -58,9 +58,7 @@
             </HBox>
             <HBox HBox.hgrow="ALWAYS">
                 <HBox styleClass="rrbox">
-                    <Label fx:id="indexCounter"/>
-                    <Label fx:id="totalLabel"/>
-                    <Label fx:id="pageCounter"/>
+                    <Label fx:id="display"/>
                 </HBox>
                 <Button fx:id="last">
                     <graphic>
