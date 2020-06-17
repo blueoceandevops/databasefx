@@ -118,7 +118,7 @@ public class ExportFactory {
                 case HTML -> exportAsHtml(map);
                 case XML -> exportAsXml(map);
                 case CSV -> exportAsCsv(map);
-                case SQL_SCRIPT -> exportAsSQL(map);
+                case SQL_SCRIPT -> exportAsSql(map);
                 default -> exportAsTxt(map);
             }
         });
@@ -443,7 +443,7 @@ public class ExportFactory {
     /**
      * export data as sql
      */
-    private void exportAsSQL(Map<String, List<String>> map) {
+    private void exportAsSql(Map<String, List<String>> map) {
         var generate = DATABASE_SOURCE.getGenerator();
         var columns = map.keySet().toArray(new String[0]);
         var list = getValueList(map.values());

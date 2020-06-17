@@ -24,7 +24,7 @@ import static com.openjfx.database.app.DatabaseFX.I18N;
  * @since 1.0
  */
 public class DialogUtils {
-    private static final Logger logger = LoggerFactory.getLogger(DialogUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DialogUtils.class);
 
     /**
      * show error dialog
@@ -33,7 +33,7 @@ public class DialogUtils {
      * @param throwable error info
      */
     public static void showErrorDialog(Throwable throwable, String title) {
-        logger.error("Unknown error", throwable);
+        LOG.error(throwable.getMessage(), throwable);
         Platform.runLater(() -> {
             var exceptionDialog = new ExceptionDialog(throwable);
             var pane = exceptionDialog.getDialogPane();
