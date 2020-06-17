@@ -3,7 +3,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
-mainClassName = 'com.openjfx.database.app.DatabaseFX'
+mainClassName = 'com.openjfx.database.app.Launcher'
 
 applicationDefaultJvmArgs = ['-Djdk.gtk.version=2', '-Dsun.java2d.opengl=true', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseZGC', '-Xms512M', '-Xmx1024M']
 
