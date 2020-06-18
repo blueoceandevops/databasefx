@@ -41,5 +41,5 @@ jar {
 }
 
 //jlink {
-//     comment_line './graalvm/bin/jlink --module-path /home/yangkui/application/javafx-jmods-11.0.2/ --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging,java.management --output /home/yangkui/runtine'
-//}
+//~/application/jdk-14.0.1/bin/jlink --module-path /home/yangkui/application/javafx-jmods-14.0.1 --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging,java.management,java.naming --output /home/yangkui/runtine
+// }

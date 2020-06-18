@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class MysqlPoolImpl extends AbstractDataBasePool {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractDataBasePool.class);
+    private static final Logger logger = LoggerFactory.getLogger(MysqlPoolImpl.class);
 
     private MysqlPoolImpl(MySQLPool pool) {
         this.pool = pool;
