@@ -1,11 +1,18 @@
 package com.openjfx.database.app.utils;
 
+import com.openjfx.database.common.VertexUtils;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.JarURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.jar.Attributes;
+
+import static java.util.jar.JarFile.MANIFEST_NAME;
 
 /**
  * Resource operation utils collection
@@ -52,7 +59,7 @@ public class AssetUtils {
             var file = new File(url.getFile());
             for (File item : Objects.requireNonNull(file.listFiles())) {
                 var in = new FileInputStream(item);
-                var font = Font.loadFont(in, DEFAULT_FONT_SIZE);
+                Font.loadFont(in, DEFAULT_FONT_SIZE);
             }
             return;
         }
@@ -68,5 +75,34 @@ public class AssetUtils {
                 Font.loadFont(in, DEFAULT_FONT_SIZE);
             }
         }
+    }
+
+    /**
+     * load java MANIFEST.MF file
+     *
+     * @return Key value pair formal attribute
+     * @throws IOException IO exception may occur
+     */
+    public static Map<String, String> loadManifest() throws IOException {
+        //gradle temp path
+        var buildPath = "build/tmp/jar/MANIFEST.MF";
+        var protocol = ClassLoader.getSystemResource("").getProtocol();
+        var map = new HashMap<String, String>();
+        if ("file".equals(protocol)) {
+            var mf = VertexUtils.getFileSystem().readFileBlocking(buildPath).toString();
+            var array = mf.split("\r\n");
+            for (String s : array) {
+                var k = s.split(":", 2);
+                map.put(k[0], k[1]);
+            }
+        } else {
+            var url = ClassLoader.getSystemResource(MANIFEST_NAME);
+            var jarCon = (JarURLConnection) url.openConnection();
+            var attrs = jarCon.getMainAttributes();
+            for (Map.Entry<Object, Object> entry : attrs.entrySet()) {
+                map.put(entry.getKey().toString(), entry.getValue().toString());
+            }
+        }
+        return map;
     }
 }

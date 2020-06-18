@@ -35,8 +35,11 @@ jar {
     }
     manifest {
         attributes "Manifest-Version": 1.0
+        attributes 'App-Name': 'databasefx'
         attributes 'Main-Class': 'com.openjfx.database.app.DatabaseFX'
         attributes 'Multi-Release': true
+        attributes 'App-Author': '752544765@qq.com'
+        attributes 'App-Website': 'http://navigational.cn'
     }
 }
 

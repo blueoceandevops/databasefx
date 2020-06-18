@@ -24,19 +24,19 @@
             <VBox alignment="CENTER_LEFT" styleClass="app-info">
                 <HBox>
                     <Label text="%view.about.name"/>
-                    <Label text="databasefx"/>
+                    <Label fx:id="name"/>
                 </HBox>
                 <HBox>
                     <Label text="%view.about.version"/>
-                    <Label text="1.0.0-alpha"/>
+                    <Label fx:id="version"/>
                 </HBox>
                 <HBox>
                     <Label text="%view.about.contact"/>
-                    <Label text=":752544765@qq.com"/>
+                    <Label fx:id="author"/>
                 </HBox>
                 <HBox>
                     <Label text="%view.about.website"/>
-                    <Label text="http://navigational.cn"/>
+                    <Label fx:id="website"/>
                 </HBox>
 
             </VBox>
