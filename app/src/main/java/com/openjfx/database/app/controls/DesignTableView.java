@@ -324,12 +324,6 @@ public class DesignTableView extends TableView<DesignTableModel> {
             textField.textProperty().addListener(valueChange());
             typeBox.textProperty().addListener(valueChange());
             checkBox.selectedProperty().addListener(valueChange());
-            //Solve the problem that the value in the input box disappears when enter is pressed
-            addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    event.consume();
-                }
-            });
         }
 
         private <T> ChangeListener<T> valueChange() {
@@ -370,12 +364,9 @@ public class DesignTableView extends TableView<DesignTableModel> {
                 ((EditChoiceBox) node).setText(item);
             } else {
                 var field = (TextField) node;
+                var carePos = field.getCaretPosition();
                 field.setText(item);
-                if (item == null) {
-                    field.positionCaret(0);
-                } else {
-                    field.positionCaret(item.length());
-                }
+                field.positionCaret(carePos);
             }
         }
     }
