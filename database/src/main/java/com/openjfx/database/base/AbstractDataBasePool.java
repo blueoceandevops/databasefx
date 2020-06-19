@@ -16,7 +16,7 @@ import java.util.List;
  * @author yangkui
  * @since 1.0
  */
-public class AbstractDataBasePool {
+public abstract class AbstractDataBasePool {
     /**
      * database language
      */
@@ -61,9 +61,28 @@ public class AbstractDataBasePool {
         return dataConvert;
     }
 
+    /**
+     * <p>In this method, the user obtains the connection pool object directly</p>
+     * <p>
+     * Note:This method directly exposes the connection pool to external calls,
+     * which is likely to cause connection leakage in the connection pool.
+     * If there are no special requirements such as things,
+     * it is not recommended to directly obtain the connection pool for operation
+     * </p>
+     *
+     * @return
+     */
     public Pool getPool() {
         return pool;
     }
+
+    /**
+     * Abstract methods for executing external SQL statements
+     *
+     * @param sql sql statement
+     * @return execute result
+     */
+    public abstract Future<RowSet<Row>> execute(String sql);
 
     /**
      * get connection from database pool.

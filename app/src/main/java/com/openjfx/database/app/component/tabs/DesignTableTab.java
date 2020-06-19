@@ -113,6 +113,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
             }
             if (index == 0 && items.size() == 1) {
                 items.add(box);
+                splitPane.setDividerPositions(0.99);
             }
         });
     }
@@ -121,14 +122,13 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         updateTableName();
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
         if (model.getDesignTableType() == DesignTabModel.DesignTableType.UPDATE) {
-            var tableName = model.getScheme() + "." + model.getTableName();
-            var future = pool.getDql().showColumns(tableName);
+            var future = pool.getDql().showColumns(model.getScheme(), model.getTableName());
             //clear design table
             Platform.runLater(() -> fieldTable.getItems().clear());
             //load design table info
             var fut = future.compose(rs -> {
                 fieldTable.flushTableColumnMeta(rs);
-                return pool.getDql().getCreateTableComment(tableName);
+                return pool.getDql().getCreateTableComment(model.getScheme(), model.getTableName());
             });
             fut.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
             fut.onFailure(t -> DialogUtils.showErrorDialog(t, i18nStr("controller.design.table.init.fail")));
@@ -145,7 +145,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         if (StringUtils.isEmpty(sql)) {
             return;
         }
-        var future = pool.getPool().query(sql);
+        var future = pool.execute(sql);
         future.onSuccess(ar -> {
             if (model.getDesignTableType() == DesignTabModel.DesignTableType.CREATE) {
                 model.setDesignTableType(DesignTabModel.DesignTableType.UPDATE);
@@ -194,9 +194,8 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         item.primaryKeyProperty().set(Boolean.valueOf(ab).toString());
     }
 
-    private String getSql(String tableName) {
-        tableName = model.getScheme() + "." + tableName;
-        return fieldTable.getSQLStatement(model.getDesignTableType(), tableName);
+    private String getSql(String table) {
+        return fieldTable.getSQLStatement(model.getDesignTableType(), model.getScheme(), table);
     }
 
     private String getTableName(boolean input) {

@@ -78,8 +78,8 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<List<TableColumnMeta>> showColumns(String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    public Future<List<TableColumnMeta>> showColumns(String scheme, String table) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
 
         var sql = "SHOW FULL COLUMNS FROM " + tableName;
 
@@ -137,8 +137,8 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<List<String[]>> query(String table, int pageIndex, int pageSize) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    public Future<List<String[]>> query(String scheme, String table, int pageIndex, int pageSize) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
         var sql = "SELECT * FROM " + tableName + " LIMIT ?,?";
         var a = PageHelper.getInitPage(pageIndex, pageSize);
         var tuple = Tuple.of(a, pageSize);
@@ -153,8 +153,8 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<Long> count(String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    public Future<Long> count(String scheme, String table) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
         var sql = "SELECT COUNT(*) FROM " + tableName;
         var promise = Promise.<Long>promise();
         var future = client.query(sql);
@@ -195,47 +195,24 @@ public class DQLImpl implements DQL {
     }
 
     @Override
-    public Future<String> showCreateTable(String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
-        var sql = "SHOW CREATE table " + tableName;
+    public Future<String> getCreateTableComment(String scheme, String table) {
+        var s = SQLHelper.escapeSingleField(scheme);
+        var k = SQLHelper.escapeFieldValue(table);
+        var sql = "SHOW table status FROM " + s + " LIKE " + k;
         var future = client.query(sql);
         var promise = Promise.<String>promise();
-        future.onSuccess(rs -> {
-            for (Row row : rs) {
-                var str = row.getString(1);
-                promise.complete(str);
+        future.onComplete(ar -> {
+            if (ar.failed()) {
+                promise.fail(ar.cause());
                 return;
             }
-            promise.complete("");
-        });
-        future.onFailure(promise::fail);
-        return promise.future();
-    }
-
-    @Override
-    public Future<String> getCreateTableComment(String table) {
-        var future = showCreateTable(table);
-        var promise = Promise.<String>promise();
-        future.onSuccess(createTableSql -> {
-            if (StringUtils.isEmpty(createTableSql)) {
-                promise.complete("");
-                return;
-            }
-            var index = createTableSql.lastIndexOf(")");
-            if (index == -1) {
-                promise.complete("");
-                return;
-            }
-            var str = createTableSql.substring(index + 1);
-            var tIndex = str.indexOf("COMMENT");
-            if (tIndex == -1) {
-                promise.complete("");
-            } else {
-                var comment = str.substring(tIndex + 9, str.length() - 1);
-                promise.complete(comment);
+            var rows = ar.result();
+            for (Row row : rows) {
+                var obj = row.getValue("Comment");
+                promise.complete(obj == null ? "" : obj.toString());
+                break;
             }
         });
-        future.onFailure(promise::fail);
         return promise.future();
     }
 

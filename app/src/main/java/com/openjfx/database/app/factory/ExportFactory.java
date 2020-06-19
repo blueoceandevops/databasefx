@@ -83,7 +83,7 @@ public class ExportFactory {
         var sql = buildSql();
         setProgress(0.1);
         var pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
-        var future = pool.getPool().query(sql);
+        var future = pool.execute(sql);
         setText("Start reading data.......");
         future.onSuccess(rows -> {
             var map = new LinkedHashMap<String, List<String>>();
@@ -457,8 +457,7 @@ public class ExportFactory {
             sql = model.getCustomExportSql();
         } else {
             var generator = DATABASE_SOURCE.getGenerator();
-            var table = model.getScheme() + "." + model.getTable();
-            sql = generator.select(model.getSelectTableColumn(), table);
+            sql = generator.select(model.getSelectTableColumn(), model.getScheme(), model.getTable());
         }
         return sql;
     }

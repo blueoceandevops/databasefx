@@ -108,7 +108,7 @@ public class SQLEditController extends BaseController<JsonObject> {
             DialogUtils.showNotification(resourceBundle.getString("controller.sql.editor.sql.empty"), Pos.TOP_CENTER, NotificationType.WARNING);
             return;
         }
-        var fut = client.getPool().query(sql);
+        var fut = client.execute(sql);
         fut.onSuccess(rs -> {
             var columnNames = rs.columnsNames();
             var convert = client.getDataConvert();

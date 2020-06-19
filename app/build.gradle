@@ -44,5 +44,5 @@ jar {
 }
 
 //jlink {
-//~/application/jdk-14.0.1/bin/jlink --module-path /home/yangkui/application/javafx-jmods-14.0.1 --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging,java.management,java.naming --output /home/yangkui/runtine
+//~/application/jdk-14.0.1/bin/jlink --module-path /home/yangkui/application/javafx-jmods-14.0.1 --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.logging,java.management,java.naming,java.net.http --output /home/yangkui/runtine
 // }

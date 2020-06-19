@@ -249,16 +249,16 @@ public class DesignTableView extends TableView<DesignTableModel> {
         }
     }
 
-    public String getSQLStatement(DesignTabModel.DesignTableType type, String tableName) {
+    public String getSQLStatement(DesignTabModel.DesignTableType type, String scheme, String table) {
         if (changeModels.isEmpty()) {
             return "";
         }
         var generator = DATABASE_SOURCE.getGenerator();
         final String sql;
         if (type == DesignTabModel.DesignTableType.CREATE) {
-            sql = generator.createTable(tableName, changeModels);
+            sql = generator.createTable(scheme, table, changeModels);
         } else {
-            sql = generator.updateTable(tableName, changeModels, metas);
+            sql = generator.updateTable(scheme, table, changeModels, metas);
         }
         return sql;
     }

@@ -37,6 +37,10 @@ public class MysqlPoolImpl extends AbstractDataBasePool {
         return new MysqlPoolImpl(pool);
     }
 
+    @Override
+    public Future<RowSet<Row>> execute(String sql) {
+        return query(sql);
+    }
 
     public Future<RowSet<Row>> query(String sql) {
         logSqlStatement(sql, List.of());

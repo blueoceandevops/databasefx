@@ -18,13 +18,6 @@ public interface DDL {
      */
     Future<Void> dropDatabase(String database);
 
-    /**
-     * 获取某一张表的ddl
-     *
-     * @param tableName 表名
-     * @return 返回目标表的ddl
-     */
-    Future<String> ddl(String tableName);
 
     /**
      * 删除table
@@ -38,8 +31,9 @@ public interface DDL {
     /**
      * delete view
      *
-     * @param view view name
+     * @param view   view name
+     * @param scheme target scheme
      * @return return drop result
      */
-    Future<Integer> dropView(String view);
+    Future<Integer> dropView(String scheme, String view);
 }

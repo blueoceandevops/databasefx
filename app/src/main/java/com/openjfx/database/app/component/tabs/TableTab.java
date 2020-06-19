@@ -95,10 +95,10 @@ public class TableTab extends BaseTab<TableTabModel> {
             setTabIcon(TABLE_VIEW_ICON);
         }
         pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
-        var title = model.getTableName() + "@" + model.getDatabase() + "(" + model.getServerName() + ")";
+        var title = model.getTable() + "@" + model.getScheme() + "(" + model.getServerName() + ")";
         setText(title);
         //dynamic obtain table comment
-        var future = pool.getDql().getCreateTableComment(model.getTable());
+        var future = pool.getDql().getCreateTableComment(model.getScheme(), model.getTable());
         future.onComplete(ar -> {
             final String tooltip;
             if (ar.succeeded() && StringUtils.nonEmpty(ar.result())) {
@@ -236,7 +236,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     private Future<Void> loadTableMeta() {
         var promise = Promise.<Void>promise();
-        var future = pool.getDql().showColumns(model.getTable());
+        var future = pool.getDql().showColumns(model.getScheme(), model.getTable());
         future.onSuccess(rs ->
         {
             var isFlushColumn = false;
@@ -279,7 +279,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private Future<Void> loadData() {
         Platform.runLater(() -> tableView.getItems().clear());
         var promise = Promise.<Void>promise();
-        var future = pool.getDql().query(model.getTable(), pageIndex, pageSize);
+        var future = pool.getDql().query(model.getScheme(), model.getTable(), pageIndex, pageSize);
         future.onSuccess(rs -> {
             var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
             for (var values : rs) {
@@ -348,7 +348,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
         for (var newRow : newRows) {
             var columns = TableDataHelper.fxPropertyToObject(newRow);
-            var future = dml.insert(metas, columns, model.getTable());
+            var future = dml.insert(metas, columns, model.getScheme(), model.getTable());
             //Add successfully, callback to deal with the problem of self increasing ID and default value
             future.setHandler(ar -> {
                 if (ar.failed()) {
@@ -399,7 +399,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             //Due to asynchronous, you may only need to update in batch, but not in single update
             var values = TableDataHelper.getChangeValue(change, keyIndex, tableView.getItems());
             //Update data asynchronously
-            return dml.batchUpdate(values, model.getTable(), metas);
+            return dml.batchUpdate(values, model.getScheme(), model.getTable(), metas);
         }
         return Future.succeededFuture();
     }
@@ -411,7 +411,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             var keys = list.stream()
                     .map(it -> it.get(index)).map(TableDataHelper::singleFxPropertyToObject)
                     .toArray();
-            return dml.batchDelete(primaryKeyMeta, keys, model.getTable());
+            return dml.batchDelete(primaryKeyMeta, keys, model.getScheme(), model.getTable());
         }
         return Future.succeededFuture();
     }
@@ -419,7 +419,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     private Future<Void> countDataNumber() {
         var promise = Promise.<Void>promise();
-        var future = pool.getDql().count(model.getTable());
+        var future = pool.getDql().count(model.getScheme(), model.getTable());
         future.onSuccess(number -> {
             this.total = number;
             updateDisplay();

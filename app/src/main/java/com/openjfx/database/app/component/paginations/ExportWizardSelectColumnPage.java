@@ -125,7 +125,7 @@ public class ExportWizardSelectColumnPage extends BorderPane {
     private void initTableColumn(ExportWizardModel model) {
         var pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
         var dql = pool.getDql();
-        var future = dql.showColumns(model.getScheme() + "." + model.getTable());
+        var future = dql.showColumns(model.getScheme(), model.getTable());
         future.onSuccess(ar -> {
             var items = ar.stream().map(NormalColumnNode::new).collect(Collectors.toList());
             Platform.runLater(() -> {

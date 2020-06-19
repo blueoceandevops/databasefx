@@ -58,7 +58,7 @@
         </HBox>
     </top>
     <center>
-        <SplitPane dividerPositions="0.8" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
+        <SplitPane dividerPositions="0.99" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
                 <Tab text="%view.design.table.field" closable="false">
                     <DesignTableView fx:id="fieldTable"/>

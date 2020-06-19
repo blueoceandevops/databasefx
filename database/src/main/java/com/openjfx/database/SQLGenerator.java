@@ -28,28 +28,32 @@ public interface SQLGenerator {
      * Create SQL statement to modify table field information
      *
      * @param table        target table
+     * @param scheme       target scheme
      * @param changeModels change model
      * @param metas        table column meta
      * @return sql statement
      */
-    String updateTable(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas);
+    String updateTable(String scheme, String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas);
 
     /**
      * create table
      *
      * @param table        table name
+     * @param scheme       current scheme
      * @param changeModels row list
      * @return create table sql
      */
-    String createTable(String table, List<RowChangeModel> changeModels);
+    String createTable(String scheme, String table, List<RowChangeModel> changeModels);
 
     /**
      * generate select sql
      *
-     * @param metas table column meta
+     * @param metas  table column meta
+     * @param scheme current scheme
+     * @param table  table
      * @return sql statement
      */
-    String select(List<TableColumnMeta> metas, String table);
+    String select(List<TableColumnMeta> metas, String scheme, String table);
 
     /**
      * generate insert sql

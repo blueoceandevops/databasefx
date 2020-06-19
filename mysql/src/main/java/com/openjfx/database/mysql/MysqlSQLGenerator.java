@@ -31,18 +31,18 @@ public class MysqlSQLGenerator implements SQLGenerator {
     }
 
     @Override
-    public String updateTable(String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas) {
-        return DesignTableSQLGenerator.updateTable(table, changeModels, metas);
+    public String updateTable(String scheme, String table, List<RowChangeModel> changeModels, List<TableColumnMeta> metas) {
+        return DesignTableSQLGenerator.updateTable(SQLHelper.fullTableName(scheme, table), changeModels, metas);
     }
 
     @Override
-    public String createTable(String table, List<RowChangeModel> changeModels) {
-        return DesignTableSQLGenerator.createTable(changeModels, table);
+    public String createTable(String scheme, String table, List<RowChangeModel> changeModels) {
+        return DesignTableSQLGenerator.createTable(changeModels, SQLHelper.fullTableName(scheme, table));
     }
 
     @Override
-    public String select(List<TableColumnMeta> metas, String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    public String select(List<TableColumnMeta> metas, String scheme, String table) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
         var sb = new StringBuilder();
         sb.append("SELECT ");
         var i = 0;
@@ -62,7 +62,7 @@ public class MysqlSQLGenerator implements SQLGenerator {
 
     @Override
     public String insert(String[] columns, String scheme, String table, List<String> values) {
-        var tableName = SQLHelper.escapeMysqlField(scheme + "." + table);
+        var tableName = SQLHelper.fullTableName(scheme, table);
         var sb = new StringBuilder("INSERT INTO " + tableName + "(");
         for (int i = 0; i < columns.length; i++) {
             var column = columns[i];
@@ -78,7 +78,7 @@ public class MysqlSQLGenerator implements SQLGenerator {
             sb.append("(");
             while (k < columns.length) {
                 var val = values.get(i + k * rowSize);
-                sb.append(SQLHelper.escapeField(val));
+                sb.append(SQLHelper.escapeFieldValue(val));
                 if (k < columns.length - 1) {
                     sb.append(",");
                 }

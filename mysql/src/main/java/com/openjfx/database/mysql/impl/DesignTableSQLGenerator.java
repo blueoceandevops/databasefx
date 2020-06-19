@@ -28,9 +28,8 @@ public class DesignTableSQLGenerator {
      * @return
      */
     public static String updateTable(String table, List<RowChangeModel> rowChangeModels, List<TableColumnMeta> metas) {
-        var tableName = SQLHelper.escapeMysqlField(table);
         var sb = new StringBuilder();
-        sb.append("ALTER TABLE ").append(tableName);
+        sb.append("ALTER TABLE ").append(table);
         var updateFieldList = rowChangeModels
                 .stream()
                 .filter(rowChangeModel -> rowChangeModel.getSource() == TABLE_FIELD)
@@ -55,7 +54,7 @@ public class DesignTableSQLGenerator {
                 } else {
                     sb.append(" ADD COLUMN ");
                     if (optional.isPresent()) {
-                        var k = SQLHelper.escapeMysqlField(optional.get().getNewValue());
+                        var k = SQLHelper.escapeSingleField(optional.get().getNewValue());
                         sb.append(k);
                     } else {
                         sb.append(meta.getField());
@@ -65,7 +64,7 @@ public class DesignTableSQLGenerator {
                 sb.append(updateTableField(row, meta));
             } else {
                 sb.append("DROP COLUMN ");
-                sb.append(SQLHelper.escapeMysqlField(meta.getField()));
+                sb.append(SQLHelper.escapeSingleField(meta.getField()));
             }
             if (i != updateFieldList.size() - 1) {
                 sb.append(",");
@@ -94,9 +93,8 @@ public class DesignTableSQLGenerator {
      */
     public static String createTable(List<RowChangeModel> changeModels, String table) {
         var sb = new StringBuilder();
-        var tableName = SQLHelper.escapeMysqlField(table);
         sb.append("CREATE TABLE ");
-        sb.append(tableName);
+        sb.append(table);
         sb.append("(");
         var updateFieldList = changeModels.stream()
                 .filter(rowChangeModel -> rowChangeModel.getSource() == TABLE_FIELD)
