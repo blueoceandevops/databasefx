@@ -34,7 +34,7 @@ jar {
         configurations.runtime.collect { zipTree(it) }
     }
     manifest {
-        attributes "Manifest-Version": 0.9
+        attributes "Manifest-Version": 1.0
         attributes 'App-Name': 'databasefx'
         attributes 'Main-Class': 'com.openjfx.database.app.DatabaseFX'
         attributes 'Multi-Release': true
