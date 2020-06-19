@@ -47,7 +47,6 @@ public class SplashController extends BaseController<Void> {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            throw new RuntimeException("");
         });
         future.whenComplete((r, t) -> {
             //close current stage
