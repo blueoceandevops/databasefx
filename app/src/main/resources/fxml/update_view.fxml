@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Button?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.openjfx.database.app.controller.UpdateController">
+    <stylesheets>
+        <URL value="@/css/update_view_style.css"/>
+    </stylesheets>
+    <top>
+        <VBox styleClass="top-box">
+            <HBox alignment="CENTER_RIGHT" styleClass="top-action-box">
+                <Button styleClass="close-button" onAction="#close">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@/assets/images/update_close_icon.png" requestedWidth="20" requestedHeight="20"
+                                   smooth="true"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+            <HBox styleClass="text-title-box">
+                <Label text="%view.update.tips"/>
+            </HBox>
+            <HBox styleClass="text-title-box">
+                <Label fx:id="version"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <ListView fx:id="listView"/>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" styleClass="bottom-box">
+            <Button text="%view.update.immediately.now" onAction="#immediateUpdate"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

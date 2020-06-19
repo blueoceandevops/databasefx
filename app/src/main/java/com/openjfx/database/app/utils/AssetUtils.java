@@ -93,7 +93,7 @@ public class AssetUtils {
             var array = mf.split("\r\n");
             for (String s : array) {
                 var k = s.split(":", 2);
-                map.put(k[0], k[1]);
+                map.put(k[0].trim(), k[1].trim());
             }
         } else {
             var url = ClassLoader.getSystemResource(MANIFEST_NAME);
