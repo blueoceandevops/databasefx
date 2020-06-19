@@ -47,4 +47,12 @@ public class Constants {
      * type
      */
     public static final String TYPE = "type";
+    /**
+     * data
+     */
+    public static final String DATA = "data";
+    /**
+     * update
+     */
+    public static final String UPDATE = "update";
 }
