@@ -7,22 +7,12 @@ import com.openjfx.database.app.stage.DatabaseFxStage;
 import com.openjfx.database.app.stage.UpdateStage;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -57,22 +47,25 @@ public class SplashController extends BaseController<Void> {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            throw new RuntimeException("");
         });
         future.whenComplete((r, t) -> {
+            //close current stage
+            // Platform.runLater(stage::close);
             if (Objects.nonNull(t)) {
                 logger.error("App init failed", t);
                 showErrorDialog(t, resourceBundle.getString("app.startup.fail"));
-                return;
+            } else {
+                updateProgress(resourceBundle.getString("app.startup.success"));
+                Platform.runLater(() -> {
+                    if (update.get()) {
+                        new UpdateStage();
+                    } else {
+                        new DatabaseFxStage();
+                    }
+                });
             }
-            updateProgress(resourceBundle.getString("app.startup.success"));
-            Platform.runLater(() -> {
-                if (update.get()) {
-                    new UpdateStage();
-                } else {
-                    new DatabaseFxStage();
-                }
-                stage.close();
-            });
+            Platform.runLater(stage::close);
         });
     }
 
@@ -117,7 +110,6 @@ public class SplashController extends BaseController<Void> {
                 update.set(j.getBoolean(UPDATE));
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
             logger.error("Check updated failed", e);
         }
     }
