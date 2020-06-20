@@ -184,7 +184,7 @@ public class DesignTableSQLGenerator {
             sb.append("' ");
         }
         var j = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COMMENT);
-        if (i.isPresent() || meta.getComment() != null) {
+        if (j.isPresent() || meta.getComment() != null) {
             sb.append("COMMENT '");
             sb.append(j.isPresent() ? j.get().getNewValue() : meta.getComment());
             sb.append("' ");
