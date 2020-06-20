@@ -8,7 +8,7 @@ import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.RobotUtils;
-import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.base.AbstractDataBaseClient;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import io.vertx.core.json.JsonObject;
@@ -21,9 +21,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -45,7 +42,7 @@ public class SQLEditController extends BaseController<JsonObject> {
     @FXML
     private SQLEditor sqlEditor;
 
-    private AbstractDataBasePool client;
+    private AbstractDataBaseClient client;
 
     @Override
     public void init() {
@@ -53,21 +50,28 @@ public class SQLEditController extends BaseController<JsonObject> {
 
         var optional = DbPreference.getConnectionParam(uid);
 
-        var uuid = "temp_" + uid;
+        var uuid = UUID.randomUUID().toString();
 
         var scheme = data.getString(Constants.SCHEME);
 
-        if (optional.isPresent()) {
-            if (StringUtils.nonEmpty(scheme)) {
-                client = DATABASE_SOURCE.createPool(optional.get(), uuid, scheme, 1);
-            } else {
-                client = DATABASE_SOURCE.createPool(optional.get(), uuid, 1);
-            }
-        } else {
-            DialogUtils.showAlertInfo(resourceBundle.getString("controller.sql.editor.disable"));
-            stage.close();
+        if (optional.isEmpty()) {
+            initFailed();
             return;
         }
+
+        var param = optional.get();
+        var future = DATABASE_SOURCE.createClient(param, uuid, scheme, 1);
+        future.onComplete(ar -> {
+            if (ar.failed()) {
+                initFailed();
+                return;
+            }
+            this.client = ar.result();
+            Platform.runLater(() -> initView(scheme, uuid));
+        });
+    }
+
+    public void initView(String scheme, String uuid) {
         //load scheme
         var param = client.getConnectionParam();
         final String title;
@@ -78,7 +82,7 @@ public class SQLEditController extends BaseController<JsonObject> {
         }
         stage.setTitle(title);
 
-        var future = client.getConnection();
+        var future = client.getPool().getConnection();
         future.onComplete(ar -> {
             if (ar.failed()) {
                 DialogUtils.showErrorDialog(ar.cause(), resourceBundle.getString("controller.sql.editor.disable"));
@@ -170,9 +174,12 @@ public class SQLEditController extends BaseController<JsonObject> {
         });
     }
 
+    private void initFailed() {
+        DialogUtils.showAlertInfo(resourceBundle.getString("controller.sql.editor.disable"));
+        Platform.runLater(() -> stage.close());
+    }
 
     private void createData(List<String> fields, List<String[]> data) {
-        Platform.runLater(() -> tableView.getColumns().clear());
         var columns = TableColumnUtils.createTableDataColumnWithField(fields);
         var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
         for (var row : data) {
@@ -183,10 +190,10 @@ public class SQLEditController extends BaseController<JsonObject> {
             list.add(item);
         }
         Platform.runLater(() -> {
+            tableView.getColumns().clear();
             tableView.getColumns().addAll(columns);
             tableView.getItems().clear();
             tableView.getItems().addAll(list);
-            tableView.refresh();
         });
     }
 }

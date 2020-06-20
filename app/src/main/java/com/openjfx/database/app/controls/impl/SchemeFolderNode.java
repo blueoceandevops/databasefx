@@ -43,8 +43,8 @@ public class SchemeFolderNode extends BaseTreeNode<String> {
             return;
         }
         setLoading(true);
-        var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(param.get().getUuid());
-        var future = pool.getDql().showDatabase();
+        var client = DatabaseFX.DATABASE_SOURCE.getClient(param.get().getUuid());
+        var future = client.getDql().showDatabase();
         future.onSuccess(schemes -> {
             var schemeTreeNodes = schemes.stream().map(s -> new SchemeTreeNode(s, param.get())).collect(Collectors.toList());
             Platform.runLater(() -> {

@@ -78,8 +78,8 @@ public class CreateSchemeController extends BaseController<String> {
                 stage.close();
                 return;
             }
-            var pool = databaseSource.getDataBaseSource(data);
-            var future = pool.getDql().executeSql(sql);
+            var client = databaseSource.getClient(data);
+            var future = client.getDql().executeSql(sql);
             future.onSuccess(rs -> {
                 EventBusUtils.flushScheme(data);
                 //close current stage

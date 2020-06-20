@@ -26,10 +26,7 @@ public class DbPreference {
      */
     public static void deleteConnect(String uuid) {
 
-        Optional<ConnectionParam> optional = params.stream()
-                .filter(c -> c.getUuid().equals(uuid))
-                .findAny();
-
+        var optional = params.stream().filter(c -> c.getUuid().equals(uuid)).findAny();
         optional.ifPresent(param -> {
             params.remove(param);
             FileConfig.deleteCon(param.getUuid());

@@ -33,8 +33,8 @@ public class ViewFolderNode extends BaseTreeNode<String> {
             return;
         }
         setLoading(true);
-        var pool = DATABASE_SOURCE.getDataBaseSource(getUuid());
-        var future = pool.getDql().showViews(scheme);
+        var client = DATABASE_SOURCE.getClient(getUuid());
+        var future = client.getDql().showViews(scheme);
         future.onComplete(ar -> {
             if (ar.succeeded()) {
                 var rs = ar.result();

@@ -64,7 +64,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
             return;
         }
         setLoading(true);
-        var dcl = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDql();
+        var dcl = DATABASE_SOURCE.getClient(getUuid()).getDql();
         var future = dcl.showTables(scheme);
         future.onComplete(ar ->
         {

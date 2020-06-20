@@ -16,7 +16,7 @@ import java.util.List;
  * @author yangkui
  * @since 1.0
  */
-public abstract class AbstractDataBasePool {
+public abstract class AbstractDataBaseClient {
     /**
      * database language
      */
@@ -69,8 +69,6 @@ public abstract class AbstractDataBasePool {
      * If there are no special requirements such as things,
      * it is not recommended to directly obtain the connection pool for operation
      * </p>
-     *
-     * @return
      */
     public Pool getPool() {
         return pool;
@@ -83,18 +81,6 @@ public abstract class AbstractDataBasePool {
      * @return execute result
      */
     public abstract Future<RowSet<Row>> execute(String sql);
-
-    /**
-     * get connection from database pool.
-     * <p>This method will not be used in general,
-     * but it needs to be called when some scenes only need to get the linked object to complete.
-     * Such as database things, etc</p>
-     *
-     * @return connection
-     */
-    public Future<SqlConnection> getConnection() {
-        return pool.getConnection();
-    }
 
     public ConnectionParam getConnectionParam() {
         return connectionParam;

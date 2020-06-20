@@ -21,9 +21,9 @@ import static com.openjfx.database.common.config.StringConstants.*;
  */
 public class DMLImpl implements DML {
 
-    private final MysqlPoolImpl client;
+    private final MysqlClient client;
 
-    public DMLImpl(MysqlPoolImpl client) {
+    public DMLImpl(MysqlClient client) {
         this.client = client;
     }
 

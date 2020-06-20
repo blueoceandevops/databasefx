@@ -59,9 +59,7 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
         if (a) {
 
             //Check whether the deleted data is in the change list
-            var optional = changeModes.stream()
-                    .filter(i -> i.getRowIndex() == index)
-                    .findAny();
+            var optional = changeModes.stream().filter(i -> i.getRowIndex() == index).findAny();
 
             optional.ifPresent(changeModes::remove);
 

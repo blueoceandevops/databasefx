@@ -1,6 +1,6 @@
 package com.openjfx.database.mysql;
 
-import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.base.AbstractDataBaseClient;
 import com.openjfx.database.base.AbstractDatabaseSource;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.enums.DatabaseType;
@@ -8,10 +8,9 @@ import com.openjfx.database.model.ConnectionParam;
 
 import com.openjfx.database.mysql.impl.MysqlCharset;
 import com.openjfx.database.mysql.impl.MysqlDataType;
-import com.openjfx.database.mysql.impl.MysqlPoolImpl;
+import com.openjfx.database.mysql.impl.MysqlClient;
+import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -34,37 +33,24 @@ public class MySql extends AbstractDatabaseSource {
     }
 
     @Override
-    public AbstractDataBasePool createPool(ConnectionParam param) {
-        var mySqlPool = MysqlHelper.createPool(param);
-        var pool = MysqlPoolImpl.create(mySqlPool);
-        pool.setConnectionParam(param);
-        createPool(pool, param);
-        return pool;
+    public Future<AbstractDataBaseClient> createClient(ConnectionParam param) {
+        var pool = MysqlHelper.createPool(param);
+        var client = MysqlClient.create(pool);
+        return validateClient(client, param);
     }
 
     @Override
-    public AbstractDataBasePool createPool(ConnectionParam param, String uuid, String database, int initPoolSize) {
-        var newParam = JsonObject.mapFrom(param).mapTo(ConnectionParam.class);
-        newParam.setUuid(uuid);
-        var mySqlPool = MysqlHelper.createPool(param, initPoolSize, database);
-        var pool = MysqlPoolImpl.create(mySqlPool);
-        createPool(pool, newParam);
-        return pool;
-    }
-
-    @Override
-    public AbstractDataBasePool createPool(ConnectionParam param, String uuid, int initPoolSize) {
-        var newParam = JsonObject.mapFrom(param).mapTo(ConnectionParam.class);
-        newParam.setUuid(uuid);
-        var mySqlPool = MysqlHelper.createPool(param, initPoolSize);
-        var pool = MysqlPoolImpl.create(mySqlPool);
-        createPool(pool, newParam);
-        return pool;
+    public Future<AbstractDataBaseClient> createClient(ConnectionParam param, String uuid, String scheme, int initPoolSize) {
+        var temp = JsonObject.mapFrom(param).mapTo(ConnectionParam.class);
+        temp.setUuid(uuid);
+        var pool = MysqlHelper.createPool(param, initPoolSize, scheme);
+        var client = MysqlClient.create(pool);
+        return validateClient(client, temp);
     }
 
     public void heartBeat() {
         //Send SQL query statement to MySQL server every 20s
-        pools.forEach((a, b) -> {
+        clients.forEach((a, b) -> {
             var future = b.getDql().heartBeatQuery();
             var serverName = b.getConnectionParam().getName();
             var host = b.getConnectionParam().getHost();

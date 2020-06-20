@@ -11,7 +11,7 @@ import com.openjfx.database.app.model.tab.meta.TableTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.TableColumnUtils;
 import com.openjfx.database.app.utils.TableDataUtils;
-import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.base.AbstractDataBaseClient;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.TableColumnMeta;
 import com.openjfx.database.mysql.MysqlHelper;
@@ -73,7 +73,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private int pageSize = 100;
     private long total = 0;
 
-    private final AbstractDataBasePool pool;
+    private final AbstractDataBaseClient client;
     /**
      * Determine whether the primary key exists in the current table.
      * If it does not exist, it is not allowed to update.
@@ -94,11 +94,11 @@ public class TableTab extends BaseTab<TableTabModel> {
         } else {
             setTabIcon(TABLE_VIEW_ICON);
         }
-        pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
+        client = DATABASE_SOURCE.getClient(model.getUuid());
         var title = model.getTable() + "@" + model.getScheme() + "(" + model.getServerName() + ")";
         setText(title);
         //dynamic obtain table comment
-        var future = pool.getDql().getCreateTableComment(model.getScheme(), model.getTable());
+        var future = client.getDql().getCreateTableComment(model.getScheme(), model.getTable());
         future.onComplete(ar -> {
             final String tooltip;
             if (ar.succeeded() && StringUtils.nonEmpty(ar.result())) {
@@ -236,7 +236,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     private Future<Void> loadTableMeta() {
         var promise = Promise.<Void>promise();
-        var future = pool.getDql().showColumns(model.getScheme(), model.getTable());
+        var future = client.getDql().showColumns(model.getScheme(), model.getTable());
         future.onSuccess(rs ->
         {
             var isFlushColumn = false;
@@ -279,7 +279,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private Future<Void> loadData() {
         Platform.runLater(() -> tableView.getItems().clear());
         var promise = Promise.<Void>promise();
-        var future = pool.getDql().query(model.getScheme(), model.getTable(), pageIndex, pageSize);
+        var future = client.getDql().query(model.getScheme(), model.getTable(), pageIndex, pageSize);
         future.onSuccess(rs -> {
             var list = FXCollections.<ObservableList<StringProperty>>observableArrayList();
             for (var values : rs) {
@@ -313,7 +313,7 @@ public class TableTab extends BaseTab<TableTabModel> {
         // Synchronous data change to database
         if (result) {
             setLoading(true);
-            var dml = DATABASE_SOURCE.getDataBaseSource(model.getUuid()).getDml();
+            var dml = DATABASE_SOURCE.getClient(model.getUuid()).getDml();
             var future = newData(dml).compose(rs -> updateData(dml)).compose(rs -> deleteData(dml));
             future.onComplete(ar -> {
                 setLoading(false);
@@ -419,7 +419,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     private Future<Void> countDataNumber() {
         var promise = Promise.<Void>promise();
-        var future = pool.getDql().count(model.getScheme(), model.getTable());
+        var future = client.getDql().count(model.getScheme(), model.getTable());
         future.onSuccess(number -> {
             this.total = number;
             updateDisplay();

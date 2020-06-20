@@ -6,9 +6,9 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
 public class DDLImpl implements DDL {
-    private final MysqlPoolImpl client;
+    private final MysqlClient client;
 
-    public DDLImpl(MysqlPoolImpl client) {
+    public DDLImpl(MysqlClient client) {
         this.client = client;
     }
 

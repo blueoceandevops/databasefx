@@ -17,11 +17,11 @@ import java.util.*;
 
 public class DQLImpl implements DQL {
 
-    private final MysqlPoolImpl client;
+    private final MysqlClient client;
 
     private final DataConvert dataConvert = new SimpleMysqlDataConvert();
 
-    public DQLImpl(MysqlPoolImpl client) {
+    public DQLImpl(MysqlClient client) {
         this.client = client;
     }
 

@@ -11,7 +11,7 @@ import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
-import com.openjfx.database.base.AbstractDataBasePool;
+import com.openjfx.database.base.AbstractDataBaseClient;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
@@ -54,7 +54,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     private DesignOptionBox box;
 
-    private AbstractDataBasePool pool;
+    private AbstractDataBaseClient client;
     /**
      * un-title
      */
@@ -120,18 +120,24 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     private void initDataTable() {
         updateTableName();
-        pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
+        client = DATABASE_SOURCE.getClient(model.getUuid());
         if (model.getDesignTableType() == DesignTabModel.DesignTableType.UPDATE) {
-            var future = pool.getDql().showColumns(model.getScheme(), model.getTableName());
+            var future = client.getDql().showColumns(model.getScheme(), model.getTableName());
             //clear design table
             Platform.runLater(() -> fieldTable.getItems().clear());
             //load design table info
             var fut = future.compose(rs -> {
                 fieldTable.flushTableColumnMeta(rs);
-                return pool.getDql().getCreateTableComment(model.getScheme(), model.getTableName());
+                return client.getDql().getCreateTableComment(model.getScheme(), model.getTableName());
             });
-            fut.onSuccess(comment -> Platform.runLater(() -> commentTextArea.setText(comment)));
-            fut.onFailure(t -> DialogUtils.showErrorDialog(t, i18nStr("controller.design.table.init.fail")));
+            fut.onComplete(ar -> {
+                if (ar.failed()) {
+                    DialogUtils.showErrorDialog(ar.cause(), i18nStr("controller.design.table.init.fail"));
+                    return;
+                }
+                Platform.runLater(() -> commentTextArea.setText(ar.result()));
+            });
+
         }
     }
 
@@ -145,7 +151,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         if (StringUtils.isEmpty(sql)) {
             return;
         }
-        var future = pool.execute(sql);
+        var future = client.execute(sql);
         future.onSuccess(ar -> {
             if (model.getDesignTableType() == DesignTabModel.DesignTableType.CREATE) {
                 model.setDesignTableType(DesignTabModel.DesignTableType.UPDATE);

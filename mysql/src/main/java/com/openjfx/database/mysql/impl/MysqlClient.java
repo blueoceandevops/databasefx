@@ -1,9 +1,6 @@
 package com.openjfx.database.mysql.impl;
 
-import com.alibaba.druid.sql.SQLUtils;
-import com.openjfx.database.base.AbstractDataBasePool;
-import com.openjfx.database.enums.DatabaseType;
-import com.openjfx.database.utils.SQLFormatUtils;
+import com.openjfx.database.base.AbstractDataBaseClient;
 import io.vertx.core.Future;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
@@ -21,11 +18,11 @@ import java.util.List;
  * @author yangkui
  * @since 1.0
  */
-public class MysqlPoolImpl extends AbstractDataBasePool {
+public class MysqlClient extends AbstractDataBaseClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(MysqlPoolImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MysqlClient.class);
 
-    private MysqlPoolImpl(MySQLPool pool) {
+    private MysqlClient(MySQLPool pool) {
         this.pool = pool;
         dql = new DQLImpl(this);
         ddl = new DDLImpl(this);
@@ -33,8 +30,8 @@ public class MysqlPoolImpl extends AbstractDataBasePool {
         dataConvert = new SimpleMysqlDataConvert();
     }
 
-    public static AbstractDataBasePool create(MySQLPool pool) {
-        return new MysqlPoolImpl(pool);
+    public static AbstractDataBaseClient create(MySQLPool pool) {
+        return new MysqlClient(pool);
     }
 
     @Override

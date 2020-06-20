@@ -6,6 +6,8 @@ import com.openjfx.database.SQLGenerator;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.enums.DatabaseType;
 import com.openjfx.database.model.ConnectionParam;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.sqlclient.Pool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,7 @@ public abstract class AbstractDatabaseSource {
     /**
      * Database connection pool cache map
      */
-    protected ConcurrentHashMap<String, AbstractDataBasePool> pools = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<String, AbstractDataBaseClient> clients = new ConcurrentHashMap<>();
     /**
      * data charset
      */
@@ -49,9 +51,9 @@ public abstract class AbstractDatabaseSource {
      * @param uuid uuid
      * @return Back to database connection pool
      */
-    public AbstractDataBasePool getDataBaseSource(String uuid) {
+    public AbstractDataBaseClient getClient(String uuid) {
         Objects.requireNonNull(uuid);
-        return pools.get(uuid);
+        return clients.get(uuid);
     }
 
     /**
@@ -60,7 +62,7 @@ public abstract class AbstractDatabaseSource {
      * @param params Connection parameters
      * @return Return to pool
      */
-    public abstract AbstractDataBasePool createPool(ConnectionParam params);
+    public abstract Future<AbstractDataBaseClient> createClient(ConnectionParam params);
 
     /**
      * Create database connection pool
@@ -68,19 +70,10 @@ public abstract class AbstractDatabaseSource {
      * @param param        Create database connection pool connection parameters
      * @param uuid         Connection identification
      * @param initPoolSize Initialize dimensions
+     * @param scheme       target scheme
      * @return Back to connection pool
      */
-    public abstract AbstractDataBasePool createPool(ConnectionParam param, String uuid, String database, int initPoolSize);
-
-    /**
-     * Create database connection pool
-     *
-     * @param param        connection param
-     * @param uuid         Connection identification
-     * @param initPoolSize Initialize dimensions
-     * @return Back to connection pool
-     */
-    public abstract AbstractDataBasePool createPool(ConnectionParam param, String uuid, int initPoolSize);
+    public abstract Future<AbstractDataBaseClient> createClient(ConnectionParam param, String uuid, String scheme, int initPoolSize);
 
     /**
      * Close a connection pool
@@ -88,25 +81,24 @@ public abstract class AbstractDatabaseSource {
      * @param uuid uuid
      */
     public void close(String uuid) {
-        var pool = pools.get(uuid);
+        var pool = clients.get(uuid);
         if (pool == null) {
-            var debug = uuid + " corresponding database connection pool non-existent," +
-                    "so cancel the close action!";
-            logger.debug(debug);
+            var debug = "{} corresponding database connection pool non-existent,so cancel the close action!";
+            logger.debug(debug, uuid);
             return;
         }
         pool.close();
         //Move out of database connection cache
-        pools.remove(uuid);
-        var debug = uuid + " connection closed successfully!";
-        logger.debug(debug);
+        clients.remove(uuid);
+        var debug = "{} connection closed successfully!";
+        logger.debug(debug, uuid);
     }
 
     /**
      * close resource
      */
     public void closeAll() {
-        pools.forEach((uuid, pool) -> close(uuid));
+        clients.forEach((uuid, pool) -> close(uuid));
     }
 
     /**
@@ -123,19 +115,24 @@ public abstract class AbstractDatabaseSource {
      * @param pool  wait test database pool
      * @param param connection param
      */
-    protected void createPool(AbstractDataBasePool pool, ConnectionParam param) {
-        pool.setConnectionParam(param);
+    protected Future<AbstractDataBaseClient> validateClient(AbstractDataBaseClient pool, ConnectionParam param) {
         //Make sure the link is available before joining the cache
-        var fut = pool.getDql().heartBeatQuery();
         var uuid = param.getUuid();
-        fut.onFailure(t -> {
-            pool.close();
-            logger.error("create database pool failed", t);
+        pool.setConnectionParam(param);
+        var fut = pool.getDql().heartBeatQuery();
+        var promise = Promise.<AbstractDataBaseClient>promise();
+        fut.onComplete(ar -> {
+            if (ar.failed()) {
+                pool.close();
+                promise.fail(ar.cause());
+                logger.error("create database pool failed", ar.cause());
+            } else {
+                clients.put(uuid, pool);
+                promise.complete(pool);
+                logger.debug("create database pool success uuid:{}!", uuid);
+            }
         });
-        fut.onSuccess(rs -> {
-            pools.put(uuid, pool);
-            logger.debug("create database pool success uuid:{}!", uuid);
-        });
+        return promise.future();
     }
 
     public DataCharset getCharset() {
