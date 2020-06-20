@@ -52,8 +52,8 @@ public class TableViewTreeNode extends BaseTreeNode<String> {
             if (!result) {
                 return;
             }
-            var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(getUuid());
-            var future = pool.getDdl().dropView(scheme + "." + tableName);
+            var client = DatabaseFX.DATABASE_SOURCE.getClient(getUuid());
+            var future = client.getDdl().dropView(scheme, tableName);
 
             future.onSuccess(ar -> {
                 EventBusUtils.closeTableTab(getUuid(), scheme, tableName);

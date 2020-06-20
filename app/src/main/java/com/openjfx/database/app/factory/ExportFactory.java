@@ -1,14 +1,9 @@
 package com.openjfx.database.app.factory;
 
-import com.openjfx.database.app.DatabaseFX;
-import com.openjfx.database.app.component.paginations.ExportWizardFormatPage;
 import com.openjfx.database.app.component.paginations.ExportWizardSelectColumnPage;
 import com.openjfx.database.app.model.ExportWizardModel;
-import com.openjfx.database.base.AbstractDataBasePool;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
-import com.openjfx.database.model.TableColumnMeta;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Row;
@@ -82,8 +77,8 @@ public class ExportFactory {
         }
         var sql = buildSql();
         setProgress(0.1);
-        var pool = DATABASE_SOURCE.getDataBaseSource(model.getUuid());
-        var future = pool.getPool().query(sql);
+        var client = DATABASE_SOURCE.getClient(model.getUuid());
+        var future = client.execute(sql);
         setText("Start reading data.......");
         future.onSuccess(rows -> {
             var map = new LinkedHashMap<String, List<String>>();
@@ -457,8 +452,7 @@ public class ExportFactory {
             sql = model.getCustomExportSql();
         } else {
             var generator = DATABASE_SOURCE.getGenerator();
-            var table = model.getScheme() + "." + model.getTable();
-            sql = generator.select(model.getSelectTableColumn(), table);
+            sql = generator.select(model.getSelectTableColumn(), model.getScheme(), model.getTable());
         }
         return sql;
     }

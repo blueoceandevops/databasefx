@@ -3,6 +3,7 @@ package com.openjfx.database.mysql;
 import com.openjfx.database.model.TableColumnMeta;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -12,26 +13,18 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 public class SQLHelper {
-    /**
-     * Escape MySQL keyword conflict
-     *
-     * @param field field
-     * @return escape after field
-     */
-    public static String escapeMysqlField(String field) {
-        var array = field.split("\\.");
-        var stringBuffer = new StringBuilder();
-        for (int i = 0; i < array.length; i++) {
-            var s = array[i];
-            stringBuffer.append("`").append(s).append("`");
-            if (i != array.length - 1) {
-                stringBuffer.append(".");
-            }
-        }
-        return stringBuffer.toString();
+
+    public static String escapeSingleField(String field) {
+        return "`" + field + "`";
     }
 
-    public static String escapeField(String field) {
-        return "'" + field + "'";
+    public static String fullTableName(String scheme, String table) {
+        Objects.requireNonNull(scheme);
+        Objects.requireNonNull(table);
+        return "`" + scheme + "`" + ".`" + table + "`";
+    }
+
+    public static String escapeFieldValue(String val) {
+        return val == null ? null : "'" + val + "'";
     }
 }

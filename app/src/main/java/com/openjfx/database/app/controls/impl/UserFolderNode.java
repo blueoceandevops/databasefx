@@ -35,8 +35,8 @@ public class UserFolderNode extends BaseTreeNode<String> {
         if (getChildren().size() > 0 || isLoading()) {
             return;
         }
-        var pool = DATABASE_SOURCE.getDataBaseSource(param.get().getUuid());
-        var future = pool.getDql().getCurrentDatabaseUserList();
+        var client = DATABASE_SOURCE.getClient(param.get().getUuid());
+        var future = client.getDql().getCurrentDatabaseUserList();
         future.onSuccess(list -> {
             var children = new ArrayList<UserTreeNode>();
             for (String user : list) {

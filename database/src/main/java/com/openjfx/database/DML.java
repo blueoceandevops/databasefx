@@ -17,22 +17,24 @@ public interface DML {
     /**
      * 批量更新
      *
-     * @param tableName 表名
-     * @param items     待更新数据
-     * @param metas     列信息
+     * @param table  表名
+     * @param items  待更新数据
+     * @param metas  列信息
+     * @param scheme current scheme
      * @return 返回更新结果
      */
-    Future<Integer> batchUpdate(List<Map<String, Object[]>> items, String tableName, List<TableColumnMeta> metas);
+    Future<Integer> batchUpdate(List<Map<String, Object[]>> items, String scheme, String table, List<TableColumnMeta> metas);
 
     /**
      * 新增数据
      *
-     * @param metas     table meta
-     * @param columns   列值
-     * @param tableName 表名
+     * @param metas   table meta
+     * @param columns 列值
+     * @param table   表名
+     * @param scheme  current scheme
      * @return 返回新增结果
      */
-    Future<Long> insert(List<TableColumnMeta> metas, Object[] columns, String tableName);
+    Future<Long> insert(List<TableColumnMeta> metas, Object[] columns, String scheme, String table);
 
     /**
      * 批量删除
@@ -40,9 +42,10 @@ public interface DML {
      * @param keyMeta   key字段
      * @param keyValues key值列表
      * @param tableName 表名
+     * @param scheme    current scheme
      * @return 返回受影响行数
      */
-    Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String tableName);
+    Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String scheme, String tableName);
 
     /**
      * Rename table

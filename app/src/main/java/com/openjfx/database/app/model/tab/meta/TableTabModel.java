@@ -3,11 +3,8 @@ package com.openjfx.database.app.model.tab.meta;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
 import com.openjfx.database.app.controls.impl.TableViewTreeNode;
 import com.openjfx.database.app.model.tab.BaseTabMode;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * Table tab metadata
@@ -15,15 +12,15 @@ import java.util.ResourceBundle;
  * @author yangkui
  * @since 1.0
  */
-public class TableTabModel extends BaseTabMode implements Initializable {
+public class TableTabModel extends BaseTabMode {
     /**
      * Database name
      */
-    private final String database;
+    private final String scheme;
     /**
      * Table name
      */
-    private final String tableName;
+    private final String table;
     /**
      * Server name
      */
@@ -33,17 +30,10 @@ public class TableTabModel extends BaseTabMode implements Initializable {
      */
     private TableType tableType;
 
-    private ResourceBundle resourceBundle;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        this.resourceBundle = resources;
-    }
-
-    public TableTabModel(String uuid, String flag, String database, String tableName, String serverName, TableType tableType) {
+    public TableTabModel(String uuid, String flag, String scheme, String table, String serverName, TableType tableType) {
         super(uuid, flag);
-        this.database = database;
-        this.tableName = tableName;
+        this.scheme = scheme;
+        this.table = table;
         this.serverName = serverName;
         this.tableType = tableType;
     }
@@ -73,16 +63,12 @@ public class TableTabModel extends BaseTabMode implements Initializable {
         return new TableTabModel(uuid, flag, scheme, tableName, serverName, tableType);
     }
 
-    public String getDatabase() {
-        return database;
+    public String getScheme() {
+        return scheme;
     }
 
     public String getTable() {
-        return database + "." + tableName;
-    }
-
-    public String getTableName() {
-        return tableName;
+        return table;
     }
 
     public String getServerName() {

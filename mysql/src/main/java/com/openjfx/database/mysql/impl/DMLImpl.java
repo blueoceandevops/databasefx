@@ -21,21 +21,21 @@ import static com.openjfx.database.common.config.StringConstants.*;
  */
 public class DMLImpl implements DML {
 
-    private final MysqlPoolImpl client;
+    private final MysqlClient client;
 
-    public DMLImpl(MysqlPoolImpl client) {
+    public DMLImpl(MysqlClient client) {
         this.client = client;
     }
 
     @Override
-    public Future<Integer> batchUpdate(List<Map<String, Object[]>> items, String tableName, List<TableColumnMeta> metas) {
+    public Future<Integer> batchUpdate(List<Map<String, Object[]>> items, String scheme, String table, List<TableColumnMeta> metas) {
         var optional = metas.stream().filter(col -> StringUtils.nonEmpty(col.getKey())).findFirst();
         var promise = Promise.<Integer>promise();
         if (optional.isEmpty()) {
             promise.fail("无法找到key值,故取消更新");
         } else {
             var keyMeta = optional.get();
-            var sql = updateSql(metas, keyMeta, tableName);
+            var sql = updateSql(metas, keyMeta, scheme, table);
             var tuples = new ArrayList<Tuple>();
             for (var item : items) {
                 var t = item.get(ROW);
@@ -53,9 +53,8 @@ public class DMLImpl implements DML {
     }
 
     @Override
-    public Future<Long> insert(List<TableColumnMeta> metas, Object[] columns, String tableName) {
-
-        var sql = insertSql(metas, tableName);
+    public Future<Long> insert(List<TableColumnMeta> metas, Object[] columns, String scheme, String table) {
+        var sql = insertSql(metas, scheme, table);
 
         var promise = Promise.<Long>promise();
 
@@ -70,15 +69,15 @@ public class DMLImpl implements DML {
         return promise.future();
     }
 
-    private String insertSql(List<TableColumnMeta> metas, String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    private String insertSql(List<TableColumnMeta> metas, String scheme, String table) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
         var sb = new StringBuilder("INSERT INTO ");
         var vs = new StringBuilder();
         sb.append(tableName);
         sb.append("(");
         for (int i = 0; i < metas.size(); i++) {
             var meta = metas.get(i);
-            var field = SQLHelper.escapeMysqlField(meta.getField());
+            var field = SQLHelper.escapeSingleField(meta.getField());
             sb.append(field);
             vs.append("?");
             if (i < metas.size() - 1) {
@@ -93,21 +92,21 @@ public class DMLImpl implements DML {
         return sb.toString();
     }
 
-    public String updateSql(List<TableColumnMeta> metas, TableColumnMeta keyMeta, String table) {
-        var tableName = SQLHelper.escapeMysqlField(table);
+    public String updateSql(List<TableColumnMeta> metas, TableColumnMeta keyMeta, String scheme, String table) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
         var sb = new StringBuilder("UPDATE ");
         sb.append(tableName);
         sb.append(" SET ");
         for (int i = 0; i < metas.size(); i++) {
             var meta = metas.get(i);
-            var field = SQLHelper.escapeMysqlField(meta.getField());
+            var field = SQLHelper.escapeSingleField(meta.getField());
             sb.append(field);
             sb.append("=?");
             if (i != metas.size() - 1) {
                 sb.append(",");
             }
         }
-        var keyField = SQLHelper.escapeMysqlField(keyMeta.getField());
+        var keyField = SQLHelper.escapeSingleField(keyMeta.getField());
         sb.append(" WHERE ");
         sb.append(keyField);
         sb.append("=?");
@@ -115,13 +114,13 @@ public class DMLImpl implements DML {
     }
 
     @Override
-    public Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String table) {
+    public Future<Integer> batchDelete(TableColumnMeta keyMeta, Object[] keyValues, String scheme, String table) {
         var sb = new StringBuilder();
-        var tableName = SQLHelper.escapeMysqlField(table);
+        var tableName = SQLHelper.fullTableName(scheme, table);
         sb.append("DELETE FROM ");
         sb.append(tableName);
         sb.append(" WHERE ");
-        sb.append(SQLHelper.escapeMysqlField(keyMeta.getField()));
+        sb.append(SQLHelper.escapeSingleField(keyMeta.getField()));
         sb.append(" =?");
         var sql = sb.toString();
         var tuples = new ArrayList<Tuple>();
@@ -138,9 +137,9 @@ public class DMLImpl implements DML {
 
     @Override
     public Future<Integer> renameTable(String table, String target, String scheme) {
-        var t = scheme + "." + table;
-        var tt = scheme + "." + target;
-        var sql = "RENAME TABLE " + SQLHelper.escapeMysqlField(t) + " TO " + SQLHelper.escapeMysqlField(tt);
+        var t = SQLHelper.fullTableName(scheme, table);
+        var tt = SQLHelper.fullTableName(scheme, table);
+        var sql = "RENAME TABLE " + t + " TO " + tt;
         var promise = Promise.<Integer>promise();
         var future = client.query(sql);
         future.onComplete(ar -> {

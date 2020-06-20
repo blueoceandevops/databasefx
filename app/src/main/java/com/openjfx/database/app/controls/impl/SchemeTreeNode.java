@@ -51,7 +51,7 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         deleteMenu.setOnAction(event -> {
             var result = DialogUtils.showAlertConfirm(I18N.getString("menu.databasefx.tree.delete.database.tips") + " " + getValue() + "?");
             if (result) {
-                var dml = DATABASE_SOURCE.getDataBaseSource(getUuid()).getDdl();
+                var dml = DATABASE_SOURCE.getClient(getUuid()).getDdl();
                 var future = dml.dropDatabase(getValue());
                 future.onSuccess(r -> {
                     //delete current node from parent node

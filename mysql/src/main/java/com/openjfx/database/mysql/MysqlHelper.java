@@ -47,10 +47,10 @@ public class MysqlHelper {
      *
      * @param param    Connection parameters
      * @param initSize Initialize connection pool size
-     * @param database Initialize database
+     * @param scheme   Initialize scheme
      * @return Back to connection pool
      */
-    public static MySQLPool createPool(ConnectionParam param, int initSize, String database) {
+    public static MySQLPool createPool(ConnectionParam param, int initSize, String scheme) {
         var options = new MySQLConnectOptions()
                 .setPort(param.getPort())
                 .setHost(param.getHost())
@@ -62,8 +62,8 @@ public class MysqlHelper {
                 .setIdleTimeout(5)
                 .setSslHandshakeTimeout(5);
 
-        if (StringUtils.nonEmpty(database)) {
-            options.setDatabase(database);
+        if (StringUtils.nonEmpty(scheme)) {
+            options.setDatabase(scheme);
         }
 
         var poolOptions = new PoolOptions();

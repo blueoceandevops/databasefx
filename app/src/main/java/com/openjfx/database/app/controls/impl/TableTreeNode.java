@@ -51,8 +51,8 @@ public class TableTreeNode extends BaseTreeNode<String> {
             if (!result) {
                 return;
             }
-            var pool = DatabaseFX.DATABASE_SOURCE.getDataBaseSource(getUuid());
-            var future = pool.getDdl().dropTable(getValue(), scheme);
+            var client = DatabaseFX.DATABASE_SOURCE.getClient(getUuid());
+            var future = client.getDdl().dropTable(getValue(), scheme);
 
             future.onSuccess(ar -> {
                 EventBusUtils.closeTableTab(getUuid(), scheme, getValue());
@@ -71,8 +71,8 @@ public class TableTreeNode extends BaseTreeNode<String> {
             if (target.isEmpty() || target.trim().equals(getValue())) {
                 return;
             }
-            var pool = DATABASE_SOURCE.getDataBaseSource(getUuid());
-            var dml = pool.getDml();
+            var client = DATABASE_SOURCE.getClient(getUuid());
+            var dml = client.getDml();
             var future = dml.renameTable(getValue(), target, scheme);
             future.onSuccess(r -> {
                 EventBusUtils.closeTableTab(getUuid(), scheme, getValue());

@@ -39,10 +39,11 @@ public interface DQL {
     /**
      * 获取某个表的column情况
      *
-     * @param table table
-     * @return 返回table column原始数据
+     * @param scheme current scheme
+     * @param table  table
+     * @return {@link TableColumnMeta}
      */
-    Future<List<TableColumnMeta>> showColumns(String table);
+    Future<List<TableColumnMeta>> showColumns(String scheme, String table);
 
     /**
      * 分页查询某张表的数据
@@ -50,17 +51,19 @@ public interface DQL {
      * @param pageIndex 分页查询起始页面
      * @param pageSize  分页查询尺寸
      * @param table     表名
+     * @param scheme    current scheme
      * @return 返回查询结果
      */
-    Future<List<String[]>> query(String table, int pageIndex, int pageSize);
+    Future<List<String[]>> query(String scheme, String table, int pageIndex, int pageSize);
 
     /**
      * 统计目标表的数量
      *
      * @param tableName 表名
+     * @param scheme    current scheme
      * @return 返回数量
      */
-    Future<Long> count(String tableName);
+    Future<Long> count(String scheme, String tableName);
 
     /**
      * 心跳查询语句
@@ -77,21 +80,15 @@ public interface DQL {
      */
     Future<Map<List<String>, List<String[]>>> executeSql(String sql);
 
-    /**
-     * show create table sql statement
-     *
-     * @param table table
-     * @return create table sql statement
-     */
-    Future<String> showCreateTable(String table);
 
     /**
      * obtain create table comment
      *
-     * @param table table
+     * @param scheme scheme
+     * @param table  table
      * @return table comment
      */
-    Future<String> getCreateTableComment(String table);
+    Future<String> getCreateTableComment(String scheme, String table);
 
     /**
      * query current database all user

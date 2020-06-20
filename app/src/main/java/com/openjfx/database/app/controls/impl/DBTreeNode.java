@@ -35,11 +35,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
     private final MenuItem openConnect;
 
-    private static final Image ICON_IMAGE = getLocalImage(
-            20,
-            20,
-            "mysql_icon.png"
-    );
+    private static final Image ICON_IMAGE = getLocalImage(20, 20, "mysql_icon.png");
 
     public DBTreeNode(ConnectionParam param) {
         super(param, ICON_IMAGE);
@@ -95,12 +91,9 @@ public class DBTreeNode extends BaseTreeNode<String> {
         if (!getChildren().isEmpty()) {
             getChildren().clear();
         }
-        //Start connecting to database
-        var pool = DATABASE_SOURCE.createPool(param.get());
-        //test connection
-        var future = pool.getDql().heartBeatQuery();
-        future.onSuccess(sc ->
-        {
+        var future = DATABASE_SOURCE.createClient(param.get());
+        future.onSuccess(rs -> {
+            setLoading(false);
             Platform.runLater(() -> {
                 //dynamic add MenuItem
                 addMenuItem(0, loseConnect);
@@ -112,7 +105,6 @@ public class DBTreeNode extends BaseTreeNode<String> {
                 var user = new UserFolderNode(getParam());
                 getChildren().addAll(database, user);
             });
-            setLoading(false);
         });
         future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.open.tips")));
     }
