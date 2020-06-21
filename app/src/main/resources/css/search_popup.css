@@ -1,5 +1,5 @@
 .search-popup {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #F5F5F5;
     -fx-spacing: 1.25em;
     -fx-alignment: center;
     -fx-padding: 0.42em 0.83em;
@@ -11,6 +11,17 @@
 
 .search-popup .left-box {
     -fx-alignment: center-left;
+}
+
+.search-popup .button:hover {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #AFAFAF;
+}
+
+.search-popup .button {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #f5f5f5;
+    -fx-border-width: 0.083em;
 }
 
 .search-popup .right-box {

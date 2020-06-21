@@ -12,6 +12,8 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -45,6 +47,8 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
 
     protected T model;
 
+    protected final Logger logger;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
@@ -52,6 +56,7 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
 
     public BaseTab(T model) {
         this.model = model;
+        this.logger = LoggerFactory.getLogger(getClass());
         //listener current tab loading status
         loading.addListener(((observable, oldValue, newValue) -> {
             final Node indicator;
@@ -110,6 +115,7 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
             var parent = (Node) fxml.load();
             setContent(parent);
         } catch (IOException e) {
+            logger.error("load fxml failed", e);
             throw new RuntimeException(e);
         }
     }

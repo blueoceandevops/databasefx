@@ -1,5 +1,6 @@
 package com.openjfx.database.app.controls;
 
+import com.openjfx.database.app.controls.impl.TableDataView;
 import com.openjfx.database.app.model.TableDataChangeMode;
 import com.openjfx.database.app.utils.TableCellUtils;
 import javafx.beans.property.ObjectProperty;
@@ -8,7 +9,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -42,6 +43,17 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
     {
         //Do not wrap to prevent text from being too long
         setWrapText(false);
+
+        addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            var tableView = getTableView();
+            if (tableView == null) {
+                return;
+            }
+            var tableRow = getTableRow();
+            var rowIndex = tableRow.getIndex();
+            tableView.getSelectionModel().setCellSelectionEnabled(true);
+            tableView.getSelectionModel().select(rowIndex, getTableColumn());
+        });
     }
 
 
@@ -84,7 +96,7 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
         var dataView = (TableDataView) getTableView();
 
         int rowIndex = getTableRow().getIndex();
-        int colIndex = getTableView().getColumns().indexOf(getTableColumn());
+        int colIndex = getTableView().getColumns().indexOf(getTableColumn()) - dataView.getColumnOffset();
 
         var optional = dataView.getChangeModel(rowIndex, colIndex);
 
@@ -124,13 +136,14 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
 
     @Override
     public void commitEdit(String newValue) {
-        String oldValue = getItem();
-        var colIndex = getTableView().getEditingCell().getColumn();
+
+        var oldValue = getItem();
         var rowIndex = getTableRow().getIndex();
+        var dataView = (TableDataView) getTableView();
+        var colIndex = dataView.getEditingCell().getColumn() - dataView.getColumnOffset();
 
         //Value change
         if (!oldValue.equals(newValue)) {
-            var dataView = (TableDataView) getTableView();
 
             var optional = dataView.getChangeModel(rowIndex, colIndex);
 
@@ -157,8 +170,8 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
         updateItem(newValue, false);
         super.commitEdit(newValue);
         //focus current tableCell
-        getTableView().requestFocus();
-        getTableView().getSelectionModel().select(rowIndex, getTableColumn());
+        dataView.requestFocus();
+        dataView.getSelectionModel().select(rowIndex, getTableColumn());
 
     }
 

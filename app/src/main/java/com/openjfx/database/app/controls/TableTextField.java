@@ -62,7 +62,7 @@ public class TableTextField extends HBox {
 //        registerFormatter(textField);
         //add css class
         getStyleClass().add("table-text-field");
-        getStylesheets().add("css/table-text-field.css");
+        getStylesheets().add("css/table_text_field.css");
     }
 
     public void setActionEvent(Handler<Void, String> handler) {

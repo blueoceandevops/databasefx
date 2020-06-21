@@ -4,7 +4,7 @@ import com.openjfx.database.DML;
 import com.openjfx.database.app.TableDataHelper;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
-import com.openjfx.database.app.controls.TableDataView;
+import com.openjfx.database.app.controls.impl.TableDataView;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.TableSearchResultModel;
 import com.openjfx.database.app.model.tab.meta.TableTabModel;
@@ -27,11 +27,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 
 import java.util.*;
 
@@ -209,7 +207,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             var model = searchList.get(index);
             var columns = tableView.getColumns();
-            var column = columns.get(model.getColumnIndex());
+            var column = columns.get(model.getColumnIndex() + tableView.getColumnOffset());
             //scroll target row
             tableView.scrollTo(model.getRowIndex());
             //scroll target column
@@ -291,6 +289,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             }
             updateDisplay();
             promise.complete();
+            tableView.setBaseNumber((pageIndex - 1) * pageSize);
             Platform.runLater(() -> tableView.getItems().addAll(list));
         });
         future.onFailure(promise::fail);
@@ -432,7 +431,7 @@ public class TableTab extends BaseTab<TableTabModel> {
     private void updateDisplay() {
         var rowIndex = tableView.getSelectionModel().getSelectedIndex();
         var t = I18N.getString("databasefx.table.label.display");
-        var info = String.format(t, rowIndex == -1 ? 0 : rowIndex, total, pageIndex);
+        var info = String.format(t, rowIndex == -1 ? 0 : rowIndex + 1, total, pageIndex);
         Platform.runLater(() -> display.setText(info));
     }
 

@@ -1,11 +1,9 @@
 package com.openjfx.database.app.component;
 
 import com.openjfx.database.DataCharset;
-import com.openjfx.database.app.component.tabs.DesignTableTab;
-import com.openjfx.database.app.controls.DesignTableView;
+import com.openjfx.database.app.controls.impl.DesignDataView;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
-import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.TableColumnMeta;
@@ -13,8 +11,6 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-
-import java.util.ResourceBundle;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
 import static com.openjfx.database.app.DatabaseFX.I18N;
@@ -45,7 +41,7 @@ public class DesignOptionBox extends VBox {
 
     private int rowIndex;
 
-    public DesignOptionBox(DesignTableView tableView) {
+    public DesignOptionBox(DesignDataView tableView) {
 
         defaultBox.setHideSelector(true);
         var grid = new GridPane();
