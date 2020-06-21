@@ -78,42 +78,39 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
     @Override
     protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
-        if (empty
-                || Objects.isNull(item)
-                || Objects.isNull(getTableView())
-                || Objects.isNull(getTableRow())) {
+        if (empty || Objects.isNull(item) || Objects.isNull(getTableView()) || Objects.isNull(getTableRow())) {
             setText(null);
             setGraphic(null);
+            getStyleClass().removeAll(NULL_STYLE, CHANGE_STYLE);
             return;
         }
         TableCellUtils.updateItem(this, textField);
 
         if (item.equals(NULL)) {
-            addClass(NULL_STYLE);
+            if (!getStyleClass().contains(NULL_STYLE)) {
+                getStyleClass().add(NULL_STYLE);
+            }
         } else {
-            removeStyle(NULL_STYLE);
+            getStyleClass().remove(NULL_STYLE);
         }
+
         var dataView = (TableDataView) getTableView();
 
         int rowIndex = getTableRow().getIndex();
         int colIndex = getTableView().getColumns().indexOf(getTableColumn()) - dataView.getColumnOffset();
-
         var optional = dataView.getChangeModel(rowIndex, colIndex);
-
-        if (optional.isPresent()) {
-            addClass(CHANGE_STYLE);
-        } else {
-            removeStyle(CHANGE_STYLE);
-        }
+        optional.ifPresentOrElse(t -> {
+            if (!getStyleClass().contains(CHANGE_STYLE)) {
+                getStyleClass().add(CHANGE_STYLE);
+            }
+        }, () -> getStyleClass().remove(CHANGE_STYLE));
         setText(item);
     }
 
     @Override
     public void startEdit() {
 
-        if (!isEditable()
-                || !getTableView().isEditable()
-                || !getTableColumn().isEditable()) {
+        if (!isEditable() || !getTableView().isEditable() || !getTableColumn().isEditable()) {
             return;
         }
 
@@ -154,61 +151,20 @@ public class TableDataCell extends TableCell<ObservableList<StringProperty>, Str
                 model.setOriginalData(oldValue);
                 model.setChangeData(newValue);
                 dataView.addChangeMode(model);
-                addClass(CHANGE_STYLE);
             } else {
                 var model = optional.get();
                 if (model.getOriginalData().equals(newValue)) {
                     dataView.removeChange(model);
-                    removeStyle(CHANGE_STYLE);
                 } else {
                     //Value update
                     model.setChangeData(newValue);
                 }
             }
         }
-        //Value change
-        updateItem(newValue, false);
         super.commitEdit(newValue);
-        //focus current tableCell
-        dataView.requestFocus();
-        dataView.getSelectionModel().select(rowIndex, getTableColumn());
-
     }
 
     public static Callback<TableColumn<ObservableList<StringProperty>, String>, TableCell<ObservableList<StringProperty>, String>> forTableColumn() {
         return list -> new TableDataCell(new DefaultStringConverter());
-    }
-
-    /**
-     * Add style
-     *
-     * @param className Style name
-     */
-    private void addClass(String className) {
-        boolean a = this.getStyleClass().contains(className);
-        //If no style has been added before - > Add
-        if (!a) {
-            this.getStyleClass().add(className);
-        }
-    }
-
-    /**
-     * Move out style name
-     *
-     * @param className style name
-     */
-    private void removeStyle(String className) {
-        ObservableList<String> list = getStyleClass();
-        List<Integer> dd = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            String cla = list.get(i);
-            if (cla.equals(className)) {
-                dd.add(i);
-            }
-        }
-        //move out style
-        for (Integer integer : dd) {
-            list.remove(integer.intValue());
-        }
     }
 }
