@@ -11,7 +11,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TextArea?>
 <?import com.openjfx.database.app.controls.SQLEditor?>
-<?import com.openjfx.database.app.controls.DesignTableView?>
+<?import com.openjfx.database.app.controls.impl.DesignDataView?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
@@ -61,7 +61,7 @@
         <SplitPane dividerPositions="0.99" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
                 <Tab text="%view.design.table.field" closable="false">
-                    <DesignTableView fx:id="fieldTable"/>
+                    <DesignDataView fx:id="fieldTable"/>
                 </Tab>
                 <Tab text="%view.design.table.comment" closable="false">
                     <TextArea fx:id="commentTextArea"/>

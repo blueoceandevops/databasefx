@@ -32,10 +32,6 @@
     -fx-text-fill: black;
 }
 
-.table-view * {
-    -fx-font-size: 1em;
-}
-
 .number-text-field {
     -fx-pref-width: 5em;
     -fx-alignment: center;

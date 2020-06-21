@@ -1,9 +1,10 @@
-package com.openjfx.database.app.controls;
+package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
+import com.openjfx.database.app.controls.DataView;
+import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
-import com.openjfx.database.app.skin.TableDataViewSkin;
 import com.openjfx.database.enums.DesignTableOperationSource;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.ColumnChangeModel;
@@ -14,8 +15,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -32,7 +31,7 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
  * @author yangkui
  * @since 1.0
  */
-public class DesignTableView extends TableView<DesignTableModel> {
+public class DesignDataView extends DataView<DesignTableModel> {
     /**
      * cached all field change
      */
@@ -42,11 +41,9 @@ public class DesignTableView extends TableView<DesignTableModel> {
      */
     private final List<TableColumnMeta> metas = new ArrayList<>();
 
-    public DesignTableView() {
-        setSortPolicy(e -> null);
-        getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        getSelectionModel().setCellSelectionEnabled(true);
-
+    public DesignDataView() {
+        setAutoColumnWidth(false);
+        setShowLineNumber(false);
         createColumn("view.design.table.field.name", TableColumnMeta.TableColumnEnum.FIELD);
         createColumn("view.design.table.field.type", TableColumnMeta.TableColumnEnum.TYPE);
         createColumn("view.design.table.field.length", TableColumnMeta.TableColumnEnum.LENGTH);
@@ -54,8 +51,6 @@ public class DesignTableView extends TableView<DesignTableModel> {
         createColumn("view.design.table.field.null", TableColumnMeta.TableColumnEnum.NULL);
         createColumn("view.design.table.field.key", TableColumnMeta.TableColumnEnum.PRIMARY_KEY);
         createColumn("view.design.table.field.comment", TableColumnMeta.TableColumnEnum.COMMENT);
-
-        setEditable(true);
     }
 
     private void createColumn(String text, TableColumnMeta.TableColumnEnum columnEnum) {
@@ -284,11 +279,6 @@ public class DesignTableView extends TableView<DesignTableModel> {
         this.changeModels.clear();
     }
 
-    @Override
-    protected Skin<?> createDefaultSkin() {
-        return new TableDataViewSkin(this);
-    }
-
     private class CustomTableCell extends TableCell<DesignTableModel, String> {
 
         private final HBox graphic = new HBox();
@@ -336,7 +326,7 @@ public class DesignTableView extends TableView<DesignTableModel> {
                 var item = getTableView().getItems().get(index);
                 var columnMeta = (TableColumnMeta.TableColumnEnum) column.getUserData();
                 var fileValue = (newValue == null ? null : newValue.toString());
-                DesignTableView.this.fieldChange(item.getMeta(), DesignTableOperationType.UPDATE, index, columnMeta, fileValue);
+                DesignDataView.this.fieldChange(item.getMeta(), DesignTableOperationType.UPDATE, index, columnMeta, fileValue);
                 item.setValue(columnEnum, fileValue);
             };
         }

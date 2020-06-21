@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Tooltip?>
-<?import com.openjfx.database.app.controls.TableDataView?>
+<?import com.openjfx.database.app.controls.impl.TableDataView?>
 <?import com.openjfx.database.app.controls.SQLEditor?>
 <?import javafx.scene.control.Button?>
 <BorderPane xmlns="http://javafx.com/javafx"

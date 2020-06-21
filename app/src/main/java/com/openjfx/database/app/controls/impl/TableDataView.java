@@ -1,16 +1,11 @@
-package com.openjfx.database.app.controls;
+package com.openjfx.database.app.controls.impl;
 
 
+import com.openjfx.database.app.controls.DataView;
 import com.openjfx.database.app.model.TableDataChangeMode;
-import com.openjfx.database.app.skin.TableDataViewSkin;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Skin;
-import javafx.scene.control.TableView;
 
 import java.util.*;
 
@@ -20,7 +15,7 @@ import java.util.*;
  * @author yangkui
  * @since 1.0
  */
-public class TableDataView extends TableView<ObservableList<StringProperty>> {
+public class TableDataView extends DataView<ObservableList<StringProperty>> {
 
     /**
      * Cache Deleted Row Data
@@ -36,13 +31,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
      * New row data
      */
     private final List<ObservableList<StringProperty>> newRows = new ArrayList<>();
-
-    public TableDataView() {
-        //Disable sorting
-        setSortPolicy(callback -> null);
-        //Enable cell selection
-        getSelectionModel().setCellSelectionEnabled(true);
-    }
 
 
     /**
@@ -130,12 +118,6 @@ public class TableDataView extends TableView<ObservableList<StringProperty>> {
     public boolean isChange() {
         return changeModes.size() != 0 || deletes.size() != 0 || newRows.size() != 0;
     }
-
-    @Override
-    protected Skin<?> createDefaultSkin() {
-        return new TableDataViewSkin(this);
-    }
-
 
     public List<ObservableList<StringProperty>> getDeletes() {
         return deletes;

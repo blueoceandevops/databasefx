@@ -1,16 +1,15 @@
 package com.openjfx.database.app.skin;
 
-import com.openjfx.database.app.controls.TableDataColumn;
+import com.openjfx.database.app.controls.DataView;
 import com.openjfx.database.app.utils.UiUtils;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.control.skin.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  * @author yangkui
  * @since 1.0
  */
-public class TableDataViewSkin extends TableViewSkin<StringProperty> {
+public class TableDataViewSkin<T> extends TableViewSkin<T> {
     private final VirtualFlow<?> flowAlias;
     private final TableHeaderRow headerAlias;
     private Parent placeholderRegionAlias;
@@ -34,8 +33,9 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
      * Listen for changes in TableColumnHeader
      */
     private final ListChangeListener<TableColumnHeader> tableColumnHeaderListChangeListener = (c) -> {
+        var tableView = (DataView<T>) getSkinnable();
         while (c.next()) {
-            if (c.wasAdded()) {
+            if (c.wasAdded() && tableView.isAutoColumnWidth()) {
                 var list = c.getAddedSubList();
                 for (TableColumnHeader header : list) {
                     var tableColumn = header.getTableColumn();
@@ -47,11 +47,15 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
                     var graphic = tableColumn.getGraphic();
                     //Calculate graphics width
                     if (Objects.nonNull(graphic)) {
-                        var icon = (ImageView) ((Label) tableColumn.getGraphic()).getGraphic();
-                        var image = icon.getImage();
-                        graphicWidth = image == null ? icon.getFitWidth() : image.getWidth();
+                        if (graphic instanceof Label) {
+                            var icon = (ImageView) ((Label) tableColumn.getGraphic()).getGraphic();
+                            var image = icon.getImage();
+                            graphicWidth = image == null ? icon.getFitWidth() : image.getWidth();
+                        }
+                        if (graphic instanceof CheckBox) {
+                            graphicWidth = ((CheckBox) graphic).getPrefWidth();
+                        }
                     }
-
                     var width = UiUtils.computeTextWidth(label);
                     var minWidth = width + graphicWidth;
                     tableColumn.setMinWidth(minWidth);
@@ -85,7 +89,7 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
      *
      * @param table the table to skin.
      */
-    public TableDataViewSkin(TableView table) {
+    public TableDataViewSkin(DataView<T> table) {
         super(table);
         flowAlias = (VirtualFlow<?>) table.lookup(".virtual-flow");
         headerAlias = (TableHeaderRow) table.lookup(".column-header-background");
@@ -113,16 +117,14 @@ public class TableDataViewSkin extends TableViewSkin<StringProperty> {
         if (placeholderRegionAlias != null) {
             throw new IllegalStateException("placeholder must not be installed more than once");
         }
-        List<Node> parents = addedSubList.stream()
-                .filter(e -> e.getStyleClass().contains("placeholder"))
-                .collect(Collectors.toList());
+        var parents = addedSubList.stream()
+                .filter(e -> e.getStyleClass().contains("placeholder")).collect(Collectors.toList());
         if (!parents.isEmpty()) {
             placeholderRegionAlias = (Parent) parents.get(0);
             placeholderRegionAlias.visibleProperty().addListener(visibleListener);
             visibleChanged(true);
-            return true;
         }
-        return false;
+        return parents.size() > 0;
     }
 
     private void tableColumnFitWith() {

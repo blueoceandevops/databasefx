@@ -147,9 +147,9 @@ public class DatabaseFxController extends BaseController<Void> {
 
         treeView.setOnKeyPressed(event -> {
             //search data in current tree view
-            if (event.isControlDown() && event.getCode() == KeyCode.F) {
-                lBox.getChildren().add(searchPopup);
-            }
+//            if (event.isControlDown() && event.getCode() == KeyCode.F) {
+//                lBox.getChildren().add(searchPopup);
+//            }
         });
         searchPopup.textChange(keyword -> {
             var cc = treeView.getRoot().getChildren();

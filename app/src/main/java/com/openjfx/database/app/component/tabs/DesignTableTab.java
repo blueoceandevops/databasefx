@@ -3,7 +3,7 @@ package com.openjfx.database.app.component.tabs;
 
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.DesignOptionBox;
-import com.openjfx.database.app.controls.DesignTableView;
+import com.openjfx.database.app.controls.impl.DesignDataView;
 import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.model.DesignTableModel;
@@ -41,7 +41,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
     private TabPane tabPane;
 
     @FXML
-    private DesignTableView fieldTable;
+    private DesignDataView fieldTable;
 
     @FXML
     private SplitPane splitPane;
