@@ -117,10 +117,12 @@ public class DialogUtils {
      * @param message message content
      */
     public static void showAlertInfo(String message) {
-        var alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("消息");
-        alert.setContentText(message);
-        alert.getDialogPane().getStylesheets().add("css/base.css");
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            var alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("消息");
+            alert.setContentText(message);
+            alert.getDialogPane().getStylesheets().add("css/base.css");
+            alert.showAndWait();
+        });
     }
 }
