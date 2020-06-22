@@ -33,6 +33,7 @@ jar {
         //添加依懒到打包文件
         configurations.runtime.collect { zipTree(it) }
     }
+    archiveName("databasefx.jar")
     manifest {
         attributes "Manifest-Version": 1.0
         attributes 'App-Name': 'databasefx'
