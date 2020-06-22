@@ -1,6 +1,5 @@
 package com.openjfx.database.utils;
 
-import com.alibaba.druid.sql.SQLUtils;
 import com.openjfx.database.enums.DatabaseType;
 
 public class SQLFormatUtils {
@@ -12,11 +11,12 @@ public class SQLFormatUtils {
      * @return format sql statement
      */
     public static String format(String sql, DatabaseType type) {
-        return switch (type) {
-            case H2 -> SQLUtils.formatHive(sql);
-            case MYSQL -> SQLUtils.formatMySql(sql);
-            case ORACLE -> SQLUtils.formatOracle(sql);
-            case SQL_SERVER -> SQLUtils.formatSQLServer(sql);
-        };
+//        return switch (type) {
+//            case H2 -> SQLUtils.formatHive(sql);
+//            case MYSQL -> SQLUtils.formatMySql(sql);
+//            case ORACLE -> SQLUtils.formatOracle(sql);
+//            case SQL_SERVER -> SQLUtils.formatSQLServer(sql);
+//        };
+        return sql;
     }
 }
