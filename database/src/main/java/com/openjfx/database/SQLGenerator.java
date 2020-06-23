@@ -57,16 +57,6 @@ public interface SQLGenerator {
     String select(List<TableColumnMeta> metas, String scheme, String table);
 
     /**
-     * generate select sql statement
-     *
-     * @param columns column name {@link Map#keySet()} field name {@link Map#values()} alias name
-     * @param scheme  target scheme
-     * @param table   target table
-     * @return sql statement
-     */
-    String select(Map<String, String> columns, String scheme, String table);
-
-    /**
      * generate insert sql
      *
      * @param columns table column list

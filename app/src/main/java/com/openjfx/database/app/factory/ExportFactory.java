@@ -81,6 +81,14 @@ public class ExportFactory {
                 for (int i = 0; i < size; i++) {
                     var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", "yyyy-MM-dd HH:mm:ss");
                     var columnName = row.getColumnName(i);
+                    //mather field alias
+                    for (EXColumnPage.FieldTableModel model : model.getSelectTableColumn()) {
+                        if (model.getField().equals(columnName)) {
+                            var alias = model.getAlias();
+                            columnName = StringUtils.isEmpty(alias) ? columnName : alias;
+                            break;
+                        }
+                    }
                     final List<String> list;
                     if (map.containsKey(columnName)) {
                         list = map.get(columnName);
@@ -441,10 +449,9 @@ public class ExportFactory {
     private String buildSql() {
         var generator = DATABASE_SOURCE.getGenerator();
         var columns = new HashMap<String, String>();
-        for (EXColumnPage.FieldTableModel model : model.getSelectTableColumn()) {
-            columns.put(model.getField(), model.getAlias());
-        }
-        return generator.select(columns, model.getScheme(), model.getTable());
+        var tableColumns = model.getSelectTableColumn().stream()
+                .map(EXColumnPage.FieldTableModel::getMeta).collect(Collectors.toList());
+        return generator.select(tableColumns, model.getScheme(), model.getTable());
     }
 
     private void writerFile(byte[] bytes) {

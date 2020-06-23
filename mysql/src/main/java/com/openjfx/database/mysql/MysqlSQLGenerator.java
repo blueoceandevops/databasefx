@@ -62,32 +62,6 @@ public class MysqlSQLGenerator implements SQLGenerator {
     }
 
     @Override
-    public String select(Map<String, String> columns, String scheme, String table) {
-        var tableName = SQLHelper.fullTableName(scheme, table);
-        var sb = new StringBuilder();
-        sb.append("SELECT ");
-        var i = 0;
-        for (Map.Entry<String, String> entry : columns.entrySet()) {
-            var field = entry.getKey();
-            var alias = entry.getValue();
-            sb.append(field);
-            if (StringUtils.nonEmpty(alias)) {
-                sb.append(" ");
-                sb.append(alias);
-            }
-            if (i == columns.size() - 1) {
-                sb.append(" ");
-            } else {
-                sb.append(",");
-            }
-            i++;
-        }
-        sb.append(" FROM ");
-        sb.append(tableName);
-        return sb.toString();
-    }
-
-    @Override
     public String insert(String[] columns, String scheme, String table, List<String> values) {
         var tableName = SQLHelper.fullTableName(scheme, table);
         var sb = new StringBuilder("INSERT INTO " + tableName + "(");
