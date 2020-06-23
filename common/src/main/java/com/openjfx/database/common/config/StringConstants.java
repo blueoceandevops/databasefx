@@ -1,16 +1,14 @@
 package com.openjfx.database.common.config;
 
 /**
- * 字符串常亮
+ * 字符串常量
  *
  * @author yangkui
  * @since 1.0
  */
 public class StringConstants {
     /**
-     *
      * 空值
-     *
      */
     public static final String NULL = "[ NULL ]";
     /**

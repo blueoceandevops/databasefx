@@ -2,9 +2,9 @@ package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.model.ExportWizardModel;
+import com.openjfx.database.app.model.EXModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
-import com.openjfx.database.app.stage.ExportWizardStage;
+import com.openjfx.database.app.stage.EXStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.model.ConnectionParam;
@@ -62,8 +62,8 @@ public class TableTreeNode extends BaseTreeNode<String> {
             future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.delete.table.fail")));
         });
         exportData.setOnAction(event -> {
-            var model = new ExportWizardModel(getUuid(), scheme, getValue());
-            new ExportWizardStage(model);
+            var model = new EXModel(getUuid(), scheme, getValue());
+            new EXStage(model);
         });
         //rename table
         rename.setOnAction(e -> {

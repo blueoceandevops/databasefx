@@ -1,7 +1,7 @@
 package com.openjfx.database.app.factory;
 
-import com.openjfx.database.app.component.paginations.ExportWizardSelectColumnPage;
-import com.openjfx.database.app.model.ExportWizardModel;
+import com.openjfx.database.app.component.paginations.EXColumnPage;
+import com.openjfx.database.app.model.EXModel;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import io.vertx.core.json.JsonArray;
@@ -15,10 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.dom.DOMDocument;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
@@ -42,7 +39,7 @@ public class ExportFactory {
     /**
      * Export configuration information
      */
-    private final ExportWizardModel model;
+    private final EXModel model;
     /**
      * Export progress
      */
@@ -52,7 +49,7 @@ public class ExportFactory {
      */
     private final StringProperty text = new SimpleStringProperty("");
 
-    private ExportFactory(ExportWizardModel model) {
+    private ExportFactory(EXModel model) {
         this.model = model;
     }
 
@@ -63,18 +60,13 @@ public class ExportFactory {
      */
     public void start() {
         setText("Pre export condition check in progress.....");
-        var a = model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.NORMAL
-                && model.getSelectTableColumn().isEmpty();
-        var b = model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.SENIOR
-                && StringUtils.isEmpty(model.getCustomExportSql());
+        var a = model.getSelectTableColumn().isEmpty();
+
         if (a) {
-            setText("常规模式至少选择一列!");
+            setText("至少选择一列导出");
             return;
         }
-        if (b) {
-            setText("高级模式下SQL语句不能为空!");
-            return;
-        }
+
         var sql = buildSql();
         setProgress(0.1);
         var client = DATABASE_SOURCE.getClient(model.getUuid());
@@ -447,14 +439,12 @@ public class ExportFactory {
     }
 
     private String buildSql() {
-        final String sql;
-        if (model.getSelectColumnPattern() == ExportWizardSelectColumnPage.SelectColumnPattern.SENIOR) {
-            sql = model.getCustomExportSql();
-        } else {
-            var generator = DATABASE_SOURCE.getGenerator();
-            sql = generator.select(model.getSelectTableColumn(), model.getScheme(), model.getTable());
+        var generator = DATABASE_SOURCE.getGenerator();
+        var columns = new HashMap<String, String>();
+        for (EXColumnPage.FieldTableModel model : model.getSelectTableColumn()) {
+            columns.put(model.getField(), model.getAlias());
         }
-        return sql;
+        return generator.select(columns, model.getScheme(), model.getTable());
     }
 
     private void writerFile(byte[] bytes) {
@@ -528,11 +518,11 @@ public class ExportFactory {
         this.text.set(text);
     }
 
-    public ExportWizardModel getModel() {
+    public EXModel getModel() {
         return model;
     }
 
-    public static ExportFactory factory(ExportWizardModel model) {
+    public static ExportFactory factory(EXModel model) {
         return new ExportFactory(model);
     }
 }

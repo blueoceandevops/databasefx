@@ -5,6 +5,7 @@ import com.openjfx.database.model.RowChangeModel;
 import com.openjfx.database.model.TableColumnMeta;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * SQL statement generation interface
@@ -54,6 +55,16 @@ public interface SQLGenerator {
      * @return sql statement
      */
     String select(List<TableColumnMeta> metas, String scheme, String table);
+
+    /**
+     * generate select sql statement
+     *
+     * @param columns column name {@link Map#keySet()} field name {@link Map#values()} alias name
+     * @param scheme  target scheme
+     * @param table   target table
+     * @return sql statement
+     */
+    String select(Map<String, String> columns, String scheme, String table);
 
     /**
      * generate insert sql

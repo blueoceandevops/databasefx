@@ -7,6 +7,7 @@ import com.openjfx.database.model.TableColumnMeta;
 import com.openjfx.database.mysql.impl.DesignTableSQLGenerator;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mysql Generator impl
@@ -49,6 +50,32 @@ public class MysqlSQLGenerator implements SQLGenerator {
         for (TableColumnMeta meta : metas) {
             sb.append(meta.getField());
             if (i == metas.size() - 1) {
+                sb.append(" ");
+            } else {
+                sb.append(",");
+            }
+            i++;
+        }
+        sb.append(" FROM ");
+        sb.append(tableName);
+        return sb.toString();
+    }
+
+    @Override
+    public String select(Map<String, String> columns, String scheme, String table) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
+        var sb = new StringBuilder();
+        sb.append("SELECT ");
+        var i = 0;
+        for (Map.Entry<String, String> entry : columns.entrySet()) {
+            var field = entry.getKey();
+            var alias = entry.getValue();
+            sb.append(field);
+            if (StringUtils.nonEmpty(alias)) {
+                sb.append(" ");
+                sb.append(alias);
+            }
+            if (i == columns.size() - 1) {
                 sb.append(" ");
             } else {
                 sb.append(",");

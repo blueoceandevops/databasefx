@@ -1,7 +1,7 @@
 package com.openjfx.database.app.component.paginations;
 
 import com.openjfx.database.app.controls.SQLEditor;
-import com.openjfx.database.app.model.ExportWizardModel;
+import com.openjfx.database.app.model.EXModel;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
@@ -12,7 +12,7 @@ import javafx.scene.layout.BorderPane;
  * @author yangkui
  * @since 1.0
  */
-public class ExportWizardInfoPage extends BorderPane {
+public class EXInfoPage extends BorderPane {
     /**
      * export text info
      */
@@ -22,7 +22,7 @@ public class ExportWizardInfoPage extends BorderPane {
      */
     private final ProgressBar progressBar = new ProgressBar();
 
-    public ExportWizardInfoPage(ExportWizardModel model) {
+    public EXInfoPage(EXModel model) {
         textArea.setEditable(false);
         progressBar.setProgress(0);
         textArea.setWrapText(true);

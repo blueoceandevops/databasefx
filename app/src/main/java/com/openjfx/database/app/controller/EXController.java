@@ -1,11 +1,11 @@
 package com.openjfx.database.app.controller;
 
 import com.openjfx.database.app.BaseController;
-import com.openjfx.database.app.component.paginations.ExportWizardFormatPage;
-import com.openjfx.database.app.component.paginations.ExportWizardInfoPage;
-import com.openjfx.database.app.component.paginations.ExportWizardSelectColumnPage;
+import com.openjfx.database.app.component.paginations.EXFormatPage;
+import com.openjfx.database.app.component.paginations.EXInfoPage;
+import com.openjfx.database.app.component.paginations.EXColumnPage;
 import com.openjfx.database.app.factory.ExportFactory;
-import com.openjfx.database.app.model.ExportWizardModel;
+import com.openjfx.database.app.model.EXModel;
 import com.openjfx.database.common.utils.OSUtils;
 
 import java.io.File;
@@ -25,7 +25,7 @@ import javafx.util.Callback;
  * @author yangkui
  * @since 1.0
  */
-public class ExportWizardController extends BaseController<ExportWizardModel> {
+public class EXController extends BaseController<EXModel> {
 
     @FXML
     private Label wizardTitle;
@@ -44,22 +44,22 @@ public class ExportWizardController extends BaseController<ExportWizardModel> {
     /**
      * format page
      */
-    private ExportWizardFormatPage formatPage;
+    private EXFormatPage formatPage;
     /**
      * select column page
      */
-    private ExportWizardSelectColumnPage selectColumnPage;
+    private EXColumnPage selectColumnPage;
     /**
      * info wizard info page
      */
-    private ExportWizardInfoPage infoPage;
+    private EXInfoPage infoPage;
 
     @Override
     public void init() {
 
-        formatPage = new ExportWizardFormatPage(data);
-        selectColumnPage = new ExportWizardSelectColumnPage(data);
-        infoPage = new ExportWizardInfoPage(data);
+        formatPage = new EXFormatPage(data);
+        selectColumnPage = new EXColumnPage(data);
+        infoPage = new EXInfoPage(data);
         pagination.setPageFactory(pageFactory());
     }
 

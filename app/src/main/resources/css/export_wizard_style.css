@@ -49,27 +49,6 @@
     -fx-padding: 0.83em;
 }
 
-.list-view * {
-    -fx-background-color: transparent;
-}
-
-.list-view .list-cell:hover {
-    -fx-background-color: #F6FBFE;
-}
-
-.list-view .list-cell:selected {
-    -fx-background-color: #7ac4f0;
-}
-
-.export-wizard-select-column-page .top-box, .export-wizard-select-column-page .bottom-box {
-    -fx-padding: 0.83em;
-    -fx-spacing: 0.83em;
-}
-
-.export-wizard-select-column-page .export-wizard-select-column-item {
-    -fx-spacing: 0.83em;
-}
-
 .export-wizard-info {
     -fx-background-color: #ffffff;
 }
@@ -79,5 +58,9 @@
 }
 
 .export-wizard-info .text-area {
+    -fx-background-color: transparent;
+}
+
+.export-wizard-select-column-page .field-table-view .text-field {
     -fx-background-color: transparent;
 }

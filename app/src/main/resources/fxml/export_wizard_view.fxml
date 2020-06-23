@@ -6,7 +6,7 @@
 <?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.openjfx.database.app.controller.ExportWizardController">
+            fx:controller="com.openjfx.database.app.controller.EXController">
     <stylesheets>
         <URL value="@/css/export_wizard_style.css"/>
     </stylesheets>

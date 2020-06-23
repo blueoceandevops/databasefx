@@ -1,21 +1,21 @@
 package com.openjfx.database.app.component.paginations;
 
-import com.openjfx.database.app.model.ExportWizardModel;
+import com.openjfx.database.app.model.EXModel;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import static com.openjfx.database.app.component.paginations.ExportWizardFormatPage.ExportDataType.*;
+import static com.openjfx.database.app.component.paginations.EXFormatPage.ExportDataType.*;
 
 /**
  * @author yangkui
  * @since 1.0
  */
-public class ExportWizardFormatPage extends BorderPane {
+public class EXFormatPage extends BorderPane {
 
-    public ExportWizardFormatPage(ExportWizardModel model) {
+    public EXFormatPage(EXModel model) {
 
         var txt = new RadioButton("文本格式(*.txt)");
         var csv = new RadioButton("CSV文件(*.csv)");
