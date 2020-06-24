@@ -27,6 +27,20 @@
     -fx-border-color: #afafaf;
 }
 
+.design-table-option {
+    -fx-spacing: 1em;
+    -fx-alignment: top-center;
+}
+
+.design-table-option HBox {
+    -fx-alignment: center-left;
+}
+
+
+.design-table-option .label {
+    -fx-pref-width: 12em;
+}
+
 .design-table-option .choice-box {
     -fx-pref-width: 25em;
 }

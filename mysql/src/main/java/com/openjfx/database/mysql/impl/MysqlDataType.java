@@ -6,7 +6,6 @@ import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.model.DataTypeModel;
 import io.vertx.core.json.JsonObject;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,6 +75,18 @@ public class MysqlDataType implements DataType {
             result = category.equals(dataTypeEnum.toString());
         }
         return result;
+    }
+
+    @Override
+    public DataTypeEnum getCategory(String type) {
+        var dataType = DataTypeEnum.STRING;
+        if (isCategory(type, DataTypeEnum.NUMBER)) {
+            dataType = DataTypeEnum.NUMBER;
+        }
+        if (isCategory(type, DataTypeEnum.DATETIME)) {
+            dataType = DataTypeEnum.DATETIME;
+        }
+        return dataType;
     }
 
     @Override

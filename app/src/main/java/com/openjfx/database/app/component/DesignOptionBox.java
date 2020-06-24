@@ -1,6 +1,7 @@
 package com.openjfx.database.app.component;
 
 import com.openjfx.database.DataCharset;
+import com.openjfx.database.DataType;
 import com.openjfx.database.app.controls.impl.DesignDataView;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
@@ -22,43 +23,41 @@ import static com.openjfx.database.app.DatabaseFX.I18N;
  * @since 1.0
  */
 public class DesignOptionBox extends VBox {
+    private int rowIndex;
+    private DesignTableModel model;
+
+    private final CheckBox unSignedCheck = new CheckBox();
+    private final CheckBox incrementCheck = new CheckBox();
+    private final DataType dataType = DATABASE_SOURCE.getDataType();
+    private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
 
     private final EditChoiceBox<String> defaultBox = new EditChoiceBox<>();
     private final EditChoiceBox<String> charsetBox = new EditChoiceBox<>();
     private final EditChoiceBox<String> collationBox = new EditChoiceBox<>();
-    private final CheckBox incrementCheck = new CheckBox();
-    private final CheckBox unSignedCheck = new CheckBox();
-
-    /**
-     * database source
-     */
-    private final DataCharset dataCharset = DATABASE_SOURCE.getCharset();
-    /**
-     * design table model
-     */
-    private DesignTableModel model;
 
 
-    private int rowIndex;
+    private final HBox h = new HBox();
+    private final HBox h1 = new HBox();
+    private final HBox h2 = new HBox();
+    private final HBox h3 = new HBox();
+    private final HBox h4 = new HBox();
 
     public DesignOptionBox(DesignDataView tableView) {
 
         defaultBox.setHideSelector(true);
-        var grid = new GridPane();
+
         var unSigned = new Label(I18N.getString("view.design.table.option.unsigned"));
         var defaultLabel = new Label(I18N.getString("view.design.table.option.default"));
         var charsetLabel = new Label(I18N.getString("view.design.table.option.charset"));
         var collationLabel = new Label(I18N.getString("view.design.table.option.collation"));
         var autoIncrement = new Label(I18N.getString("view.design.table.option.auto"));
-        grid.addRow(0, autoIncrement, incrementCheck);
-        grid.addRow(1, unSigned, unSignedCheck);
-        grid.addRow(2, defaultLabel, defaultBox);
-        grid.addRow(3, charsetLabel, charsetBox);
-        grid.addRow(4, collationLabel, collationBox);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.getRowConstraints().add(new RowConstraints());
-        grid.getColumnConstraints().add(new ColumnConstraints());
+
+
+        h.getChildren().addAll(autoIncrement, incrementCheck);
+        h1.getChildren().addAll(unSigned, unSignedCheck);
+        h2.getChildren().addAll(defaultLabel, defaultBox);
+        h3.getChildren().addAll(charsetLabel, charsetBox);
+        h4.getChildren().addAll(collationLabel, collationBox);
 
 
         charsetBox.getItems().addAll(dataCharset.getCharset());
@@ -87,8 +86,6 @@ public class DesignOptionBox extends VBox {
                 }
             }
         });
-
-        this.getChildren().add(grid);
 
         //update all listener
         defaultBox.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -119,12 +116,18 @@ public class DesignOptionBox extends VBox {
     public void updateValue(DesignTableModel model, int rowIndex) {
         this.model = model;
         this.rowIndex = rowIndex;
-
         final String defaultValue;
         if (model.getDefaultValue() == null) {
             defaultValue = "";
         } else {
             defaultValue = model.getDefaultValue();
+        }
+        var type = dataType.getCategory(model.getType());
+        getChildren().clear();
+        switch (type) {
+            case NUMBER -> getChildren().addAll(h, h1, h2);
+            case STRING -> getChildren().addAll(h2, h3, h4);
+            case DATETIME -> getChildren().addAll(h2);
         }
         //update value
         this.charsetBox.setText(model.getCharset());

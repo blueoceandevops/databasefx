@@ -60,6 +60,14 @@ public interface DataType {
     boolean isCategory(String typeName, DataTypeEnum dataTypeEnum);
 
     /**
+     * get current type belong to category
+     *
+     * @param type database type
+     * @return {@link DataTypeEnum}
+     */
+    DataTypeEnum getCategory(String type);
+
+    /**
      * Get field decimal places
      *
      * @param fieldType field type
