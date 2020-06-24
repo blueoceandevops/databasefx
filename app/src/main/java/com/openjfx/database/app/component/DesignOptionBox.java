@@ -5,6 +5,7 @@ import com.openjfx.database.DataType;
 import com.openjfx.database.app.controls.impl.DesignDataView;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
+import com.openjfx.database.app.utils.UiUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.TableColumnMeta;
@@ -52,7 +53,6 @@ public class DesignOptionBox extends VBox {
         var collationLabel = new Label(I18N.getString("view.design.table.option.collation"));
         var autoIncrement = new Label(I18N.getString("view.design.table.option.auto"));
 
-
         h.getChildren().addAll(autoIncrement, incrementCheck);
         h1.getChildren().addAll(unSigned, unSignedCheck);
         h2.getChildren().addAll(defaultLabel, defaultBox);
@@ -61,7 +61,6 @@ public class DesignOptionBox extends VBox {
 
 
         charsetBox.getItems().addAll(dataCharset.getCharset());
-
         charsetBox.textProperty().addListener((observable, oldValue, newValue) -> {
             boolean canUpdate = false;
             if (StringUtils.nonEmpty(model.getCollation())) {

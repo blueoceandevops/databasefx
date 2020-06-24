@@ -1,6 +1,7 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
+import com.openjfx.database.app.component.tabs.DesignTableTab;
 import com.openjfx.database.app.controls.DataView;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
@@ -41,7 +42,10 @@ public class DesignDataView extends DataView<DesignTableModel> {
      */
     private final List<TableColumnMeta> metas = new ArrayList<>();
 
-    public DesignDataView() {
+    private final DesignTableTab tab;
+
+    public DesignDataView(DesignTableTab tab) {
+        this.tab = tab;
         setAutoColumnWidth(false);
         setShowLineNumber(false);
         createColumn("view.design.table.field.name", TableColumnMeta.TableColumnEnum.FIELD);
@@ -51,6 +55,7 @@ public class DesignDataView extends DataView<DesignTableModel> {
         createColumn("view.design.table.field.null", TableColumnMeta.TableColumnEnum.NULL);
         createColumn("view.design.table.field.key", TableColumnMeta.TableColumnEnum.PRIMARY_KEY);
         createColumn("view.design.table.field.comment", TableColumnMeta.TableColumnEnum.COMMENT);
+        getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> updateBoxValue()));
     }
 
     private void createColumn(String text, TableColumnMeta.TableColumnEnum columnEnum) {
@@ -79,6 +84,18 @@ public class DesignDataView extends DataView<DesignTableModel> {
         }
         column.prefWidthProperty().bind(widthProperty().multiply(prop));
         getColumns().add(column);
+    }
+
+    /**
+     * according data type dynamic update bottom show item
+     */
+    public void updateBoxValue() {
+        var index = getSelectionModel().getSelectedIndex();
+        if (index == -1) {
+            return;
+        }
+        var item = getItems().get(index);
+        tab.getBox().updateValue(item, index);
     }
 
     /**
@@ -328,6 +345,9 @@ public class DesignDataView extends DataView<DesignTableModel> {
                 var fileValue = (newValue == null ? null : newValue.toString());
                 DesignDataView.this.fieldChange(item.getMeta(), DesignTableOperationType.UPDATE, index, columnMeta, fileValue);
                 item.setValue(columnEnum, fileValue);
+                if (columnMeta == TableColumnMeta.TableColumnEnum.TYPE) {
+                    updateBoxValue();
+                }
             };
         }
 

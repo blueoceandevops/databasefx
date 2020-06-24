@@ -18,10 +18,13 @@ import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.TableColumnMeta;
 import com.openjfx.database.utils.SQLFormatUtils;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -41,7 +44,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
     private TabPane tabPane;
 
     @FXML
-    private DesignDataView fieldTable;
+    private Tab fieldTab;
 
     @FXML
     private SplitPane splitPane;
@@ -54,6 +57,8 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     private DesignOptionBox box;
 
+    private final DesignDataView fieldTable;
+
     private AbstractDataBaseClient client;
     /**
      * un-title
@@ -64,6 +69,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     public DesignTableTab(DesignTabModel model) {
         super(model);
+        this.fieldTable = new DesignDataView(this);
         loadView("design_tab_view.fxml");
         setTabIcon(IMAGE_ICON);
     }
@@ -71,7 +77,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
     @Override
     public void init() {
         initDataTable();
-
+        fieldTab.setContent(this.fieldTable);
         box = new DesignOptionBox(fieldTable);
         splitPane.getItems().add(box);
 
@@ -91,16 +97,6 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
                 }
             }
         });
-
-        fieldTable.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
-            var index = newValue.intValue();
-            if (index == -1) {
-                return;
-            }
-            var model = fieldTable.getItems().get(index);
-            box.updateValue(model, index);
-        }));
-
         //dynamic show/hide bottom DesignOptionBox
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             var index = newValue.intValue();
@@ -227,5 +223,9 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
         }
 
         Platform.runLater(() -> setText(title));
+    }
+
+    public DesignOptionBox getBox() {
+        return box;
     }
 }

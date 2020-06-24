@@ -60,9 +60,7 @@
     <center>
         <SplitPane dividerPositions="0.99" orientation="VERTICAL" BorderPane.alignment="CENTER" fx:id="splitPane">
             <TabPane fx:id="tabPane">
-                <Tab text="%view.design.table.field" closable="false">
-                    <DesignDataView fx:id="fieldTable"/>
-                </Tab>
+                <Tab text="%view.design.table.field" closable="false" fx:id="fieldTab"/>
                 <Tab text="%view.design.table.comment" closable="false">
                     <TextArea fx:id="commentTextArea"/>
                 </Tab>

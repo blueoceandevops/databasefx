@@ -1,5 +1,6 @@
 package com.openjfx.database.mysql.impl;
 
+import com.openjfx.database.DataType;
 import com.openjfx.database.common.utils.StringUtils;
 import com.openjfx.database.enums.DesignTableOperationType;
 import com.openjfx.database.model.RowChangeModel;
@@ -35,6 +36,7 @@ public class DesignTableSQLGenerator {
                 .filter(rowChangeModel -> rowChangeModel.getSource() == TABLE_FIELD)
                 .collect(Collectors.toList());
         var i = 0;
+        var dataType = new MysqlDataType();
         for (RowChangeModel row : updateFieldList) {
             var operateType = row.getOperationType();
             var meta = row.getTableColumnMeta();
@@ -61,7 +63,7 @@ public class DesignTableSQLGenerator {
                     }
                 }
                 sb.append(" ");
-                sb.append(updateTableField(row, meta));
+                sb.append(updateTableField(row, meta, dataType));
             } else {
                 sb.append("DROP COLUMN ");
                 sb.append(SQLHelper.escapeSingleField(meta.getField()));
@@ -100,6 +102,7 @@ public class DesignTableSQLGenerator {
                 .filter(rowChangeModel -> rowChangeModel.getSource() == TABLE_FIELD)
                 .collect(Collectors.toList());
         var i = 0;
+        var dataType = new MysqlDataType();
         for (RowChangeModel row : updateFieldList) {
             var meta = row.getTableColumnMeta();
             var optional = row.getColumn(TableColumnMeta.TableColumnEnum.FIELD);
@@ -109,7 +112,7 @@ public class DesignTableSQLGenerator {
                 sb.append(meta.getField());
             }
             sb.append(" ");
-            sb.append(updateTableField(row, meta));
+            sb.append(updateTableField(row, meta, dataType));
             var option = row.getColumn(TableColumnMeta.TableColumnEnum.PRIMARY_KEY);
             option.ifPresent(column -> sb.append("PRIMARY KEY"));
             if (i != updateFieldList.size() - 1) {
@@ -126,13 +129,14 @@ public class DesignTableSQLGenerator {
         return sb.toString();
     }
 
-    private static String updateTableField(RowChangeModel rowChangeModel, TableColumnMeta meta) {
+    private static String updateTableField(RowChangeModel rowChangeModel, TableColumnMeta meta, DataType dataType) {
         var sb = new StringBuilder();
         var a = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.TYPE);
         var b = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.LENGTH);
         var c = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.DECIMAL_POINT);
+        var hasCharset = false;
+        final String type;
         if (a.isPresent() || b.isPresent() || c.isEmpty()) {
-            final String type;
             if (a.isPresent()) {
                 type = a.get().getNewValue();
             } else {
@@ -150,22 +154,27 @@ public class DesignTableSQLGenerator {
             sb.append(")");
         } else {
             sb.append(meta.getOriginalType());
+            type = dataType.getDataType(meta.getType());
         }
         sb.append(" ");
+        hasCharset = dataType.isCategory(type, DataType.DataTypeEnum.STRING);
         var d = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.UN_SIGNED);
         var dd = d.map(column -> Boolean.parseBoolean(column.getNewValue())).orElse(meta.getUnsigned());
         if (dd) {
             sb.append("UNSIGNED ");
         }
-        var e = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.CHARSET);
-        var f = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COLLATION);
-        if (StringUtils.nonEmpty(meta.getCharset()) || e.isPresent() || f.isPresent()) {
-            sb.append("CHARACTER SET ");
-            sb.append(e.isPresent() ? e.get().getNewValue() : meta.getCharset());
-            sb.append(" COLLATE ");
-            sb.append(f.isPresent() ? f.get().getNewValue() : meta.getCollation());
+        //only string set charset and collate
+        if (hasCharset) {
+            var e = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.CHARSET);
+            var f = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COLLATION);
+            if (StringUtils.nonEmpty(meta.getCharset()) || e.isPresent() || f.isPresent()) {
+                sb.append("CHARACTER SET ");
+                sb.append(e.isPresent() ? e.get().getNewValue() : meta.getCharset());
+                sb.append(" COLLATE ");
+                sb.append(f.isPresent() ? f.get().getNewValue() : meta.getCollation());
+            }
+            sb.append(" ");
         }
-        sb.append(" ");
         var g = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.NULL);
         var nullable = g
                 .map(columnChangeModel -> Boolean.parseBoolean(columnChangeModel.getNewValue()))
