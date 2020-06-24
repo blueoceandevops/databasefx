@@ -168,12 +168,16 @@ public class DesignTableSQLGenerator {
             var e = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.CHARSET);
             var f = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.COLLATION);
             if (StringUtils.nonEmpty(meta.getCharset()) || e.isPresent() || f.isPresent()) {
-                sb.append("CHARACTER SET ");
-                sb.append(e.isPresent() ? e.get().getNewValue() : meta.getCharset());
-                sb.append(" COLLATE ");
-                sb.append(f.isPresent() ? f.get().getNewValue() : meta.getCollation());
+                var charset = e.isPresent() ? e.get().getNewValue() : meta.getCharset();
+                var collate = f.isPresent() ? f.get().getNewValue() : meta.getCollation();
+                if (StringUtils.nonEmpty(charset) && StringUtils.nonEmpty(collate)) {
+                    sb.append("CHARACTER SET ");
+                    sb.append(charset);
+                    sb.append(" COLLATE ");
+                    sb.append(collate);
+                    sb.append(" ");
+                }
             }
-            sb.append(" ");
         }
         var g = rowChangeModel.getColumn(TableColumnMeta.TableColumnEnum.NULL);
         var nullable = g
