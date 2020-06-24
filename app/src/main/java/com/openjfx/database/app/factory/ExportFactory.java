@@ -98,7 +98,6 @@ public class ExportFactory {
                         map.put(columnName, list);
                     }
                     list.add(val);
-                    setProgress((1f - progress.getValue()) * (10f * count + i) / (rowSize * size));
                 }
                 count++;
             }

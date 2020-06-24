@@ -13,6 +13,7 @@ import com.openjfx.database.common.utils.OSUtils;
 
 import java.io.File;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -133,7 +134,7 @@ public class EXController extends BaseController<EXModel> {
                 }
                 try {
                     OSUtils.openFile(data.getPath());
-                    stage.close();
+                    Platform.runLater((stage::close));
                 } catch (Exception e) {
                     DialogUtils.showNotification("打开文件失败", Pos.TOP_CENTER, NotificationType.ERROR, stage);
                 }
