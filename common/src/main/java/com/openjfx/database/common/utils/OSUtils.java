@@ -1,5 +1,11 @@
 package com.openjfx.database.common.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.File;
+
 /**
  * 系统相关操作工具类
  *
@@ -34,6 +40,8 @@ public class OSUtils {
         }
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(OSUtils.class);
+
     /**
      * 获取操作系统名称
      *
@@ -50,6 +58,22 @@ public class OSUtils {
      */
     public static String getUserHome() {
         return System.getProperty("user.home");
+    }
+
+    /**
+     * call local progress open fix file
+     *
+     * @param path file path
+     * @throws Exception {@inheritDoc}
+     */
+    public static void openFile(String path) throws Exception {
+        var file = new File(path);
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (Exception e) {
+            LOG.error("Open file fail", e);
+            throw new RuntimeException(e);
+        }
     }
 
 }

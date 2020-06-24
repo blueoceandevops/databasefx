@@ -3,6 +3,8 @@ package com.openjfx.database.app.model;
 import com.openjfx.database.app.component.paginations.EXFormatPage;
 import com.openjfx.database.app.component.paginations.EXColumnPage;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,10 @@ public class EXModel {
      * user select table column
      */
     private List<EXColumnPage.FieldTableModel> selectTableColumn = new ArrayList<>();
+    /**
+     * timestamp
+     */
+    private String timePattern = "yyyyMMddHHmm";
 
     /**
      * export data format default txt
@@ -81,12 +87,21 @@ public class EXModel {
         this.selectTableColumn = selectTableColumn;
     }
 
+    public void setTimePattern(String timePattern) {
+        this.timePattern = timePattern;
+    }
+
+    public String getTimePattern() {
+        return timePattern;
+    }
+
     @Override
     public String toString() {
-        return "ExportWizardModel{" +
+        return "EXModel{" +
                 "uuid='" + uuid + '\'' +
                 ", scheme='" + scheme + '\'' +
                 ", table='" + table + '\'' +
+                ", path='" + path + '\'' +
                 ", selectTableColumn=" + selectTableColumn +
                 ", exportDataType=" + exportDataType +
                 '}';

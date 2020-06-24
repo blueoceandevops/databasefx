@@ -19,11 +19,14 @@ public class EditChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
 
     public EditChoiceBoxSkin(EditChoiceBox<T> control) {
         super(control);
+        textField.setEditable(control.isEdit());
         var label = (Label) getChildren().get(0);
         var openButton = (StackPane) getChildren().get(1);
 
         label.setGraphic(textField);
         label.setGraphicTextGap(0);
+        //listener edit property
+        control.editProperty().addListener((observable, oldValue, newValue) -> textField.setEditable(newValue));
         //forbid text show in label
         label.textProperty().addListener((observable, oldValue, newValue) -> label.setText(""));
         //hide open button

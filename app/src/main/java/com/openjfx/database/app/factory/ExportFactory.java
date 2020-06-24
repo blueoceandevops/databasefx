@@ -79,7 +79,7 @@ public class ExportFactory {
             int count = 0;
             for (Row row : rows) {
                 for (int i = 0; i < size; i++) {
-                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", "yyyy-MM-dd HH:mm:ss");
+                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", model.getTimePattern());
                     var columnName = row.getColumnName(i);
                     //mather field alias
                     for (EXColumnPage.FieldTableModel model : model.getSelectTableColumn()) {

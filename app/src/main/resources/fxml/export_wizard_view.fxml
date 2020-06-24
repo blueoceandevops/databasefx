@@ -16,7 +16,7 @@
         </HBox>
     </top>
     <center>
-        <Pagination pageCount="3" fx:id="pagination"/>
+        <Pagination pageCount="4" fx:id="pagination"/>
     </center>
     <bottom>
         <HBox styleClass="bottom-box">

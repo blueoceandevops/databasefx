@@ -45,6 +45,7 @@ public class EXColumnPage extends BorderPane {
             Platform.runLater(() -> {
                 tableView.getItems().clear();
                 tableView.getItems().addAll(items);
+                tableView.selectAll();
             });
         });
         future.onFailure(t -> DialogUtils.showErrorDialog(t, "获取表列数据失败"));
@@ -75,6 +76,10 @@ public class EXColumnPage extends BorderPane {
                 }
             });
             getStyleClass().add("field-table-view");
+        }
+
+        public void selectAll() {
+            checkAll.setSelected(true);
         }
 
         private void createTableColumn(CTableColumn cTableColumn) {

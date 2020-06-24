@@ -25,6 +25,10 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
      * is hide selector
      */
     private final BooleanProperty hideSelector = new SimpleBooleanProperty(false);
+    /**
+     * {@link javafx.scene.control.TextField} allow edit?
+     */
+    private final BooleanProperty edit = new SimpleBooleanProperty(true);
 
     private final static String DEFAULT_STYLE_CLASS = "edit-choice-box";
 
@@ -33,6 +37,11 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
     public EditChoiceBox() {
         getStyleClass().add(DEFAULT_STYLE_CLASS);
         editChoiceBoxSkin = new EditChoiceBoxSkin<>(this);
+    }
+
+    public EditChoiceBox(boolean edit) {
+        this();
+        this.setEdit(edit);
     }
 
     public EditChoiceBox(ObservableList<T> items) {
@@ -67,5 +76,17 @@ public class EditChoiceBox<T> extends ChoiceBox<T> {
 
     public void setHideSelector(boolean hideSelector) {
         this.hideSelector.set(hideSelector);
+    }
+
+    public boolean isEdit() {
+        return edit.get();
+    }
+
+    public BooleanProperty editProperty() {
+        return edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit.set(edit);
     }
 }

@@ -64,3 +64,13 @@
 .export-wizard-select-column-page .field-table-view .text-field {
     -fx-background-color: transparent;
 }
+
+.ex-convert-page {
+    -fx-hgap: 1.5em;
+    -fx-vgap: 1em;
+    -fx-padding: 1em;
+}
+
+.ex-convert-page .text-field {
+    -fx-pref-width: 15em;
+}
