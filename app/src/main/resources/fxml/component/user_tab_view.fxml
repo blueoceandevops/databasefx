@@ -8,6 +8,14 @@
 <?import javafx.scene.control.Tab?>
 <?import java.net.URL?>
 <?import com.openjfx.database.app.controls.SQLEditor?>
+<?import impl.org.controlsfx.skin.GridRow?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.skin.SplitPaneSkin.ContentDivider?>
+<?import javafx.scene.control.Separator?>
+<?import com.openjfx.database.app.controls.impl.ServerPermitDataView?>
 <BorderPane xmlns="http://javafx.com/javafx" prefHeight="400.0" prefWidth="600.0"
             xmlns:fx="http://javafx.com/fxml">
     <stylesheets>
@@ -20,11 +28,54 @@
     </top>
     <center>
         <TabPane fx:id="tabPane">
-            <Tab text="%app.routine" closable="false"/>
-            <Tab text="高级" closable="false"/>
-            <Tab text="服务器权限" closable="false"/>
+            <Tab text="%app.routine" closable="false">
+                <GridPane styleClass="grid-pane">
+                    <Label text="用户名:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="主机:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="插件:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ChoiceBox GridPane.rowIndex="2" GridPane.columnIndex="1" fx:id="plugins"/>
+                    <Label text="密码:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <PasswordField GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="确定密码:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <PasswordField GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <Label text="密码过期策略:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                    <ChoiceBox GridPane.rowIndex="5" GridPane.columnIndex="1" fx:id="policies"/>
+                </GridPane>
+            </Tab>
+            <Tab text="高级" closable="false">
+                <HBox styleClass="senior-box">
+                    <GridPane styleClass="grid-pane">
+                        <Label text="每小时最多查询量:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="每小时最更新数:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Label text="每小时最多连接数:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <Label text="最大用户连接数:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        <Label text="备注:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <Label GridPane.rowIndex="4" GridPane.columnIndex="1" text="0(默认)=没有限制"/>
+                    </GridPane>
+                    <Separator orientation="VERTICAL"/>
+                    <GridPane styleClass="grid-pane">
+                        <Label text="SSL类型:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ChoiceBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="Cipher:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Label text="发型者:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <Label text="主旨:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </HBox>
+            </Tab>
+            <Tab text="服务器权限" closable="false">
+                <ServerPermitDataView fx:id="permitDataView"/>
+            </Tab>
             <Tab text="%app.preview" closable="false">
-                <SQLEditor/>
+                <SQLEditor editable="false"/>
             </Tab>
         </TabPane>
     </center>

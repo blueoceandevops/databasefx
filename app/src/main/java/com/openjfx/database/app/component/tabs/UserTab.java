@@ -1,12 +1,16 @@
 package com.openjfx.database.app.component.tabs;
 
 import com.openjfx.database.app.component.BaseTab;
+import com.openjfx.database.app.controls.impl.ServerPermitDataView;
 import com.openjfx.database.app.model.tab.meta.UserTabModel;
 import com.openjfx.database.app.utils.AssetUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+
+import java.security.PrivilegedAction;
 
 /**
  * database user tab
@@ -17,6 +21,15 @@ import javafx.scene.image.Image;
 public class UserTab extends BaseTab<UserTabModel> {
     @FXML
     private TabPane tabPane;
+
+    @FXML
+    private ChoiceBox<String> plugins;
+
+    @FXML
+    private ChoiceBox<String> policies;
+
+    @FXML
+    private ServerPermitDataView permitDataView;
 
     /**
      * user icon
@@ -34,7 +47,8 @@ public class UserTab extends BaseTab<UserTabModel> {
 
     @Override
     public void init() {
-
+        plugins.getItems().addAll("mysql_native_password", "sha256_password");
+        policies.getItems().addAll("DEFAULT", "IMMEDIATE", "INTERVAL", "NEVER");
     }
 
     @Override

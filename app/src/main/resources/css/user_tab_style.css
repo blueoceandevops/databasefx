@@ -32,10 +32,25 @@
 }
 
 .tab-pane .tab .tab-label {
-    -fx-padding: 0.42em 0.83em;
+    -fx-padding: 0em 1em;
 }
 
 .tab-pane .tab:selected {
     -fx-background-color: #ffffff;
     -fx-border-width: 0.083em 0.083em 0em 0.083em;
+}
+
+.grid-pane {
+    -fx-padding: 1em;
+    -fx-vgap: 1em;
+    -fx-hgap: 1em;
+    -fx-alignment: top-center;
+}
+
+.grid-pane .text-field, .choice-box {
+    -fx-pref-width: 15em;
+}
+.senior-box{
+    -fx-alignment: top-center;
+    -fx-padding: 1em 0em;
 }
