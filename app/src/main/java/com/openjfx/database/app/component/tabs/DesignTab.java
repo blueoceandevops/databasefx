@@ -39,7 +39,7 @@ import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
  * @author yangkui
  * @since 1.0
  */
-public class DesignTableTab extends BaseTab<DesignTabModel> {
+public class DesignTab extends BaseTab<DesignTabModel> {
     @FXML
     private TabPane tabPane;
 
@@ -67,7 +67,7 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     private final static Image IMAGE_ICON = AssetUtils.getLocalImage(20, 20, "design_table_icon.png");
 
-    public DesignTableTab(DesignTabModel model) {
+    public DesignTab(DesignTabModel model) {
         super(model);
         this.fieldTable = new DesignDataView(this);
         loadView("design_tab_view.fxml");
@@ -227,5 +227,10 @@ public class DesignTableTab extends BaseTab<DesignTabModel> {
 
     public DesignOptionBox getBox() {
         return box;
+    }
+
+    @Override
+    public TabType getTabType() {
+        return TabType.DESIGN_TABLE_TAB;
     }
 }

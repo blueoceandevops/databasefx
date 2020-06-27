@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
@@ -28,6 +27,30 @@ import static com.openjfx.database.app.DatabaseFX.I18N;
  * @since 1.0
  */
 public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Initializable {
+    /**
+     * tab type
+     *
+     * @author yangkui
+     * @since 1.0
+     */
+    public static enum TabType {
+        /**
+         * Regular base table tab
+         */
+        BASE_TABLE_TAB,
+        /**
+         * Table view tab
+         */
+        VIEW_TAB,
+        /**
+         * design table tab
+         */
+        DESIGN_TABLE_TAB,
+        /**
+         * user tab
+         */
+        USER_TAB
+    }
 
     /**
      * Loading state, prevent repeated loading true means false is not in loading
@@ -123,4 +146,11 @@ public abstract class BaseTab<T extends BaseTabMode> extends Tab implements Init
     protected String i18nStr(String key) {
         return resourceBundle.getString(key);
     }
+
+    /**
+     * obtain current tab type
+     *
+     * @return {@link TabType}
+     */
+    public abstract TabType getTabType();
 }

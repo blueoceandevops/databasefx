@@ -1,5 +1,6 @@
 package com.openjfx.database.app.model.tab.meta;
 
+import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
 import com.openjfx.database.app.controls.impl.TableViewTreeNode;
 import com.openjfx.database.app.model.tab.BaseTabMode;
@@ -28,9 +29,9 @@ public class TableTabModel extends BaseTabMode {
     /**
      * Table type
      */
-    private TableType tableType;
+    private final BaseTab.TabType tableType;
 
-    public TableTabModel(String uuid, String flag, String scheme, String table, String serverName, TableType tableType) {
+    public TableTabModel(String uuid, String flag, String scheme, String table, String serverName, BaseTab.TabType tableType) {
         super(uuid, flag);
         this.scheme = scheme;
         this.table = table;
@@ -42,21 +43,21 @@ public class TableTabModel extends BaseTabMode {
         final String scheme;
         final String serverName;
         final String tableName;
-        final TableType tableType;
+        final BaseTab.TabType tableType;
         final String uuid;
         if (treeNode instanceof TableTreeNode) {
             var tableNode = (TableTreeNode) treeNode;
             scheme = tableNode.getScheme();
             serverName = tableNode.getServerName();
             tableName = tableNode.getValue();
-            tableType = TableType.BASE_TABLE;
+            tableType = BaseTab.TabType.BASE_TABLE_TAB;
             uuid = tableNode.getUuid();
         } else {
             var viewNode = (TableViewTreeNode) treeNode;
             scheme = viewNode.getScheme();
             serverName = viewNode.getServerName();
             tableName = viewNode.getValue();
-            tableType = TableType.VIEW;
+            tableType = BaseTab.TabType.VIEW_TAB;
             uuid = viewNode.getUuid();
         }
         var flag = uuid + "_" + scheme + "_" + tableName;
@@ -75,32 +76,7 @@ public class TableTabModel extends BaseTabMode {
         return serverName;
     }
 
-    public TableType getTableType() {
+    public BaseTab.TabType getTableType() {
         return tableType;
-    }
-
-    public void setTableType(TableType tableType) {
-        this.tableType = tableType;
-    }
-
-    /**
-     * table type
-     *
-     * @author yangkui
-     * @since 1.0
-     */
-    public enum TableType {
-        /**
-         * system view
-         */
-        SYSTEM_VIEW,
-        /**
-         * base table
-         */
-        BASE_TABLE,
-        /**
-         * view
-         */
-        VIEW
     }
 }

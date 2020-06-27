@@ -87,7 +87,7 @@ public class TableTab extends BaseTab<TableTabModel> {
 
     public TableTab(TableTabModel model) {
         super(model);
-        if (model.getTableType() == TableTabModel.TableType.BASE_TABLE) {
+        if (model.getTableType() == TabType.BASE_TABLE_TAB) {
             setTabIcon(TABLE_ICON);
         } else {
             setTabIcon(TABLE_VIEW_ICON);
@@ -447,5 +447,10 @@ public class TableTab extends BaseTab<TableTabModel> {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public TabType getTabType() {
+        return model.getTableType();
     }
 }

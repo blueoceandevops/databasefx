@@ -1,7 +1,7 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
-import com.openjfx.database.app.component.tabs.DesignTableTab;
+import com.openjfx.database.app.component.tabs.DesignTab;
 import com.openjfx.database.app.controls.DataView;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.model.DesignTableModel;
@@ -42,9 +42,9 @@ public class DesignDataView extends DataView<DesignTableModel> {
      */
     private final List<TableColumnMeta> metas = new ArrayList<>();
 
-    private final DesignTableTab tab;
+    private final DesignTab tab;
 
-    public DesignDataView(DesignTableTab tab) {
+    public DesignDataView(DesignTab tab) {
         this.tab = tab;
         setAutoColumnWidth(false);
         setShowLineNumber(false);

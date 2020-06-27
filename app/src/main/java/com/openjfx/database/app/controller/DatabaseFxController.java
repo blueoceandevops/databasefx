@@ -3,7 +3,7 @@ package com.openjfx.database.app.controller;
 import com.openjfx.database.app.BaseController;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
-import com.openjfx.database.app.component.tabs.DesignTableTab;
+import com.openjfx.database.app.component.tabs.DesignTab;
 import com.openjfx.database.app.component.tabs.UserTab;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.component.MainTabPane;
@@ -13,7 +13,6 @@ import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.controls.impl.*;
 import com.openjfx.database.app.enums.MenuItemOrder;
 import com.openjfx.database.app.enums.NotificationType;
-import com.openjfx.database.app.enums.TabType;
 import com.openjfx.database.app.model.tab.BaseTabMode;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.model.tab.meta.TableTabModel;
@@ -135,10 +134,10 @@ public class DatabaseFxController extends BaseController<Void> {
                 if (a || b) {
                     //Load table data
                     var model = TableTabModel.build(selectedItem);
-                    addTab(model, TabType.TABLE);
+                    addTab(model, BaseTab.TabType.BASE_TABLE_TAB);
                 } else if (selectedItem instanceof UserTreeNode) {
                     var model = UserTabModel.build((UserTreeNode) selectedItem);
-                    addTab(model, TabType.DATABASE_USER);
+                    addTab(model, BaseTab.TabType.USER_TAB);
                 } else {
                     ((BaseTreeNode) selectedItem).init();
                 }
@@ -223,7 +222,7 @@ public class DatabaseFxController extends BaseController<Void> {
         treeItemRoot.getChildren().addAll(nodes);
     }
 
-    private void addTab(BaseTabMode mode, TabType tabType) {
+    private void addTab(BaseTabMode mode, BaseTab.TabType tabType) {
         var tabs = tabPane.getTabs();
         var optional = tabs.stream().map(it -> (BaseTab) it)
                 .filter(t -> t.getModel().getFlag().equals(mode.getFlag())).findAny();
@@ -235,13 +234,13 @@ public class DatabaseFxController extends BaseController<Void> {
             return;
         }
         final BaseTab tab;
-        if (tabType == TabType.TABLE) {
+        if (tabType == BaseTab.TabType.BASE_TABLE_TAB) {
             //create tab
             tab = new TableTab((TableTabModel) mode);
-        } else if (tabType == TabType.DATABASE_USER) {
+        } else if (tabType == BaseTab.TabType.USER_TAB) {
             tab = new UserTab((UserTabModel) mode);
         } else {
-            tab = new DesignTableTab((DesignTabModel) mode);
+            tab = new DesignTab((DesignTabModel) mode);
         }
 
         Platform.runLater(() -> {
@@ -293,7 +292,7 @@ public class DatabaseFxController extends BaseController<Void> {
         //open design table
         if (action == EventBusAction.OPEN_DESIGN_TAB) {
             var model = DesignTabModel.build(body);
-            addTab(model, TabType.DESIGN_TABLE);
+            addTab(model, BaseTab.TabType.DESIGN_TABLE_TAB);
         }
     }
 

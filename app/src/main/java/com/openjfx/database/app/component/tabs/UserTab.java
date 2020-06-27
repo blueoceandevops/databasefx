@@ -37,4 +37,8 @@ public class UserTab extends BaseTab<UserTabModel> {
 
     }
 
+    @Override
+    public TabType getTabType() {
+        return TabType.USER_TAB;
+    }
 }
