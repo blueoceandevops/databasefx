@@ -6,6 +6,7 @@ import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.enums.DatabaseType;
 import com.openjfx.database.model.ConnectionParam;
 
+import com.openjfx.database.mysql.impl.MySqlUserPrivilege;
 import com.openjfx.database.mysql.impl.MysqlCharset;
 import com.openjfx.database.mysql.impl.MysqlDataType;
 import com.openjfx.database.mysql.impl.MysqlClient;
@@ -29,6 +30,7 @@ public class MySql extends AbstractDatabaseSource {
         charset = new MysqlCharset();
         dataType = new MysqlDataType();
         generator = new MysqlSQLGenerator();
+        userPrivilege = new MySqlUserPrivilege();
         timerId = VertexUtils.getVertex().setPeriodic(20000, timer -> heartBeat());
     }
 

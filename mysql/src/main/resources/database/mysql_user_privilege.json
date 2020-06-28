@@ -1,0 +1,194 @@
+[
+  {
+    "name": "ALTER",
+    "describe": "Enable use of ALTER TABLE.",
+    "type": "STATIC",
+    "level": "Global, database, table."
+  },
+  {
+    "name": "ALTER ROUTINE",
+    "describe": "Enable stored routines to be altered or dropped.",
+    "type": "STATIC",
+    "level": "Global, database, routine."
+  },
+  {
+    "name": "CREATE",
+    "describe": "Enable database and table creation.",
+    "type": "STATIC",
+    "level": "Global,database,table."
+  },
+  {
+    "name": "CREATE ROLE",
+    "describe": "Enable role creation.",
+    "type": "STATIC",
+    "level": "Global"
+  },
+  {
+    "name": "CREATE ROUTINE",
+    "describe": "Enable stored routine creation.",
+    "type": "STATIC",
+    "level": "Global, database."
+  },
+  {
+    "name": "CREATE TEMPORARY TABLES",
+    "describe": "Enable use of CREATE TEMPORARY TABLE.",
+    "type": "STATIC",
+    "level": "Global, database."
+  },
+  {
+    "name": "CREATE TABLESPACE",
+    "describe": "Enable tablespaces and log file groups to be created, altered, or dropped.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "CREATE USER",
+    "describe": "Enable use of CREATE USER, DROP USER, RENAME USER, and REVOKE ALL PRIVILEGES.",
+    "type": "STATIC",
+    "level": "Global"
+  },
+  {
+    "name": "CREATE VIEW",
+    "describe": "Enable views to be created or altered. ",
+    "type": "STATIC",
+    "level": "Global,database,table"
+  },
+  {
+    "name": "DELETE",
+    "describe": "Enable use of DELETE.",
+    "type": "STATIC",
+    "level": "Global, database, table."
+  },
+  {
+    "name": "DROP",
+    "describe": "Enable databases, tables, and views to be dropped.",
+    "type": "STATIC",
+    "level": "Global, database, table."
+  },
+  {
+    "name": "DROP ROLE",
+    "describe": "Enable roles to be dropped",
+    "type": "STATIC",
+    "level": "Global"
+  },
+  {
+    "name": "EVENT",
+    "describe": "Enable use of events for the Event Scheduler.",
+    "type": "STATIC",
+    "level": "Global,database"
+  },
+  {
+    "name": "EXECUTE",
+    "describe": "Enable the user to execute stored routines.",
+    "type": "STATIC",
+    "level": "Global,database,routine."
+  },
+  {
+    "name": "FILE",
+    "describe": "Enable the user to cause the server to read or write files.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "GRANT OPTION",
+    "describe": "Enable privileges to be granted to or removed from other accounts. ",
+    "type": "STATIC",
+    "level": "Global, database, table, routine, proxy."
+  },
+  {
+    "name": "INDEX",
+    "describe": "Enable indexes to be created or dropped. ",
+    "type": "STATIC",
+    "level": "Global,database,table."
+  },
+  {
+    "name": "INSERT",
+    "describe": "Enable use of INSERT. ",
+    "type": "STATIC",
+    "level": "Global,database,table,column."
+  },
+  {
+    "name": "LOCK TABLES",
+    "describe": "Enable use of LOCK TABLES on tables for which you have the SELECT privilege. ",
+    "type": "STATIC",
+    "level": "Global,database."
+  },
+  {
+    "name": "PROCESS",
+    "describe": "Enable the user to see all processes with SHOW PROCESSLIST.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "PROXY",
+    "describe": "Enable user proxying.",
+    "type": "STATIC",
+    "level": "From user to user."
+  },
+  {
+    "name": "REFERENCES",
+    "describe": "Enable foreign key creation.",
+    "type": "STATIC",
+    "level": "Global, database, table, column."
+  },
+  {
+    "name": "RELOAD",
+    "describe": "Enable use of FLUSH operations.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "REPLICATION CLIENT",
+    "describe": "Enable the user to ask where master or slave servers are.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "REPLICATION SLAVE",
+    "describe": "Enable replication slaves to read binary log events from the master.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "SELECT",
+    "describe": "Enable use of SELECT. ",
+    "type": "STATIC",
+    "level": "Global, database, table, column."
+  },
+  {
+    "name": "SHOW DATABASES",
+    "describe": "Enable SHOW DATABASES to show all databases.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "SHOW VIEW",
+    "describe": "Enable use of SHOW CREATE VIEW.",
+    "type": "STATIC",
+    "level": "Global,database,table."
+  },
+  {
+    "name": "SHUTDOWN",
+    "describe": "Enable use of mysqladmin shutdown.",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "SUPER",
+    "describe": "Enable use of other administrative operations such as CHANGE MASTER TO, KILL, PURGE BINARY LOGS, SET GLOBAL, and mysqladmin debug command. ",
+    "type": "STATIC",
+    "level": "Global."
+  },
+  {
+    "name": "TRIGGER",
+    "describe": "Enable trigger operations.",
+    "type": "STATIC",
+    "level": "Global,database,table."
+  },
+  {
+    "name": "UPDATE",
+    "describe": "Enable use of UPDATE.",
+    "type": "STATIC",
+    "level": "Global,database,table,column."
+  }
+]

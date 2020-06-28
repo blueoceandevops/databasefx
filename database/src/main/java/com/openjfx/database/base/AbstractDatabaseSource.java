@@ -3,6 +3,7 @@ package com.openjfx.database.base;
 import com.openjfx.database.DataCharset;
 import com.openjfx.database.DataType;
 import com.openjfx.database.SQLGenerator;
+import com.openjfx.database.UserPrivilege;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.enums.DatabaseType;
 import com.openjfx.database.model.ConnectionParam;
@@ -40,6 +41,10 @@ public abstract class AbstractDatabaseSource {
      * current database local sql generator
      */
     protected SQLGenerator generator;
+    /**
+     * database user privilege
+     */
+    protected UserPrivilege userPrivilege;
 
     public AbstractDatabaseSource() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -145,5 +150,9 @@ public abstract class AbstractDatabaseSource {
 
     public SQLGenerator getGenerator() {
         return generator;
+    }
+
+    public UserPrivilege getUserPrivilege() {
+        return userPrivilege;
     }
 }

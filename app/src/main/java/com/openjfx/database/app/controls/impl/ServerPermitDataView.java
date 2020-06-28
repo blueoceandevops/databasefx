@@ -1,8 +1,7 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.controls.DataView;
-import com.openjfx.database.common.utils.StringUtils;
-import javafx.beans.property.SimpleBooleanProperty;
+import com.openjfx.database.model.PrivilegeModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
@@ -28,24 +27,51 @@ public class ServerPermitDataView extends DataView<ServerPermitDataView.ServerPe
         /**
          * permit selection
          */
-        SELECTION
+        SELECTION,
+        /**
+         * describe
+         */
+        DESCRIBE,
+        /**
+         * Scope
+         */
+        SCOPE
     }
+
+    private final CheckBox selectOrCancelAll;
 
     public ServerPermitDataView() {
         setShowLineNumber(false);
-        createColumn(CellType.NAME);
+        this.selectOrCancelAll = new CheckBox();
         createColumn(CellType.SELECTION);
+        createColumn(CellType.NAME);
+        createColumn(CellType.DESCRIBE);
+        createColumn(CellType.SCOPE);
+        selectOrCancelAll.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            var val = newValue.toString();
+            getItems().forEach(m -> m.setHas(val));
+        });
     }
 
     private void createColumn(CellType cellType) {
-        var columnName = cellType == CellType.NAME ? "权限" : "授予";
+        var columnName = switch (cellType) {
+            case SELECTION -> "";
+            case NAME -> "权限";
+            case DESCRIBE -> "描述";
+            case SCOPE -> "范围";
+        };
         var tableColumn = new TableColumn<ServerPermitModel, String>(columnName);
+        if (cellType == CellType.SELECTION) {
+            tableColumn.setGraphic(selectOrCancelAll);
+        }
         tableColumn.setCellFactory(cal -> new PermitCell(cellType));
         tableColumn.setCellValueFactory(cal -> {
             var model = cal.getValue();
             return switch (cellType) {
                 case NAME -> model.nameProperty();
                 case SELECTION -> model.hasProperty();
+                case DESCRIBE -> model.describeProperty();
+                case SCOPE -> model.levelProperty();
             };
         });
         getColumns().add(tableColumn);
@@ -61,11 +87,14 @@ public class ServerPermitDataView extends DataView<ServerPermitDataView.ServerPe
 
         private final StringProperty name;
         private final StringProperty has;
+        private final StringProperty describe;
+        private final StringProperty level;
 
-        public ServerPermitModel(String name, String hasPermit) {
-            this.name = new SimpleStringProperty(name);
-            var t = new SimpleBooleanProperty(StringUtils.nonEmpty(hasPermit) && "Y".equals(hasPermit)).toString();
-            this.has = new SimpleStringProperty(Boolean.valueOf(t).toString());
+        public ServerPermitModel(PrivilegeModel model) {
+            this.name = new SimpleStringProperty(model.getName());
+            this.has = new SimpleStringProperty("false");
+            this.describe = new SimpleStringProperty(model.getDescribe());
+            this.level = new SimpleStringProperty(model.getLevel());
         }
 
         public String getName() {
@@ -90,6 +119,30 @@ public class ServerPermitDataView extends DataView<ServerPermitDataView.ServerPe
 
         public void setHas(String has) {
             this.has.set(has);
+        }
+
+        public String getDescribe() {
+            return describe.get();
+        }
+
+        public StringProperty describeProperty() {
+            return describe;
+        }
+
+        public void setDescribe(String describe) {
+            this.describe.set(describe);
+        }
+
+        public String getLevel() {
+            return level.get();
+        }
+
+        public StringProperty levelProperty() {
+            return level;
+        }
+
+        public void setLevel(String level) {
+            this.level.set(level);
         }
     }
 
@@ -118,7 +171,7 @@ public class ServerPermitDataView extends DataView<ServerPermitDataView.ServerPe
         }
 
         private void updateValue(String item) {
-            if (cellType == CellType.NAME) {
+            if (cellType != CellType.SELECTION) {
                 setText(item);
                 return;
             }
