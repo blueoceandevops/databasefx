@@ -38,10 +38,9 @@ public class UserTab extends BaseTab<UserTabModel> {
 
     public UserTab(UserTabModel model) {
         super(model);
-        var title = model.getUser() + "(" + model.getServerName() + ")";
         setTabIcon(USER_ICON);
-        setText(title);
-        setTooltip(new Tooltip(title));
+        setText(model.getUser() + "@" + model.getHost() + "(" + model.getConName() + ")");
+        setTooltip(new Tooltip(getText()));
         loadView("user_tab_view.fxml");
     }
 

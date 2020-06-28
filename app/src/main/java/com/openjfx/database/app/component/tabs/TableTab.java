@@ -93,7 +93,7 @@ public class TableTab extends BaseTab<TableTabModel> {
             setTabIcon(TABLE_VIEW_ICON);
         }
         client = DATABASE_SOURCE.getClient(model.getUuid());
-        var title = model.getTable() + "@" + model.getScheme() + "(" + model.getServerName() + ")";
+        var title = model.getTable() + "@" + model.getScheme() + "(" + model.getConName() + ")";
         setText(title);
         //dynamic obtain table comment
         var future = client.getDql().getCreateTableComment(model.getScheme(), model.getTable());

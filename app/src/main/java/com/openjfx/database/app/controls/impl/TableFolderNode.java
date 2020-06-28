@@ -52,7 +52,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
             }
         });
 
-        createTable.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), scheme, null, DesignTabModel.DesignTableType.CREATE));
+        createTable.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), scheme,param.getName(), null, DesignTabModel.DesignTableType.CREATE));
 
         addMenuItem(flush, createTable);
 

@@ -45,7 +45,12 @@ public class TableViewTreeNode extends BaseTreeNode<String> {
         var delete = new MenuItem(I18N.getString("menu.databasefx.tree.delete.table"));
 
 
-        design.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), scheme, tableName, DesignTabModel.DesignTableType.UPDATE));
+        design.setOnAction(e -> EventBusUtils.openDesignTab(
+                getUuid(),
+                param.getName(),
+                scheme,
+                tableName,
+                DesignTabModel.DesignTableType.UPDATE));
         delete.setOnAction(e -> {
             var tips = I18N.getString("menu.databasefx.tree.delete.table.tips") + " " + tableName + "?";
             var result = DialogUtils.showAlertConfirm(tips);

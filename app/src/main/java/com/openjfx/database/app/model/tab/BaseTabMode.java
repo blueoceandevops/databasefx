@@ -6,26 +6,37 @@ package com.openjfx.database.app.model.tab;
  * @author yangkui
  * @since 1.0
  */
-public class BaseTabMode {
+public abstract class BaseTabMode {
     /**
      * 数据库标识
      */
     protected final String uuid;
     /**
-     * Tab 独立标识
+     * con name
      */
-    protected final String flag;
+    private final String conName;
 
-    public BaseTabMode(String uuid, String flag) {
+    public BaseTabMode(String uuid, String conName) {
         this.uuid = uuid;
-        this.flag = flag;
+        this.conName = conName;
     }
 
-    public String getFlag() {
-        return flag;
-    }
 
     public String getUuid() {
         return uuid;
     }
+
+    public String getConName() {
+        return conName;
+    }
+
+    /**
+     * <p>
+     * This method is used to generate an independent identifier,
+     * which can distinguish the function / function of each tab
+     * </p>
+     *
+     * @return tab independent identifier
+     */
+    public abstract String getFlag();
 }

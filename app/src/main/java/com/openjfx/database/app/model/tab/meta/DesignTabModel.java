@@ -43,8 +43,8 @@ public class DesignTabModel extends BaseTabMode {
      */
     private String tableName;
 
-    public DesignTabModel(String uuid, String flag) {
-        super(uuid, flag);
+    public DesignTabModel(String uuid, String conName) {
+        super(uuid, conName);
     }
 
     public void setDesignTableType(DesignTableType designTableType) {
@@ -71,20 +71,24 @@ public class DesignTabModel extends BaseTabMode {
         this.tableName = tableName;
     }
 
-    public static DesignTabModel build(String uuid, String scheme, String tableName, DesignTableType designTableType) {
-        var flag = uuid + "_" + scheme + "_design_" + (StringUtils.isEmpty(tableName) ? "UnTitle" : tableName);
-        var model = new DesignTabModel(uuid, flag);
-        model.setDesignTableType(designTableType);
-        model.setTableName(tableName);
-        model.setScheme(scheme);
-        return model;
+    @Override
+    public String getFlag() {
+        return uuid + "_" + scheme + "_design_" + tableName;
     }
 
     public static DesignTabModel build(JsonObject json) {
+
         var uuid = json.getString(Constants.UUID);
-        var scheme = json.getString(Constants.SCHEME);
-        var tableName = json.getString(Constants.TABLE_NAME);
         var type = json.getString(Constants.TYPE);
-        return build(uuid, scheme, tableName, DesignTableType.valueOf(type));
+        var scheme = json.getString(Constants.SCHEME);
+        var conName = json.getString(Constants.CON_NAME);
+        var tableName = json.getString(Constants.TABLE_NAME);
+
+        var model = new DesignTabModel(uuid, conName);
+        model.setScheme(scheme);
+        model.setTableName(tableName);
+        model.setDesignTableType(DesignTableType.valueOf(type));
+
+        return model;
     }
 }

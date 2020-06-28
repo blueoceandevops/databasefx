@@ -33,14 +33,16 @@ public class EventBusUtils {
     /**
      * notify {@link DatabaseFxController} open design tab
      *
+     * @param conName   连接名
      * @param uuid      uuid
      * @param scheme    scheme
      * @param tableName table name
      * @param type      type
      */
-    public static void openDesignTab(String uuid, String scheme, String tableName, DesignTabModel.DesignTableType type) {
+    public static void openDesignTab(String uuid, String conName, String scheme, String tableName, DesignTabModel.DesignTableType type) {
         var params = new JsonObject();
         params.put(Constants.UUID, uuid);
+        params.put(Constants.CON_NAME, conName);
         params.put(Constants.SCHEME, scheme);
         params.put(Constants.TYPE, type);
         params.put(Constants.ACTION, DatabaseFxController.EventBusAction.OPEN_DESIGN_TAB);

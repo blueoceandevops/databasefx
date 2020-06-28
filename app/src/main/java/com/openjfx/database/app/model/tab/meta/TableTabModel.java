@@ -1,6 +1,7 @@
 package com.openjfx.database.app.model.tab.meta;
 
 import com.openjfx.database.app.component.BaseTab;
+import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.controls.impl.TableTreeNode;
 import com.openjfx.database.app.controls.impl.TableViewTreeNode;
 import com.openjfx.database.app.model.tab.BaseTabMode;
@@ -23,45 +24,48 @@ public class TableTabModel extends BaseTabMode {
      */
     private final String table;
     /**
-     * Server name
-     */
-    private final String serverName;
-    /**
      * Table type
      */
     private final BaseTab.TabType tableType;
 
-    public TableTabModel(String uuid, String flag, String scheme, String table, String serverName, BaseTab.TabType tableType) {
-        super(uuid, flag);
+    public TableTabModel(String uuid,
+                         String scheme,
+                         String table,
+                         String conName,
+                         BaseTab.TabType tableType) {
+
+        super(uuid, conName);
         this.scheme = scheme;
         this.table = table;
-        this.serverName = serverName;
         this.tableType = tableType;
+    }
+
+    @Override
+    public String getFlag() {
+        return uuid + "_" + scheme + "_" + table;
     }
 
     public static TableTabModel build(TreeItem<String> treeNode) {
         final String scheme;
-        final String serverName;
         final String tableName;
         final BaseTab.TabType tableType;
         final String uuid;
+        final String conName;
         if (treeNode instanceof TableTreeNode) {
             var tableNode = (TableTreeNode) treeNode;
             scheme = tableNode.getScheme();
-            serverName = tableNode.getServerName();
             tableName = tableNode.getValue();
             tableType = BaseTab.TabType.BASE_TABLE_TAB;
             uuid = tableNode.getUuid();
         } else {
             var viewNode = (TableViewTreeNode) treeNode;
             scheme = viewNode.getScheme();
-            serverName = viewNode.getServerName();
             tableName = viewNode.getValue();
             tableType = BaseTab.TabType.VIEW_TAB;
             uuid = viewNode.getUuid();
         }
-        var flag = uuid + "_" + scheme + "_" + tableName;
-        return new TableTabModel(uuid, flag, scheme, tableName, serverName, tableType);
+        conName = ((BaseTreeNode<String>) treeNode).getConName();
+        return new TableTabModel(uuid, scheme, tableName, conName, tableType);
     }
 
     public String getScheme() {
@@ -70,10 +74,6 @@ public class TableTabModel extends BaseTabMode {
 
     public String getTable() {
         return table;
-    }
-
-    public String getServerName() {
-        return serverName;
     }
 
     public BaseTab.TabType getTableType() {

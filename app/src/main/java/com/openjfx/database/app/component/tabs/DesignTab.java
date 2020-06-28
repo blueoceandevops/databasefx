@@ -214,13 +214,15 @@ public class DesignTab extends BaseTab<DesignTabModel> {
     }
 
     private void updateTableName() {
-        final String title;
+        var temp = "";
         final String table = model.getTableName();
         if (StringUtils.isEmpty(table)) {
-            title = UN_TITLE + "@" + model.getScheme();
+            temp = UN_TITLE + "@" + model.getScheme();
         } else {
-            title = table + "@" + model.getScheme();
+            temp = table + "@" + model.getScheme();
         }
+
+        final var title = temp + "(" + model.getConName() + ")";
 
         Platform.runLater(() -> setText(title));
     }

@@ -22,13 +22,9 @@ public class UserTabModel extends BaseTabMode {
      * tab value
      */
     private String value;
-    /**
-     * server name
-     */
-    private String serverName;
 
-    public UserTabModel(String uuid, String flag) {
-        super(uuid, flag);
+    public UserTabModel(String uuid, String conName) {
+        super(uuid, conName);
     }
 
     public String getUser() {
@@ -55,23 +51,19 @@ public class UserTabModel extends BaseTabMode {
         this.value = value;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public String getServerName() {
-        return serverName;
+    @Override
+    public String getFlag() {
+        return uuid + "_user_" + value;
     }
 
     public static UserTabModel build(UserTreeNode treeNode) {
         var uuid = treeNode.getUuid();
         var value = treeNode.getValue();
-        var flag = uuid + "_user_" + value;
-        var tabModel = new UserTabModel(uuid, flag);
+        var conName = treeNode.getConName();
+        var tabModel = new UserTabModel(uuid, conName);
         var array = value.split("@");
         tabModel.setHost(array[1]);
         tabModel.setUser(array[0]);
-        tabModel.setServerName(treeNode.getServerName());
         tabModel.setValue(value);
         return tabModel;
     }

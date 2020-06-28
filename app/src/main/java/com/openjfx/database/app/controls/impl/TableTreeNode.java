@@ -44,7 +44,12 @@ public class TableTreeNode extends BaseTreeNode<String> {
         var exportData = new MenuItem(I18N.getString("menu.databasefx.tree.export.data"));
         var rename = new MenuItem(I18N.getString("menu.databasefx.tree.rename"));
 
-        design.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), getScheme(), getValue(), DesignTabModel.DesignTableType.UPDATE));
+        design.setOnAction(e -> EventBusUtils.openDesignTab(
+                getUuid(),
+                param.getName(),
+                getScheme(),
+                getValue(),
+                DesignTabModel.DesignTableType.UPDATE));
         delete.setOnAction(e -> {
             var tips = I18N.getString("menu.databasefx.tree.delete.table.tips") + " " + getValue() + "?";
             var result = DialogUtils.showAlertConfirm(tips);

@@ -39,12 +39,6 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      * Connection parameters property
      */
     protected ObjectProperty<ConnectionParam> param = new SimpleObjectProperty<>();
-
-    /**
-     * Called when a child node is initialized
-     */
-    public abstract void init();
-
     /**
      * Menu list
      */
@@ -89,7 +83,7 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
         return param.get().getUuid();
     }
 
-    public String getServerName() {
+    public String getConName() {
         return param.get().getName();
     }
 
@@ -139,6 +133,11 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
             menus.add(item);
         }
     }
+
+    /**
+     * Called when a child node is initialized
+     */
+    public abstract void init();
 
     protected void removeMenu(MenuItem item) {
         this.menus.remove(item);

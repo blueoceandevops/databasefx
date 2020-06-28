@@ -55,4 +55,8 @@ public class Constants {
      * update
      */
     public static final String UPDATE = "update";
+    /***
+     * connection name
+     */
+    public static final String CON_NAME = "conName";
 }
