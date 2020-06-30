@@ -33,7 +33,7 @@ public class EventBusUtils {
     /**
      * notify {@link DatabaseFxController} open design tab
      *
-     * @param conName   连接名
+     * @param conName   connection name
      * @param uuid      uuid
      * @param scheme    scheme
      * @param tableName table name

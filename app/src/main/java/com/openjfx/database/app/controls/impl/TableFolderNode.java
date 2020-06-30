@@ -38,8 +38,8 @@ public class TableFolderNode extends BaseTreeNode<String> {
         this.scheme = scheme;
         this.eventBusAddress = getUuid() + "_" + scheme;
         setValue(I18N.getString("database.table"));
-        final var createTable = new MenuItem(I18N.getString("menu.databasefx.tree.create.table"));
-        final var flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
+        var createTable = new MenuItem(I18N.getString("menu.databasefx.tree.create.table"));
+        var flush = new MenuItem(I18N.getString("menu.databasefx.tree.flush"));
         //flush table list
         flush.setOnAction((event) -> flush());
 
@@ -52,7 +52,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
             }
         });
 
-        createTable.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), scheme,param.getName(), null, DesignTabModel.DesignTableType.CREATE));
+        createTable.setOnAction(e -> EventBusUtils.openDesignTab(getUuid(), param.getName(), scheme, null, DesignTabModel.DesignTableType.CREATE));
 
         addMenuItem(flush, createTable);
 
