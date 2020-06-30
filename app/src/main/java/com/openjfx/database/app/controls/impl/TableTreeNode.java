@@ -72,7 +72,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
         });
         //rename table
         rename.setOnAction(e -> {
-            var target = DialogUtils.showInputDialog(I18N.getString("menu.databasefx.tree.rename.table.tips")).trim();
+            var target = DialogUtils.showInputDialog(I18N.getString("menu.databasefx.tree.rename.table.tips"), getValue()).trim();
             if (target.isEmpty() || target.trim().equals(getValue())) {
                 return;
             }

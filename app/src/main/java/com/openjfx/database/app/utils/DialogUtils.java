@@ -1,6 +1,7 @@
 package com.openjfx.database.app.utils;
 
 import com.openjfx.database.app.enums.NotificationType;
+import com.openjfx.database.common.utils.StringUtils;
 import com.sun.javafx.scene.control.InputField;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -102,9 +103,13 @@ public class DialogUtils {
      * @param title dialog title
      * @return inout title
      */
-    public static String showInputDialog(String title) {
+    public static String showInputDialog(String title, String defaultValue) {
         var dialog = new TextInputDialog();
-        dialog.setTitle(I18N.getString("app.dialog.input"));
+        var textField = dialog.getEditor();
+        if (StringUtils.nonEmpty(defaultValue)) {
+            textField.setText(defaultValue);
+            textField.selectAll();
+        }
         dialog.setHeaderText(title);
         dialog.getDialogPane().getStylesheets().add("css/base.css");
         var optional = dialog.showAndWait();

@@ -204,7 +204,7 @@ public class DesignTab extends BaseTab<DesignTabModel> {
         var tableName = UN_TITLE;
         //Prompt user for table name
         if (StringUtils.isEmpty(model.getTableName()) && input) {
-            tableName = DialogUtils.showInputDialog(i18nStr("controller.design.table.input"));
+            tableName = DialogUtils.showInputDialog(i18nStr("controller.design.table.input"), "");
         } else {
             if (StringUtils.nonEmpty(model.getTableName())) {
                 tableName = model.getTableName();

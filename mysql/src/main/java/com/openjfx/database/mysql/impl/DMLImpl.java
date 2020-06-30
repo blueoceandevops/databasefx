@@ -138,7 +138,7 @@ public class DMLImpl implements DML {
     @Override
     public Future<Integer> renameTable(String table, String target, String scheme) {
         var t = SQLHelper.fullTableName(scheme, table);
-        var tt = SQLHelper.fullTableName(scheme, table);
+        var tt = SQLHelper.fullTableName(scheme, target);
         var sql = "RENAME TABLE " + t + " TO " + tt;
         var promise = Promise.<Integer>promise();
         var future = client.query(sql);
