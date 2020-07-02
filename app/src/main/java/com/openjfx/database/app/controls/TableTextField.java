@@ -149,6 +149,7 @@ public class TableTextField extends HBox {
             pane.setPadding(Insets.EMPTY);
             pane.getStylesheets().add("css/base.css");
             setTitle(I18N.getString("databasefx.table.edit.dialog"));
+            setResizable(true);
             setResultConverter(buttonType -> {
                 if (buttonType == ButtonType.CANCEL) {
                     return text;
