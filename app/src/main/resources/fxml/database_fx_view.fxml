@@ -17,38 +17,18 @@
         <VBox>
             <MenuBar fx:id="menuBar" styleClass="menu-bar">
                 <Menu text="%view.databasefx.menu.file">
-                    <MenuItem text="%view.databasefx.menu.file.create.con" userData="connection"/>
-                    <MenuItem text="%view.databasefx.menu.file.open" userData="open"/>
-                    <MenuItem text="%view.databasefx.menu.file.flush" userData="flush"/>
-                    <!--                <MenuItem text="导入" userData="import"/>-->
-                    <!--                <MenuItem text="导出" userData="export"/>-->
-                    <MenuItem text="%view.databasefx.menu.file.exit" userData="exit"/>
+                    <MenuItem text="%view.databasefx.menu.file.create.con" userData="connection"
+                              onAction="#doExecMenuOrder"/>
+                    <MenuItem text="%view.databasefx.menu.file.open" userData="open" onAction="#doExecMenuOrder"/>
+                    <MenuItem text="%view.databasefx.menu.file.flush" userData="flush" onAction="#doExecMenuOrder"/>
+                    <MenuItem text="%view.databasefx.menu.file.exit" userData="exit" onAction="#doExecMenuOrder"/>
                 </Menu>
-                <!--            <Menu text="编辑(E)"/>-->
-                <!--            <Menu text="SQL编辑器">-->
-                <!--                <MenuItem text="SQL编辑器" userData="editor"/>-->
-                <!--            </Menu>-->
-                <!--                <Menu text="数据库(D)">-->
-                <!--                    <MenuItem text="新建连接" userData="connection"/>-->
-                <!--                </Menu>-->
-                <!--            <Menu text="窗口(W)">-->
-                <!--                <MenuItem text="首选项" userData="setting"/>-->
-                <!--            </Menu>-->
                 <Menu text="%view.databasefx.menu.help">
-                    <MenuItem text="%view.databasefx.menu.help.about" userData="about"/>
+                    <MenuItem text="%view.databasefx.menu.help.about" userData="about" onAction="#doExecMenuOrder"/>
                 </Menu>
             </MenuBar>
             <ButtonBar styleClass="button-bar" nodeOrientation="RIGHT_TO_LEFT">
                 <buttons>
-                    <Button text="%view.databasefx.database.model" contentDisplay="TOP"
-                            onAction="#showDatabaseModelView">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/assets/images/model_view_icon.png" requestedWidth="28"
-                                       requestedHeight="30" smooth="true"/>
-                            </ImageView>
-                        </graphic>
-                    </Button>
                     <Button contentDisplay="TOP" text="%view.databasefx.menu.file.create.terminal"
                             onAction="#createQueryTerminal">
                         <graphic>

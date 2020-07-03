@@ -32,6 +32,13 @@ public class StringUtils {
         return !isEmpty(target);
     }
 
+    /**
+     * 将时间装换为指定格式的字符串
+     *
+     * @param dateTime 日期时间
+     * @param pattern  字符串模板
+     * @return 返回转换后的时间字符串
+     */
     public static String localDateTimeToStr(LocalDateTime dateTime, String pattern) {
         var format = DateTimeFormatter.ofPattern(pattern);
         return dateTime.format(format);

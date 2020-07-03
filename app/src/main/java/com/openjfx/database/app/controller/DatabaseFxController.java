@@ -38,8 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.openjfx.database.app.DatabaseFX.DATABASE_SOURCE;
-import static com.openjfx.database.app.config.Constants.ACTION;
-import static com.openjfx.database.app.config.Constants.SCHEME;
+import static com.openjfx.database.app.config.Constants.*;
 
 /**
  * App main interface controller
@@ -48,68 +47,24 @@ import static com.openjfx.database.app.config.Constants.SCHEME;
  * @since 1.0
  */
 public class DatabaseFxController extends BaseController<Void> {
-    /**
-     * Top menu bar
-     */
-    @FXML
-    private MenuBar menuBar;
-
-    @FXML
-    private VBox lBox;
-
-    @FXML
-    private TreeView<String> treeView;
-
-    @FXML
-    private TreeItem<String> treeItemRoot;
-
     @FXML
     private MainTabPane tabPane;
-
     @FXML
     private SplitPane splitPane;
-    /**
-     * search popup
-     */
-    private final SearchPopup searchPopup = SearchPopup.simplePopup();
-    /**
-     * search result list
-     */
-    private List<Integer> searchList = new ArrayList<>();
-    /**
-     * search select index
-     */
+    @FXML
+    private TreeView<String> treeView;
+    @FXML
+    private TreeItem<String> treeItemRoot;
     private int selectIndex = 0;
-
-    /**
-     * EVENT-BUS address
-     */
+    private List<Integer> searchList = new ArrayList<>();
+    private final SearchPopup searchPopup = SearchPopup.simplePopup();
     public static final String EVENT_ADDRESS = "controller:databaseFX";
 
 
     @Override
     public void init() {
         initDbList();
-        //Register a click event on a MenuItem
-        var menus = menuBar.getMenus();
-        for (Menu menu : menus) {
-            for (MenuItem item : menu.getItems()) {
-                item.addEventHandler(ActionEvent.ACTION, event -> {
-                    Object obj = event.getSource();
-                    if (obj instanceof MenuItem) {
-                        MenuItem temp = (MenuItem) obj;
-
-                        Object userData = temp.getUserData();
-
-                        if (Objects.nonNull(userData)) {
-                            doExecMenuOrder(userData.toString());
-                        }
-                    }
-                });
-            }
-        }
         var menu = new ContextMenu();
-
         treeView.setOnContextMenuRequested(e -> {
             menu.getItems().clear();
             var item = treeView.getSelectionModel().getSelectedItem();
@@ -117,12 +72,8 @@ public class DatabaseFxController extends BaseController<Void> {
                 menu.getItems().addAll(((BaseTreeNode<String>) item).getMenus());
             }
         });
-
         treeView.setContextMenu(menu);
-
         VBox.setVgrow(treeView, Priority.ALWAYS);
-
-
         treeView.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {
                 var selectedItem = treeView.getSelectionModel().getSelectedItem();
@@ -143,7 +94,6 @@ public class DatabaseFxController extends BaseController<Void> {
                 }
             }
         });
-
         treeView.setOnKeyPressed(event -> {
             //search data in current tree view
 //            if (event.isControlDown() && event.getCode() == KeyCode.F) {
@@ -167,7 +117,6 @@ public class DatabaseFxController extends BaseController<Void> {
             searchList.clear();
             selectIndex = 0;
         });
-
         stage.widthProperty().addListener((observable, oldValue, newValue) -> {
             var t = 800;
             var position = 0.2;
@@ -184,11 +133,16 @@ public class DatabaseFxController extends BaseController<Void> {
     /**
      * execute menu order
      *
-     * @param value order value
+     * @param event event source
      */
-    private void doExecMenuOrder(String value) {
+    @FXML
+    public void doExecMenuOrder(ActionEvent event) {
+        var item = event.getSource();
+        if (!(item instanceof MenuItem)) {
+            return;
+        }
+        var value = ((MenuItem) item).getUserData().toString();
         var order = MenuItemOrder.valueOf(value.toUpperCase());
-
         if (order == MenuItemOrder.CONNECTION) {
             createConnection();
         }
@@ -198,7 +152,6 @@ public class DatabaseFxController extends BaseController<Void> {
         if (order == MenuItemOrder.EXIT) {
             Platform.exit();
         }
-
         if (order == MenuItemOrder.FLUSH) {
             var result = DialogUtils.showAlertConfirm(resourceBundle.getString("controller.databasefx.flush.tips"));
             if (result) {
@@ -321,11 +274,6 @@ public class DatabaseFxController extends BaseController<Void> {
     @FXML
     public void createConnection() {
         new CreateConnectionStage();
-    }
-
-    @FXML
-    public void showDatabaseModelView() {
-        DialogUtils.showAlertInfo(resourceBundle.getString("app.function.future"));
     }
 
     public enum EventBusAction {
