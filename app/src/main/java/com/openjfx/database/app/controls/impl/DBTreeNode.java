@@ -4,6 +4,7 @@ import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.config.DbPreference;
 
 import com.openjfx.database.app.component.MainTabPane;
+import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.stage.CreateConnectionStage;
 import com.openjfx.database.app.stage.CreateSchemeStage;
 import com.openjfx.database.app.utils.DialogUtils;
@@ -107,5 +108,10 @@ public class DBTreeNode extends BaseTreeNode<String> {
             });
         });
         future.onFailure(t -> initFailed(t, I18N.getString("menu.databasefx.tree.open.tips")));
+    }
+
+    @Override
+    public TreeItemType getTreeItemType() {
+        return TreeItemType.DATABASE_CON;
     }
 }

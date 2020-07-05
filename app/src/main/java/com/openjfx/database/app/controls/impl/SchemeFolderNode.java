@@ -2,9 +2,11 @@ package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.BaseTreeNode;
+import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.stage.CreateSchemeStage;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
+import com.sun.source.tree.Tree;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -54,5 +56,10 @@ public class SchemeFolderNode extends BaseTreeNode<String> {
             setLoading(false);
         });
         future.onFailure(t -> initFailed(t, I18N.getString("databasefx.tree.database.load.fail")));
+    }
+
+    @Override
+    public TreeItemType getTreeItemType() {
+        return TreeItemType.SCHEME_FOLDER;
     }
 }

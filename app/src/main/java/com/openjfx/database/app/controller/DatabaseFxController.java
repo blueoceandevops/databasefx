@@ -10,6 +10,7 @@ import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.component.tabs.TableTab;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.config.DbPreference;
+import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.controls.impl.*;
 import com.openjfx.database.app.enums.MenuItemOrder;
 import com.openjfx.database.app.enums.NotificationType;
@@ -65,41 +66,30 @@ public class DatabaseFxController extends AbstractController<Void> {
     @Override
     public void init() {
         initDbList();
-        var menu = new ContextMenu();
-        treeView.setOnContextMenuRequested(e -> {
-            menu.getItems().clear();
-            var item = treeView.getSelectionModel().getSelectedItem();
-            if (item instanceof BaseTreeNode) {
-                menu.getItems().addAll(((BaseTreeNode<String>) item).getMenus());
-            }
-        });
-        treeView.setContextMenu(menu);
         VBox.setVgrow(treeView, Priority.ALWAYS);
+        treeView.setCellFactory(k -> new CustomTreeCell());
         treeView.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {
                 var selectedItem = treeView.getSelectionModel().getSelectedItem();
-                if (selectedItem == null) {
+                if (!(selectedItem instanceof BaseTreeNode)) {
                     return;
                 }
-                var a = selectedItem instanceof TableTreeNode;
-                var b = selectedItem instanceof TableViewTreeNode;
-                if (a || b) {
+                var itemType = ((BaseTreeNode<String>) selectedItem).getTreeItemType();
+                var b = itemType == BaseTreeNode.TreeItemType.TABLE || itemType == BaseTreeNode.TreeItemType.VIEW;
+                if (b) {
                     //Load table data
                     var model = TableTabModel.build(selectedItem);
                     addTab(model, BaseTab.TabType.BASE_TABLE_TAB);
-                } else if (selectedItem instanceof UserTreeNode) {
+                } else if (itemType == BaseTreeNode.TreeItemType.USER) {
                     var model = UserTabModel.build((UserTreeNode) selectedItem);
                     addTab(model, BaseTab.TabType.USER_TAB);
                 } else {
-                    ((BaseTreeNode) selectedItem).init();
+                    ((BaseTreeNode<String>) selectedItem).init();
                 }
             }
         });
         treeView.setOnKeyPressed(event -> {
-            //search data in current tree view
-//            if (event.isControlDown() && event.getCode() == KeyCode.F) {
-//                lBox.getChildren().add(searchPopup);
-//            }
+
         });
         searchPopup.textChange(keyword -> {
             var cc = treeView.getRoot().getChildren();

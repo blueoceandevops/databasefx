@@ -14,8 +14,6 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static com.openjfx.database.common.config.StringConstants.NULL;

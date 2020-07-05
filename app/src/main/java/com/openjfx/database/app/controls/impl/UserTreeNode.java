@@ -1,6 +1,7 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.controls.BaseTreeNode;
+import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.scene.image.Image;
@@ -21,6 +22,7 @@ public class UserTreeNode extends BaseTreeNode<String> {
     }
 
     @Override
-    public void init() {
+    public TreeItemType getTreeItemType() {
+        return TreeItemType.USER;
     }
 }

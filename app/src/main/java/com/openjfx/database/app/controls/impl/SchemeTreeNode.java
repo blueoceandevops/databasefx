@@ -4,6 +4,7 @@ package com.openjfx.database.app.controls.impl;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.component.MainTabPane;
 import com.openjfx.database.app.config.Constants;
+import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.stage.SQLEditStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
@@ -11,6 +12,7 @@ import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
 import io.vertx.core.json.JsonObject;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeCell;
 import javafx.scene.image.Image;
 
 
@@ -80,7 +82,9 @@ public class SchemeTreeNode extends BaseTreeNode<String> {
         addMenuItem(sqlEditor, deleteMenu);
     }
 
+
     @Override
-    public void init() {
+    public TreeItemType getTreeItemType() {
+        return TreeItemType.SCHEME;
     }
 }

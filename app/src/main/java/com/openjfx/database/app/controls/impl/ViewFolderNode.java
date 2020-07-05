@@ -1,6 +1,7 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.controls.BaseTreeNode;
+import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
@@ -48,5 +49,10 @@ public class ViewFolderNode extends BaseTreeNode<String> {
             }
             setLoading(false);
         });
+    }
+
+    @Override
+    public TreeItemType getTreeItemType() {
+        return TreeItemType.VIEW_FOLDER;
     }
 }

@@ -8,15 +8,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +26,51 @@ import java.util.List;
 public abstract class BaseTreeNode<T> extends TreeItem<T> {
 
     /**
+     * Customer TreeCell type
+     *
+     * @author yangkui
+     * @since 1.0
+     */
+    public enum TreeItemType {
+        /**
+         * database user
+         */
+        USER,
+        /**
+         * database view
+         */
+        VIEW,
+        /**
+         * database basic table
+         */
+        TABLE,
+        /**
+         * database scheme
+         */
+        SCHEME,
+        /**
+         * database connection
+         */
+        DATABASE_CON,
+        /**
+         * database view folder
+         */
+        VIEW_FOLDER,
+        /**
+         * database user folder
+         */
+        USER_FOLDER,
+        /**
+         * database table folder
+         */
+        TABLE_FOLDER,
+        /**
+         * database scheme folder
+         */
+        SCHEME_FOLDER,
+    }
+
+    /**
      * Loading state, prevent repeated loading true means false is not in loading
      */
     private final BooleanProperty loading = new SimpleBooleanProperty();
@@ -43,6 +82,10 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      * Menu list
      */
     protected List<MenuItem> menus = new ArrayList<>();
+    /**
+     * TreeCell icon
+     */
+    private final Image image;
 
     /**
      * Node constructor
@@ -50,22 +93,8 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
      * @param param Link parameters
      */
     public BaseTreeNode(ConnectionParam param, Image image) {
+        this.image = image;
         this.param.set(param);
-
-        var icon = new ImageView(image);
-        var indicator = new ProgressIndicator();
-
-        setGraphic(icon);
-        //Detect status changes
-        loading.addListener((observable, oldValue, newValue) -> {
-            final Node graphic;
-            if (newValue) {
-                graphic = indicator;
-            } else {
-                graphic = icon;
-            }
-            Platform.runLater(() -> setGraphic(graphic));
-        });
     }
 
     /**
@@ -137,7 +166,12 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     /**
      * Called when a child node is initialized
      */
-    public abstract void init();
+    public void init() {
+    }
+
+    public Image getImage() {
+        return image;
+    }
 
     protected void removeMenu(MenuItem item) {
         this.menus.remove(item);
@@ -166,4 +200,6 @@ public abstract class BaseTreeNode<T> extends TreeItem<T> {
     public void setParam(ConnectionParam param) {
         this.param.set(param);
     }
+
+    public abstract TreeItemType getTreeItemType();
 }
