@@ -1,6 +1,6 @@
 package com.openjfx.database.app.controller;
 
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.component.SearchPopup;
 import com.openjfx.database.app.component.tabs.DesignTab;
@@ -46,7 +46,7 @@ import static com.openjfx.database.app.config.Constants.*;
  * @author yangkui
  * @since 1.0
  */
-public class DatabaseFxController extends BaseController<Void> {
+public class DatabaseFxController extends AbstractController<Void> {
     @FXML
     private MainTabPane tabPane;
     @FXML
@@ -55,6 +55,7 @@ public class DatabaseFxController extends BaseController<Void> {
     private TreeView<String> treeView;
     @FXML
     private TreeItem<String> treeItemRoot;
+
     private int selectIndex = 0;
     private List<Integer> searchList = new ArrayList<>();
     private final SearchPopup searchPopup = SearchPopup.simplePopup();
@@ -125,9 +126,12 @@ public class DatabaseFxController extends BaseController<Void> {
             }
             splitPane.setDividerPosition(0, position);
         });
-        //window close->close all connection
-        stage.setOnCloseRequest(e -> Platform.exit());
         EventBusUtils.registerEventBus(EVENT_ADDRESS, this::eventBusHandler);
+    }
+
+    @Override
+    public void close() {
+        Platform.exit();
     }
 
     /**
@@ -260,7 +264,7 @@ public class DatabaseFxController extends BaseController<Void> {
         if (item instanceof BaseTreeNode) {
             param.put(Constants.UUID, ((BaseTreeNode<String>) item).getUuid());
         }
-        String scheme = "";
+        var scheme = "";
         if (item instanceof SchemeTreeNode) {
             scheme = item.getValue();
         }

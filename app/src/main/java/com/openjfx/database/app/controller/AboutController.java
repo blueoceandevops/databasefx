@@ -1,13 +1,12 @@
 package com.openjfx.database.app.controller;
 
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.utils.AssetUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -17,20 +16,15 @@ import java.util.concurrent.CompletableFuture;
  * @author yangkui
  * @since 1.0
  */
-public class AboutController extends BaseController<Void> {
-
+public class AboutController extends AbstractController<Void> {
     @FXML
     private Label name;
-
     @FXML
     private Label author;
-
     @FXML
     private Label version;
-
     @FXML
     private Label website;
-
 
     @Override
     public void init() {

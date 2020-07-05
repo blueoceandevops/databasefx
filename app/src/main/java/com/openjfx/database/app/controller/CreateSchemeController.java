@@ -1,24 +1,18 @@
 package com.openjfx.database.app.controller;
 
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.EditChoiceBox;
 import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.base.AbstractDatabaseSource;
-import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.common.utils.StringUtils;
-import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
-import jdk.jfr.Event;
-
-import static com.openjfx.database.app.config.Constants.ACTION;
-import static com.openjfx.database.app.config.Constants.UUID;
 
 /**
  * New database stage controller
@@ -26,26 +20,21 @@ import static com.openjfx.database.app.config.Constants.UUID;
  * @author yangkui
  * @since 1.0
  */
-public class CreateSchemeController extends BaseController<String> {
+public class CreateSchemeController extends AbstractController<String> {
+    @FXML
+    private Button cancel;
+    @FXML
+    private Button create;
     @FXML
     private TabPane tabPane;
     @FXML
     private SQLEditor sqlEditor;
-
-    @FXML
-    private EditChoiceBox<String> schemeNameBox;
-
     @FXML
     private EditChoiceBox<String> charsetBox;
-
     @FXML
     private EditChoiceBox<String> collationBox;
-
     @FXML
-    private Button cancel;
-
-    @FXML
-    private Button create;
+    private EditChoiceBox<String> schemeNameBox;
 
     @Override
     public void init() {
@@ -78,10 +67,10 @@ public class CreateSchemeController extends BaseController<String> {
                 stage.close();
                 return;
             }
-            var client = databaseSource.getClient(data);
+            var client = databaseSource.getClient(intent);
             var future = client.getDql().executeSql(sql);
             future.onSuccess(rs -> {
-                EventBusUtils.flushScheme(data);
+                EventBusUtils.flushScheme(intent);
                 //close current stage
                 Platform.runLater(stage::close);
             });

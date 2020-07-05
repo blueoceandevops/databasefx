@@ -1,18 +1,14 @@
 package com.openjfx.database.app;
 
 import com.openjfx.database.app.annotation.Layout;
-import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.utils.StringUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 
 import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
@@ -21,20 +17,19 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
 /**
  * base stage
  *
- * @param <D> Pass parameter type
+ * @param <T> Pass parameter type
  * @author yangkui
  * @since 1.0
  */
-public class BaseStage<D> extends Stage {
-
+public class AbstractStage<T> extends Stage {
+    private Layout layout;
     protected Scene scene = null;
-
-    protected BaseController<D> controller;
+    protected AbstractController<T> controller;
 
     /**
      * No parameters need to be passed
      */
-    public BaseStage() {
+    public AbstractStage() {
         initController();
         controller.init();
         initStage();
@@ -43,12 +38,12 @@ public class BaseStage<D> extends Stage {
     /**
      * Parameters need to be passed
      *
-     * @param data param
+     * @param intent param
      */
 
-    public BaseStage(D data) {
+    public AbstractStage(T intent) {
         initController();
-        controller.setData(data);
+        controller.setIntent(intent);
         controller.init();
         initStage();
     }
@@ -59,7 +54,7 @@ public class BaseStage<D> extends Stage {
      * @return Return annotation information
      */
     private Layout getLayout() {
-        Layout layout = this.getClass().getAnnotation(Layout.class);
+        var layout = this.getClass().getAnnotation(Layout.class);
         if (Objects.isNull(layout)) {
             throw new RuntimeException(DatabaseFX.I18N.getString("base.stage.layout.null"));
         }
@@ -70,8 +65,10 @@ public class BaseStage<D> extends Stage {
      * init controller
      */
     private void initController() {
-        var layout = getLayout();
-
+        this.layout = this.getClass().getAnnotation(Layout.class);
+        if (this.layout == null) {
+            throw new RuntimeException(DatabaseFX.I18N.getString("base.stage.layout.null"));
+        }
         var path = "fxml/" + layout.layout();
         var url = ClassLoader.getSystemResource(path);
         var loader = new FXMLLoader(url);
@@ -95,32 +92,19 @@ public class BaseStage<D> extends Stage {
      * init stage
      */
     private void initStage() {
-        Layout layout = getLayout();
-
-        setWidth(layout.width());
-        setHeight(layout.height());
-        setMaximized(layout.maximized());
-        setResizable(layout.resizable());
-        if (StringUtils.isEmpty(getTitle())) {
-            var title = StringUtils.isEmpty(layout.title()) ? "" : DatabaseFX.I18N.getString(layout.title());
-            setTitle(title);
-        }
-        setAlwaysOnTop(layout.alwaysOnTop());
-
-        Image icon = getLocalImage(200, 200, layout.icon());
-
-        initStyle(layout.stageStyle());
-        setIconified(layout.iconified());
-
-        getIcons().add(icon);
-        initModality(layout.modality());
-        if (!layout.show()) {
-            return;
-        }
-        if (layout.await()) {
-            showAndWait();
-        } else {
-            show();
+        this.setWidth(this.layout.width());
+        this.setHeight(this.layout.height());
+        this.initStyle(this.layout.stageStyle());
+        this.initModality(this.layout.modality());
+        this.setMaximized(this.layout.maximized());
+        this.setResizable(this.layout.resizable());
+        this.setIconified(this.layout.iconified());
+        this.setAlwaysOnTop(this.layout.alwaysOnTop());
+        this.setOnCloseRequest(e -> this.controller.close());
+        this.getIcons().add(getLocalImage(200, 200, this.layout.icon()));
+        this.setTitle(StringUtils.isEmpty(this.layout.title()) ? "" : DatabaseFX.I18N.getString(this.layout.title()));
+        if (layout.show()) {
+            this.show();
         }
     }
 }

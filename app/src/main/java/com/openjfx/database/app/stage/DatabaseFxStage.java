@@ -1,6 +1,6 @@
 package com.openjfx.database.app.stage;
 
-import com.openjfx.database.app.BaseStage;
+import com.openjfx.database.app.AbstractStage;
 import com.openjfx.database.app.annotation.Layout;
 
 
@@ -11,5 +11,5 @@ import com.openjfx.database.app.annotation.Layout;
  * @since 1.0
  */
 @Layout(layout = "database_fx_view.fxml",title = "app.stage.databasefx",width = 1024,height = 768)
-public class DatabaseFxStage extends BaseStage {
+public class DatabaseFxStage extends AbstractStage {
 }

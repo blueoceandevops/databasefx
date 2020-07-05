@@ -1,7 +1,7 @@
 package com.openjfx.database.app.controller;
 
 import com.openjfx.database.app.API;
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.stage.DatabaseFxStage;
 import com.openjfx.database.app.utils.DialogUtils;
@@ -28,13 +28,11 @@ import static com.openjfx.database.app.config.Constants.DATA;
  * @author yangkui
  * @since 1.0
  */
-public class UpdateController extends BaseController<Void> {
-
-    @FXML
-    private ListView<UpdateLogItem> listView;
-
+public class UpdateController extends AbstractController<Void> {
     @FXML
     private Label version;
+    @FXML
+    private ListView<UpdateLogItem> listView;
 
     private JsonObject info;
 

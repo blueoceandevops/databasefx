@@ -1,6 +1,6 @@
 package com.openjfx.database.app.stage;
 
-import com.openjfx.database.app.BaseStage;
+import com.openjfx.database.app.AbstractStage;
 import com.openjfx.database.app.annotation.Layout;
 import javafx.stage.StageStyle;
 
@@ -12,5 +12,5 @@ import javafx.stage.StageStyle;
  * @since 1.0
  */
 @Layout(layout = "splash_view.fxml", width = 600, height = 400, stageStyle = StageStyle.UNDECORATED, alwaysOnTop = true)
-public class SplashStage extends BaseStage<Void> {
+public class SplashStage extends AbstractStage<Void> {
 }

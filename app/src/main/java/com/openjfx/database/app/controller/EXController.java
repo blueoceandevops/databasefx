@@ -1,6 +1,6 @@
 package com.openjfx.database.app.controller;
 
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.component.paginations.EXConvertPage;
 import com.openjfx.database.app.component.paginations.EXFormatPage;
 import com.openjfx.database.app.component.paginations.EXInfoPage;
@@ -30,16 +30,13 @@ import javafx.util.Callback;
  * @author yangkui
  * @since 1.0
  */
-public class EXController extends BaseController<EXModel> {
-
+public class EXController extends AbstractController<EXModel> {
     @FXML
     private Label wizardTitle;
-
-    @FXML
-    private Pagination pagination;
-
     @FXML
     private Button startOrCancel;
+    @FXML
+    private Pagination pagination;
 
     private static final String[] TITLE = {
             "向导可以让你指定导出数据的细节。你要使用哪一种导出格式?(1/4)",
@@ -47,30 +44,19 @@ public class EXController extends BaseController<EXModel> {
             "你可以对数据进行一些个性化设置。(3/4)",
             "我们已收集向导导出数据所需要的全部信息。点击[开始]按钮开始导出。(3/4)"
     };
-    /**
-     * format page
-     */
-    private EXFormatPage formatPage;
-    /**
-     * select column page
-     */
-    private EXColumnPage selectColumnPage;
-    /**
-     * data convert page
-     */
-    private EXConvertPage convertPage;
-    /**
-     * info wizard info page
-     */
+
     private EXInfoPage infoPage;
+    private EXFormatPage formatPage;
+    private EXConvertPage convertPage;
+    private EXColumnPage selectColumnPage;
+
 
     @Override
     public void init() {
-
-        formatPage = new EXFormatPage(data);
-        selectColumnPage = new EXColumnPage(data);
-        infoPage = new EXInfoPage(data);
-        convertPage = new EXConvertPage(data);
+        infoPage = new EXInfoPage(intent);
+        formatPage = new EXFormatPage(intent);
+        convertPage = new EXConvertPage(intent);
+        selectColumnPage = new EXColumnPage(intent);
         pagination.setPageFactory(pageFactory());
     }
 
@@ -119,11 +105,11 @@ public class EXController extends BaseController<EXModel> {
         var index = pagination.getCurrentPageIndex();
         if (index == pagination.getPageCount() - 1) {
             infoPage.reset();
-            if (data.getPath() == null) {
+            if (intent.getPath() == null) {
                 var file = openFileSelector();
-                data.setPath(file.getAbsolutePath());
+                intent.setPath(file.getAbsolutePath());
             }
-            var factory = ExportFactory.factory(data);
+            var factory = ExportFactory.factory(intent);
             factory.textProperty().addListener((observable, oldValue, newValue) -> {
                 infoPage.appendStr(newValue);
             });
@@ -133,7 +119,7 @@ public class EXController extends BaseController<EXModel> {
                     return;
                 }
                 try {
-                    OSUtils.openFile(data.getPath());
+                    OSUtils.openFile(intent.getPath());
                     Platform.runLater((stage::close));
                 } catch (Exception e) {
                     DialogUtils.showNotification("打开文件失败", Pos.TOP_CENTER, NotificationType.ERROR, stage);
@@ -148,9 +134,8 @@ public class EXController extends BaseController<EXModel> {
     private File openFileSelector() {
         var fileChooser = new FileChooser();
         var initPath = OSUtils.getUserHome();
-        var suffix = data.getExportDataType().getSuffix();
-        var filter = new FileChooser.ExtensionFilter(String.format("%s File", suffix.toUpperCase()),
-                String.format("*.%s", suffix));
+        var suffix = intent.getExportDataType().getSuffix();
+        var filter = new FileChooser.ExtensionFilter(String.format("%s File", suffix.toUpperCase()), String.format("*.%s", suffix));
         fileChooser.setTitle("请选择保存路径");
         fileChooser.setInitialDirectory(new File(initPath));
         fileChooser.getExtensionFilters().add(filter);

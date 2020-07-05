@@ -1,8 +1,7 @@
 package com.openjfx.database.app.stage;
 
-import com.openjfx.database.app.BaseStage;
+import com.openjfx.database.app.AbstractStage;
 import com.openjfx.database.app.annotation.Layout;
-import com.openjfx.database.model.ConnectionParam;
 
 /**
  * create connection stage view
@@ -11,7 +10,7 @@ import com.openjfx.database.model.ConnectionParam;
  * @since 1.0
  */
 @Layout(layout = "create_connection_view.fxml", title = "app.stage.create.con", resizable = false)
-public class CreateConnectionStage extends BaseStage<String> {
+public class CreateConnectionStage extends AbstractStage<String> {
     public CreateConnectionStage() {
     }
 

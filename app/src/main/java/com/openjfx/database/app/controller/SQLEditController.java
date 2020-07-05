@@ -3,7 +3,7 @@ package com.openjfx.database.app.controller;
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.controls.SQLEditor;
 import com.openjfx.database.app.utils.TableColumnUtils;
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.config.Constants;
 import com.openjfx.database.app.enums.NotificationType;
 import com.openjfx.database.app.utils.DialogUtils;
@@ -35,24 +35,23 @@ import static com.openjfx.database.app.DatabaseFX.I18N;
  * @author yangkui
  * @since 1.0
  */
-public class SQLEditController extends BaseController<JsonObject> {
-    @FXML
-    private TableView<ObservableList<StringProperty>> tableView;
-
+public class SQLEditController extends AbstractController<JsonObject> {
     @FXML
     private SQLEditor sqlEditor;
+    @FXML
+    private TableView<ObservableList<StringProperty>> tableView;
 
     private AbstractDataBaseClient client;
 
     @Override
     public void init() {
-        var uid = data.getString(Constants.UUID);
+        var uid = intent.getString(Constants.UUID);
 
         var optional = DbPreference.getConnectionParam(uid);
 
         var uuid = UUID.randomUUID().toString();
 
-        var scheme = data.getString(Constants.SCHEME);
+        var scheme = intent.getString(Constants.SCHEME);
 
         if (optional.isEmpty()) {
             initFailed();

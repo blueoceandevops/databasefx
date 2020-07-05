@@ -67,13 +67,6 @@ public @interface Layout {
     boolean show() default true;
 
     /**
-     * 是否调用showAndWait
-     *
-     * @return 返回结果
-     */
-    boolean await() default false;
-
-    /**
      * 是否允许窗口调整
      *
      * @return 返回结果

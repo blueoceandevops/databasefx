@@ -2,7 +2,7 @@ package com.openjfx.database.app.controller;
 
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.enums.NotificationType;
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.common.VertexUtils;
 import com.openjfx.database.model.ConnectionParam;
@@ -29,9 +29,7 @@ import static com.openjfx.database.common.utils.StringUtils.isEmpty;
  * @author yangkui
  * @since 1.0
  */
-public class CreateConnectionController extends BaseController<String> {
-    @FXML
-    private TextField server;
+public class CreateConnectionController extends AbstractController<String> {
     @FXML
     private TextField name;
     @FXML
@@ -39,13 +37,15 @@ public class CreateConnectionController extends BaseController<String> {
     @FXML
     private TextField user;
     @FXML
+    private TextField server;
+    @FXML
     private PasswordField password;
 
     @Override
     public void init() {
-        if (data != null) {
+        if (intent != null) {
             //加载配置信息
-            DbPreference.getConnectionParam(data).ifPresent(cc -> {
+            DbPreference.getConnectionParam(intent).ifPresent(cc -> {
                 server.setText(cc.getHost());
                 name.setText(cc.getName());
                 port.setText(String.valueOf(cc.getPort()));
@@ -67,7 +67,8 @@ public class CreateConnectionController extends BaseController<String> {
     }
 
     @FXML
-    private void close() {
+    @Override
+    public void close() {
         stage.close();
     }
 
@@ -79,7 +80,7 @@ public class CreateConnectionController extends BaseController<String> {
         }
         var flag = true;
         //update connection
-        if (Objects.nonNull(data)) {
+        if (Objects.nonNull(intent)) {
             updateConnection(param);
             flag = DialogUtils.showAlertConfirm(resourceBundle.getString("controller.create.con.change.tips"));
         } else {
@@ -91,7 +92,7 @@ public class CreateConnectionController extends BaseController<String> {
             DbPreference.addConnection(param);
         }
         var message = new JsonObject();
-        DatabaseFxController.EventBusAction action = Objects.nonNull(data)
+        DatabaseFxController.EventBusAction action = Objects.nonNull(intent)
                 ? DatabaseFxController.EventBusAction.UPDATE_CONNECTION
                 : DatabaseFxController.EventBusAction.ADD_CONNECTION;
 
@@ -119,8 +120,8 @@ public class CreateConnectionController extends BaseController<String> {
 
         var param = new ConnectionParam();
 
-        if (Objects.nonNull(data)) {
-            param.setUuid(data);
+        if (Objects.nonNull(intent)) {
+            param.setUuid(intent);
         }
 
         param.setHost(a);

@@ -1,7 +1,7 @@
 package com.openjfx.database.app.controller;
 
 import com.openjfx.database.app.API;
-import com.openjfx.database.app.BaseController;
+import com.openjfx.database.app.AbstractController;
 import com.openjfx.database.app.config.DbPreference;
 import com.openjfx.database.app.stage.DatabaseFxStage;
 import com.openjfx.database.app.stage.UpdateStage;
@@ -28,7 +28,7 @@ import static com.openjfx.database.app.utils.DialogUtils.showErrorDialog;
  * @author yangkui
  * @since 1.0
  */
-public class SplashController extends BaseController<Void> {
+public class SplashController extends AbstractController<Void> {
     @FXML
     private Label title;
     /**

@@ -11,31 +11,36 @@ import java.util.ResourceBundle;
 /**
  * base controller
  *
- * @param <D> Transfer data type
+ * @param <T> Transfer data type
  * @author yangkui
  * @since 1.0
  */
-public abstract class BaseController<D> implements Initializable {
+public abstract class AbstractController<T> implements Initializable {
     /**
      * extension data
      */
-    protected D data;
+    protected T intent;
     /**
      * stage reference
      */
     protected Stage stage;
     /**
-     * ResourceBundle
-     */
-    protected ResourceBundle resourceBundle;
-    /**
      * URL
      */
     protected URL location;
-
+    /**
+     * logger
+     */
     protected final Logger logger;
+    /**
+     * ResourceBundle
+     */
+    protected ResourceBundle resourceBundle;
 
-    public BaseController() {
+    /**
+     * empty construction
+     */
+    public AbstractController() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -53,18 +58,23 @@ public abstract class BaseController<D> implements Initializable {
     }
 
     /**
-     * init controller
+     * Init controller
      */
     public void init() {
-        //todo override
     }
 
-    public D getData() {
-        return data;
+    /**
+     * Current stage close call method
+     */
+    public void close() {
     }
 
-    public void setData(D data) {
-        this.data = data;
+    public T getIntent() {
+        return intent;
+    }
+
+    public void setIntent(T intent) {
+        this.intent = intent;
     }
 
     public Stage getStage() {
