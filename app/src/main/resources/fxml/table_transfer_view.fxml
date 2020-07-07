@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.Label?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.openjfx.database.app.controller.TableTransferController"
+            prefHeight="400.0" prefWidth="600.0">
+    <stylesheets>
+        <URL value="@/css/table_transfer_view_style.css"/>
+    </stylesheets>
+    <top>
+        <GridPane>
+            <Label text="当前连接:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Label fx:id="curCon" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Label text="当前Scheme:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+            <Label fx:id="curScheme" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+            <Label text="当前表:" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+            <Label fx:id="curTable" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+        </GridPane>
+    </top>
+    <center>
+        <Pagination fx:id="pagination" pageCount="2"/>
+    </center>
+    <bottom>
+        <HBox styleClass="bottom-box">
+            <Button text="继续" disable="true" fx:id="next"/>
+        </HBox>
+    </bottom>
+</BorderPane>
