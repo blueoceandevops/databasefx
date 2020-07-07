@@ -1,7 +1,6 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
@@ -39,7 +38,7 @@ public class ViewFolderNode extends BaseTreeNode<String> {
         future.onComplete(ar -> {
             if (ar.succeeded()) {
                 var rs = ar.result();
-                var list = rs.stream().map(view -> new TableViewTreeNode(scheme, view, getParam())).collect(Collectors.toList());
+                var list = rs.stream().map(view -> new TableViewNode(scheme, view, getParam())).collect(Collectors.toList());
                 Platform.runLater(() -> {
                     getChildren().addAll(list);
                     setExpanded(true);

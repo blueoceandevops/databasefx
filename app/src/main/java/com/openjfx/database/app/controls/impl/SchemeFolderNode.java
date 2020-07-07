@@ -2,11 +2,9 @@ package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.stage.CreateSchemeStage;
 import com.openjfx.database.app.utils.AssetUtils;
 import com.openjfx.database.model.ConnectionParam;
-import com.sun.source.tree.Tree;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -48,7 +46,7 @@ public class SchemeFolderNode extends BaseTreeNode<String> {
         var client = DatabaseFX.DATABASE_SOURCE.getClient(param.get().getUuid());
         var future = client.getDql().showDatabase();
         future.onSuccess(schemes -> {
-            var schemeTreeNodes = schemes.stream().map(s -> new SchemeTreeNode(s, param.get())).collect(Collectors.toList());
+            var schemeTreeNodes = schemes.stream().map(s -> new SchemeNode(s, param.get())).collect(Collectors.toList());
             Platform.runLater(() -> {
                 getChildren().addAll(schemeTreeNodes);
                 setExpanded(true);

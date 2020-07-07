@@ -12,11 +12,11 @@ import javafx.scene.image.Image;
  * @author yangkui
  * @since 1.0
  */
-public class UserTreeNode extends BaseTreeNode<String> {
+public class UserNode extends BaseTreeNode<String> {
 
     private final static Image USER_ICON = AssetUtils.getLocalImage(20, 20, "user_icon.png");
 
-    public UserTreeNode(ConnectionParam param, String user) {
+    public UserNode(ConnectionParam param, String user) {
         super(param, USER_ICON);
         setValue(user);
     }

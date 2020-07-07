@@ -1,10 +1,6 @@
 package com.openjfx.database.app.controls;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeCell;
 import javafx.scene.image.ImageView;
 

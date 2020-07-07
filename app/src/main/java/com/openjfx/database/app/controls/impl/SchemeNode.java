@@ -28,13 +28,13 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @author yangkui
  * @since 1.0
  */
-public class SchemeTreeNode extends BaseTreeNode<String> {
+public class SchemeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "db_icon.png");
 
     private final MenuItem close;
 
-    public SchemeTreeNode(String scheme, ConnectionParam param) {
+    public SchemeNode(String scheme, ConnectionParam param) {
         super(param, ICON_IMAGE);
 
         setValue(scheme);

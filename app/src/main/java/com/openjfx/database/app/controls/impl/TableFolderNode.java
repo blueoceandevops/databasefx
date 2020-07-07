@@ -1,7 +1,6 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
@@ -72,7 +71,7 @@ public class TableFolderNode extends BaseTreeNode<String> {
             if (ar.failed()) {
                 DialogUtils.showErrorDialog(ar.cause(), I18N.getString("menu.databasefx.tree.database.init.fail"));
             } else {
-                var tas = ar.result().stream().map(s -> new TableTreeNode(scheme, s, param.get())).collect(Collectors.toList());
+                var tas = ar.result().stream().map(s -> new TableNode(scheme, s, param.get())).collect(Collectors.toList());
                 Platform.runLater(() -> {
                     getChildren().addAll(tas);
                     setExpanded(true);

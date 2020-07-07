@@ -29,7 +29,7 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @author yangkui
  * @since 1.0
  */
-public class DBTreeNode extends BaseTreeNode<String> {
+public class DBNode extends BaseTreeNode<String> {
 
     private final MenuItem loseConnect;
 
@@ -38,7 +38,7 @@ public class DBTreeNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "mysql_icon.png");
 
-    public DBTreeNode(ConnectionParam param) {
+    public DBNode(ConnectionParam param) {
         super(param, ICON_IMAGE);
 
         loseConnect = new MenuItem(I18N.getString("menu.databasefx.tree.lose.connection"));

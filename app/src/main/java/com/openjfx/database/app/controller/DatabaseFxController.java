@@ -81,7 +81,7 @@ public class DatabaseFxController extends AbstractController<Void> {
                     var model = TableTabModel.build(selectedItem);
                     addTab(model, BaseTab.TabType.BASE_TABLE_TAB);
                 } else if (itemType == BaseTreeNode.TreeItemType.USER) {
-                    var model = UserTabModel.build((UserTreeNode) selectedItem);
+                    var model = UserTabModel.build((UserNode) selectedItem);
                     addTab(model, BaseTab.TabType.USER_TAB);
                 } else {
                     ((BaseTreeNode<String>) selectedItem).init();
@@ -161,7 +161,7 @@ public class DatabaseFxController extends AbstractController<Void> {
      * render connection list
      */
     private void initDbList() {
-        var nodes = DbPreference.getParams().stream().map(DBTreeNode::new).collect(Collectors.toList());
+        var nodes = DbPreference.getParams().stream().map(DBNode::new).collect(Collectors.toList());
         var observableList = treeItemRoot.getChildren();
         if (!observableList.isEmpty()) {
             observableList.clear();
@@ -211,7 +211,7 @@ public class DatabaseFxController extends AbstractController<Void> {
         //create connection
         if (action == EventBusAction.ADD_CONNECTION) {
             DbPreference.getConnectionParam(uuid).ifPresent(db -> {
-                var node = new DBTreeNode(db);
+                var node = new DBNode(db);
                 Platform.runLater(() -> treeItemRoot.getChildren().add(node));
             });
         }
@@ -255,11 +255,11 @@ public class DatabaseFxController extends AbstractController<Void> {
             param.put(Constants.UUID, ((BaseTreeNode<String>) item).getUuid());
         }
         var scheme = "";
-        if (item instanceof SchemeTreeNode) {
+        if (item instanceof SchemeNode) {
             scheme = item.getValue();
         }
-        if (item instanceof TableTreeNode) {
-            scheme = ((TableTreeNode) item).getScheme();
+        if (item instanceof TableNode) {
+            scheme = ((TableNode) item).getScheme();
         }
         param.put(SCHEME, scheme);
         new SQLEditStage(param);

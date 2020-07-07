@@ -1,9 +1,7 @@
 package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.utils.AssetUtils;
-import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
@@ -39,9 +37,9 @@ public class UserFolderNode extends BaseTreeNode<String> {
         var client = DATABASE_SOURCE.getClient(param.get().getUuid());
         var future = client.getDql().getCurrentDatabaseUserList();
         future.onSuccess(list -> {
-            var children = new ArrayList<UserTreeNode>();
+            var children = new ArrayList<UserNode>();
             for (String user : list) {
-                var node = new UserTreeNode(param.get(), user);
+                var node = new UserNode(param.get(), user);
                 children.add(node);
             }
             Platform.runLater(() -> {

@@ -24,7 +24,7 @@ import static com.openjfx.database.app.utils.AssetUtils.getLocalImage;
  * @author yangkui
  * @since 1.0
  */
-public class TableTreeNode extends BaseTreeNode<String> {
+public class TableNode extends BaseTreeNode<String> {
 
     private static final Image ICON_IMAGE = getLocalImage(20, 20, "table_icon.png");
 
@@ -33,7 +33,7 @@ public class TableTreeNode extends BaseTreeNode<String> {
      */
     private final String scheme;
 
-    public TableTreeNode(String scheme, String tableName, ConnectionParam param) {
+    public TableNode(String scheme, String tableName, ConnectionParam param) {
         super(param, ICON_IMAGE);
 
         this.scheme = scheme;

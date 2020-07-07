@@ -1,6 +1,6 @@
 package com.openjfx.database.app.model.tab.meta;
 
-import com.openjfx.database.app.controls.impl.UserTreeNode;
+import com.openjfx.database.app.controls.impl.UserNode;
 import com.openjfx.database.app.model.tab.BaseTabMode;
 
 /**
@@ -56,7 +56,7 @@ public class UserTabModel extends BaseTabMode {
         return uuid + "_user_" + value;
     }
 
-    public static UserTabModel build(UserTreeNode treeNode) {
+    public static UserTabModel build(UserNode treeNode) {
         var uuid = treeNode.getUuid();
         var value = treeNode.getValue();
         var conName = treeNode.getConName();

@@ -2,8 +2,8 @@ package com.openjfx.database.app.model.tab.meta;
 
 import com.openjfx.database.app.component.BaseTab;
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.impl.TableTreeNode;
-import com.openjfx.database.app.controls.impl.TableViewTreeNode;
+import com.openjfx.database.app.controls.impl.TableNode;
+import com.openjfx.database.app.controls.impl.TableViewNode;
 import com.openjfx.database.app.model.tab.BaseTabMode;
 import javafx.scene.control.TreeItem;
 
@@ -51,14 +51,14 @@ public class TableTabModel extends BaseTabMode {
         final BaseTab.TabType tableType;
         final String uuid;
         final String conName;
-        if (treeNode instanceof TableTreeNode) {
-            var tableNode = (TableTreeNode) treeNode;
+        if (treeNode instanceof TableNode) {
+            var tableNode = (TableNode) treeNode;
             scheme = tableNode.getScheme();
             tableName = tableNode.getValue();
             tableType = BaseTab.TabType.BASE_TABLE_TAB;
             uuid = tableNode.getUuid();
         } else {
-            var viewNode = (TableViewTreeNode) treeNode;
+            var viewNode = (TableViewNode) treeNode;
             scheme = viewNode.getScheme();
             tableName = viewNode.getValue();
             tableType = BaseTab.TabType.VIEW_TAB;
