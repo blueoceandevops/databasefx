@@ -1,0 +1,19 @@
+.selector-box {
+    -fx-alignment: center;
+    -fx-spacing: 3em;
+    -fx-padding: 1em;
+}
+
+.bottom-box {
+    -fx-alignment: center-right;
+    -fx-padding: 1em;
+}
+
+.select-item {
+    -fx-alignment: center-left;
+    -fx-spacing: 1em;
+}
+
+.pagination .pagination-control {
+    visibility: hidden;
+}

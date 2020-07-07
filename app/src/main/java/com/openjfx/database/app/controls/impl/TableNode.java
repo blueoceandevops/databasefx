@@ -4,12 +4,15 @@ import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.BaseTreeNode;
 import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.model.EXModel;
+import com.openjfx.database.app.model.TableTransferModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
 import com.openjfx.database.app.stage.EXStage;
+import com.openjfx.database.app.stage.TableTransferStage;
 import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
@@ -43,6 +46,7 @@ public class TableNode extends BaseTreeNode<String> {
         var design = new MenuItem(I18N.getString("menu.databasefx.tree.design.table"));
         var delete = new MenuItem(I18N.getString("menu.databasefx.tree.delete.table"));
         var exportData = new MenuItem(I18N.getString("menu.databasefx.tree.export.data"));
+        var transfer = new MenuItem(I18N.getString("menu.databasefx.tree.transfer.table"));
         var rename = new MenuItem(I18N.getString("menu.databasefx.tree.rename"));
 
         design.setOnAction(e -> EventBusUtils.openDesignTab(
@@ -86,7 +90,14 @@ public class TableNode extends BaseTreeNode<String> {
             });
             future.onFailure(t -> DialogUtils.showErrorDialog(t, I18N.getString("menu.databasefx.tree.rename.failed")));
         });
-        addMenuItem(design, exportData, rename, delete);
+        transfer.setOnAction(event -> {
+            var model = new TableTransferModel();
+            model.setCurUUID(getUuid());
+            model.setCurScheme(getScheme());
+            model.setCurTable(getValue());
+            new TableTransferStage(model);
+        });
+        addMenuItem(design, transfer, exportData, rename, delete);
     }
 
     public String getScheme() {
