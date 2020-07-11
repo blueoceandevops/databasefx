@@ -56,4 +56,13 @@ public interface DML {
      * @return result
      */
     Future<Integer> renameTable(String table, String target, String scheme);
+
+    /**
+     * clear empty table
+     *
+     * @param table  target table
+     * @param scheme target scheme
+     * @return return clear result
+     */
+    Future<Integer> clearTable(String table, String scheme);
 }

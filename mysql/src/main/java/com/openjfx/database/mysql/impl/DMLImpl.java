@@ -151,4 +151,31 @@ public class DMLImpl implements DML {
         });
         return promise.future();
     }
+
+    /**
+     * <p>
+     * Truncate is more efficient than delete, but the truncate operation will not be
+     * written to the operation log, so the operation is irreversible.For data security,
+     * delete is recommended.
+     * </p>
+     *
+     * @param table  target table
+     * @param scheme target scheme
+     * @return operation result
+     * @see <a href='https://dev.mysql.com/doc/refman/8.0/en/truncate-table.html'>Mysql official document</a>
+     */
+    @Override
+    public Future<Integer> clearTable(String table, String scheme) {
+        var tableName = SQLHelper.fullTableName(scheme, table);
+        var sql = "DELETE FROM " + tableName;
+        var promise = Promise.<Integer>promise();
+        client.query(sql).onComplete(ar -> {
+            if (ar.failed()) {
+                promise.fail(ar.cause());
+                return;
+            }
+            promise.complete(ar.result().rowCount());
+        });
+        return promise.future();
+    }
 }

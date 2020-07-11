@@ -48,6 +48,7 @@ public class TableNode extends BaseTreeNode<String> {
         var exportData = new MenuItem(I18N.getString("menu.databasefx.tree.export.data"));
         var transfer = new MenuItem(I18N.getString("menu.databasefx.tree.transfer.table"));
         var rename = new MenuItem(I18N.getString("menu.databasefx.tree.rename"));
+        var clear = new MenuItem(I18N.getString("menu.databasefx.tree.empty.table"));
 
         design.setOnAction(e -> EventBusUtils.openDesignTab(
                 getUuid(),
@@ -97,7 +98,19 @@ public class TableNode extends BaseTreeNode<String> {
             model.setCurTable(getValue());
             new TableTransferStage(model);
         });
-        addMenuItem(design, transfer, exportData, rename, delete);
+        clear.setOnAction(e -> {
+            var i18n = I18N.getString("menu.databasefx.tree.empty.table.tips");
+            var msg = String.format(i18n, getValue());
+            var ok = DialogUtils.showAlertConfirm(msg);
+            if (!ok) {
+                return;
+            }
+            var client = DATABASE_SOURCE.getClient(getUuid());
+            var dml = client.getDml();
+            var future = dml.clearTable(getValue(), getScheme());
+            future.onFailure(t -> DialogUtils.showErrorDialog(t, "清空表失败!"));
+        });
+        addMenuItem(design, transfer, clear, exportData, rename, delete);
     }
 
     public String getScheme() {
