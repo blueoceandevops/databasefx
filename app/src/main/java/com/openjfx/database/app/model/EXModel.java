@@ -16,34 +16,46 @@ import java.util.List;
  */
 public class EXModel {
     /**
+     * save path
+     */
+    private String path;
+    /**
      * uuid
      */
     private final String uuid;
-    /**
-     * scheme
-     */
-    private final String scheme;
     /**
      * table
      */
     private final String table;
     /**
-     * save path
+     * scheme
      */
-    private String path;
+    private final String scheme;
+    /**
+     * How to deal null?
+     */
+    private String nullStr = "null";
+    /**
+     * Auto open file？
+     */
+    private boolean autoOpen = true;
+    /**
+     * Auto close current stage？
+     */
+    private boolean autoClose = true;
+    /**
+     * timestamp
+     */
+    private String timePattern = "yyyyMMddHHmm";
     /**
      * user select table column
      */
     private List<EXColumnPage.FieldTableModel> selectTableColumn = new ArrayList<>();
     /**
-     * timestamp
-     */
-    private String timePattern = "yyyyMMddHHmm";
-
-    /**
      * export data format default txt
      */
     private EXFormatPage.ExportDataType exportDataType = EXFormatPage.ExportDataType.TXT;
+
 
     public EXModel(String uuid, String scheme, String table) {
         this.uuid = uuid;
@@ -93,6 +105,30 @@ public class EXModel {
 
     public String getTimePattern() {
         return timePattern;
+    }
+
+    public String getNullStr() {
+        return nullStr;
+    }
+
+    public void setNullStr(String nullStr) {
+        this.nullStr = nullStr;
+    }
+
+    public boolean isAutoOpen() {
+        return autoOpen;
+    }
+
+    public void setAutoOpen(boolean autoOpen) {
+        this.autoOpen = autoOpen;
+    }
+
+    public boolean isAutoClose() {
+        return autoClose;
+    }
+
+    public void setAutoClose(boolean autoClose) {
+        this.autoClose = autoClose;
     }
 
     @Override

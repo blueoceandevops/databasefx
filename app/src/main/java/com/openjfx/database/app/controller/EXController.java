@@ -41,7 +41,7 @@ public class EXController extends AbstractController<EXModel> {
     private static final String[] TITLE = {
             "向导可以让你指定导出数据的细节。你要使用哪一种导出格式?(1/4)",
             "你可以选择具体需要导出哪些列。(2/4)",
-            "你可以对数据进行一些个性化设置。(3/4)",
+            "你可以对导出/数据进行一些个性化设置。(3/4)",
             "我们已收集向导导出数据所需要的全部信息。点击[开始]按钮开始导出。(3/4)"
     };
 
@@ -105,10 +105,12 @@ public class EXController extends AbstractController<EXModel> {
         var index = pagination.getCurrentPageIndex();
         if (index == pagination.getPageCount() - 1) {
             infoPage.reset();
-            if (intent.getPath() == null) {
-                var file = openFileSelector();
-                intent.setPath(file.getAbsolutePath());
+            var file = openFileSelector();
+            //if cancel select path
+            if (file == null) {
+                return;
             }
+            intent.setPath(file.getAbsolutePath());
             var factory = ExportFactory.factory(intent);
             factory.textProperty().addListener((observable, oldValue, newValue) -> {
                 infoPage.appendStr(newValue);
@@ -119,10 +121,16 @@ public class EXController extends AbstractController<EXModel> {
                     return;
                 }
                 try {
-                    OSUtils.openFile(intent.getPath());
-                    Platform.runLater((stage::close));
+                    //is open export file
+                    if (intent.isAutoOpen()) {
+                        OSUtils.openFile(intent.getPath());
+                    }
                 } catch (Exception e) {
                     DialogUtils.showNotification("打开文件失败", Pos.TOP_CENTER, NotificationType.ERROR, stage);
+                }
+                //is close current export stage
+                if (intent.isAutoClose()) {
+                    Platform.runLater((stage::close));
                 }
             });
             factory.start();
@@ -137,6 +145,7 @@ public class EXController extends AbstractController<EXModel> {
         var suffix = intent.getExportDataType().getSuffix();
         var filter = new FileChooser.ExtensionFilter(String.format("%s File", suffix.toUpperCase()), String.format("*.%s", suffix));
         fileChooser.setTitle("请选择保存路径");
+        fileChooser.setInitialFileName(intent.getTable());
         fileChooser.setInitialDirectory(new File(initPath));
         fileChooser.getExtensionFilters().add(filter);
         return fileChooser.showSaveDialog(getStage());

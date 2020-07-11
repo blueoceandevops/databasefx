@@ -2,7 +2,6 @@ package com.openjfx.database.app.controls.impl;
 
 import com.openjfx.database.app.DatabaseFX;
 import com.openjfx.database.app.controls.BaseTreeNode;
-import com.openjfx.database.app.controls.CustomTreeCell;
 import com.openjfx.database.app.model.EXModel;
 import com.openjfx.database.app.model.TableTransferModel;
 import com.openjfx.database.app.model.tab.meta.DesignTabModel;
@@ -12,7 +11,6 @@ import com.openjfx.database.app.utils.DialogUtils;
 import com.openjfx.database.app.utils.EventBusUtils;
 import com.openjfx.database.model.ConnectionParam;
 import javafx.application.Platform;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 

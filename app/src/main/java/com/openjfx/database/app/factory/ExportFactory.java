@@ -75,11 +75,10 @@ public class ExportFactory {
         future.onSuccess(rows -> {
             var map = new LinkedHashMap<String, List<String>>();
             int size = rows.columnsNames().size();
-            int rowSize = rows.size();
-            int count = 0;
             for (Row row : rows) {
                 for (int i = 0; i < size; i++) {
-                    var val = StringUtils.getObjectStrElseGet(row.getValue(i), "", model.getTimePattern());
+                    var val = StringUtils.getObjectStrElseGet(
+                            row.getValue(i), model.getNullStr(), model.getTimePattern());
                     var columnName = row.getColumnName(i);
                     //mather field alias
                     for (EXColumnPage.FieldTableModel model : model.getSelectTableColumn()) {
@@ -99,7 +98,6 @@ public class ExportFactory {
                     }
                     list.add(val);
                 }
-                count++;
             }
             setText("Read data successfully.......");
             formatFilePath();
